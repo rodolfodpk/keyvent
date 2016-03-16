@@ -42,31 +42,3 @@ class StateTransitionsTracker<E: EventSourced> (val instance: E, val applyEventO
     }
 }
 
-
-// events routing and execution function
-
-val applyEventOnCustomer : (Event, Customer) -> Customer = { event, customer ->
-    when(event) {
-        is CustomerCreated -> customer.copy(customerId = event.customerId)
-        is CustomerActivated -> customer.copy(active = true, activatedSince = event.date)
-        else -> customer
-    }
-}
-
-// commands routing and execution function
-
-val handleCustomerCommands : (Snapshot<Customer>, Command, (Event, Customer) -> Customer) -> UnitOfWork? = { snapshot, command, applyEventOn ->
-    when(command) {
-        is CreateCustomerCmd -> UnitOfWork(command = command, version = snapshot.nextVersion(),
-                events = snapshot.eventSourced.create(command.eventSourcedId))
-        is CreateAncActivateCustomerCmd -> {
-            val events = with(StateTransitionsTracker(snapshot.eventSourced, applyEventOn)) {
-                apply(snapshot.eventSourced.create(command.eventSourcedId))
-                apply(snapshot.eventSourced.activate())
-                collectedEvents()
-            }
-            UnitOfWork(command = command, version = snapshot.nextVersion(), events = events)
-        }
-        else -> null
-    }
-}
