@@ -1,5 +1,6 @@
 package kyvent
 
+import com.fasterxml.jackson.module.kotlin.*
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
@@ -25,10 +26,13 @@ fun test1() {
 }
 
 fun test2() {
-    println("---> multiple step")
+    println("---> multiple steps")
     val cmd : CreateActivatedCustomerCmd = CreateActivatedCustomerCmd(CommandId(), EventSourcedId())
     val snapshot : Snapshot<Customer> = Snapshot(Customer(), Version(1))
     val uow = handleCustomerCommands(snapshot, cmd, applyEventOnCustomer)
     println(uow)
-    println(mapper.writeValueAsString(uow))
+    val json = mapper.writeValueAsString(uow)
+    println(json)
+    val uowFromJson: UnitOfWork = mapper.readValue(json)
+    require(uow == uowFromJson)
 }
