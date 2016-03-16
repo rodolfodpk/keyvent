@@ -1,10 +1,17 @@
 package kyvent
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 
+val mapper = ObjectMapper().registerModules(Jdk8Module(), KotlinModule(), JavaTimeModule())
 
 fun main(args : Array<String>) {
+
+    mapper.enable(SerializationFeature.INDENT_OUTPUT);
+    mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 
     test1()
     test2()
@@ -13,7 +20,7 @@ fun main(args : Array<String>) {
 
 fun test1() {
 
-    println("single step")
+    println("---> single step")
 
     val cmd : CreateCustomerCmd = CreateCustomerCmd(CommandId(), EventSourcedId())
 
@@ -23,8 +30,6 @@ fun test1() {
 
     println(uow)
 
-    val mapper = ObjectMapper().registerModule(KotlinModule())
-
     println(mapper.writeValueAsString(uow))
 
 
@@ -32,7 +37,7 @@ fun test1() {
 
 fun test2() {
 
-    println("multiple step")
+    println("---> multiple step")
 
     val cmd : CreateAncActivateCustomerCmd = CreateAncActivateCustomerCmd(CommandId(), EventSourcedId())
 
@@ -41,4 +46,7 @@ fun test2() {
     val uow = handleCustomerCommands(snapshot, cmd, applyEventOnCustomer)
 
     println(uow)
+
+    println(mapper.writeValueAsString(uow))
+
 }
