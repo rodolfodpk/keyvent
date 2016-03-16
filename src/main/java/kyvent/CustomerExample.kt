@@ -7,8 +7,8 @@ import java.time.LocalDateTime
 data class CreateCustomerCmd(override val commandId: CommandId,
                              override val eventSourcedId: EventSourcedId) : Command
 
-data class CreateAncActivateCustomerCmd(override val commandId: CommandId,
-                                        override val eventSourcedId: EventSourcedId) : Command
+data class CreateActivatedCustomerCmd(override val commandId: CommandId,
+                                      override val eventSourcedId: EventSourcedId) : Command
 
 // events
 
@@ -53,7 +53,7 @@ val handleCustomerCommands : (Snapshot<Customer>, Command, (Event, Customer) -> 
     when(command) {
         is CreateCustomerCmd -> UnitOfWork(command = command, version = snapshot.nextVersion(),
                 events = snapshot.eventSourced.create(command.eventSourcedId))
-        is CreateAncActivateCustomerCmd -> {
+        is CreateActivatedCustomerCmd -> {
             val events = with(StateTransitionsTracker(snapshot.eventSourced, applyEventOn)) {
                 apply(snapshot.eventSourced.create(command.eventSourcedId))
                 apply(snapshot.eventSourced.activate())
