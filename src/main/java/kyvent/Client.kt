@@ -1,8 +1,12 @@
 package kyvent
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
+
 
 fun main(args : Array<String>) {
 
+    test1()
     test2()
 
 }
@@ -18,6 +22,11 @@ fun test1() {
     val uow = handleCustomerCommands(snapshot, cmd, applyEventOnCustomer)
 
     println(uow)
+
+    val mapper = ObjectMapper().registerModule(KotlinModule())
+
+    println(mapper.writeValueAsString(uow))
+
 
 }
 
