@@ -1,7 +1,5 @@
 package kyvent
 
-import java.util.*
-
 
 fun main(args : Array<String>) {
 
@@ -13,7 +11,7 @@ fun test1() {
 
     println("single step")
 
-    val cmd : CreateCustomerCmd = CreateCustomerCmd(CommandId(UUID.randomUUID()), EventSourcedId(UUID.randomUUID()))
+    val cmd : CreateCustomerCmd = CreateCustomerCmd(CommandId(), EventSourcedId())
 
     val snapshot : Snapshot<Customer> = Snapshot(Customer(), Version(0))
 
@@ -27,7 +25,7 @@ fun test2() {
 
     println("multiple step")
 
-    val cmd : CreateAncActivateCustomerCmd = CreateAncActivateCustomerCmd(CommandId(UUID.randomUUID()), EventSourcedId(UUID.randomUUID()))
+    val cmd : CreateAncActivateCustomerCmd = CreateAncActivateCustomerCmd(CommandId(), EventSourcedId())
 
     val snapshot : Snapshot<Customer> = Snapshot(Customer(), Version(1))
 

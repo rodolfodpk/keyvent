@@ -8,11 +8,11 @@ interface Event
 interface AggregateRoot : EventSourced
 interface Saga : EventSourced
 
-data class EventSourcedId(val uuid: UUID)
-data class CommandId(val uuid: UUID)
-data class UnitOfWorkId(val uuid: UUID)
+data class EventSourcedId(val uuid: UUID = UUID.randomUUID())
+data class CommandId(val uuid: UUID = UUID.randomUUID())
+data class UnitOfWorkId(val uuid: UUID = UUID.randomUUID())
 data class Version(val version: Long)
-data class UnitOfWork(val id: UnitOfWorkId = UnitOfWorkId(UUID.randomUUID()), val command: Command,
+data class UnitOfWork(val id: UnitOfWorkId = UnitOfWorkId(), val command: Command,
                       val version: Version, val events: List<Event>,
                       val timestamp : LocalDateTime = LocalDateTime.now())
 
