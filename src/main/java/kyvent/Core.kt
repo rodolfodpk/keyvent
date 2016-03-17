@@ -1,7 +1,5 @@
 package kyvent
 
-import com.fasterxml.jackson.annotation.JsonSubTypes
-import com.fasterxml.jackson.annotation.JsonTypeInfo
 import java.time.LocalDateTime
 import java.util.*
 
