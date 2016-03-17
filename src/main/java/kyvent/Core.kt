@@ -1,29 +1,13 @@
 package kyvent
 
-import java.time.LocalDateTime
-import java.util.*
-
-interface EventSourced
-interface AggregateRoot : EventSourced
-interface Saga : EventSourced
-
-data class EventSourcedId(val uuid: UUID = UUID.randomUUID())
-data class CommandId(val uuid: UUID = UUID.randomUUID())
-data class UnitOfWorkId(val uuid: UUID = UUID.randomUUID())
 data class Version(val version: Long)
 
-data class UnitOfWork(val id: UnitOfWorkId = UnitOfWorkId(),
-                      val command: Command,
-                      val version: Version,
-                      val events: List<Event>,
-                      val timestamp : LocalDateTime = LocalDateTime.now())
-
-class Snapshot<E: EventSourced> (val eventSourced: E, val version: Version) {
+class Snapshot<E> (val eventSourced: E, val version: Version) {
     fun nextVersion(): Version { return Version(version.version.inc())
     }
 }
 
-class StateTransitionsTracker<E: EventSourced, V> (val instance: E, val applyEventOn: (event: V, E) -> E) {
+class StateTransitionsTracker<E, V> (val instance: E, val applyEventOn: (event: V, E) -> E) {
     val stateTransitions : MutableList<Pair<E, V>> = mutableListOf()
     fun apply(events: List<V>) {
         val last = if (stateTransitions.size == 0) instance else stateTransitions.last().first
