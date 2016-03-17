@@ -1,58 +1,15 @@
 package kyvent
 
+import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
-import com.fasterxml.jackson.databind.DatabindContext
-import com.fasterxml.jackson.databind.JavaType
-import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver
-import com.fasterxml.jackson.databind.jsontype.TypeIdResolver
 import java.time.LocalDateTime
 
 // https://www.thomaskeller.biz/blog/2013/09/10/custom-polymorphic-type-handling-with-jackson/
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.CUSTOM,
-        include = JsonTypeInfo.As.PROPERTY,
-        property = "customerCommand")
-@JsonTypeIdResolver(CommandTypeIdResolver::class)
-abstract class CustomerCommand: Command
-
-class CommandTypeIdResolver: TypeIdResolver {
-    override fun idFromBaseType(): String? {
-        throw UnsupportedOperationException()
-    }
-
-    override fun init(p0: JavaType?) {
-        throw UnsupportedOperationException()
-    }
-
-    override fun typeFromId(p0: String?): JavaType? {
-        throw UnsupportedOperationException()
-    }
-
-    override fun typeFromId(p0: DatabindContext?, p1: String?): JavaType? {
-        throw UnsupportedOperationException()
-    }
-
-    override fun getDescForKnownTypeIds(): String? {
-        throw UnsupportedOperationException()
-    }
-
-    override fun idFromValueAndType(p0: Any?, p1: Class<*>?): String? {
-        throw UnsupportedOperationException()
-    }
-
-    override fun getMechanism(): JsonTypeInfo.Id? {
-        throw UnsupportedOperationException()
-    }
-
-    override fun idFromValue(p0: Any?): String? {
-        throw UnsupportedOperationException()
-    }
-}
 
 // commands
 
-
-data class CreateCustomerCmd(override val commandId: CommandId,
+data class CreateCustomerCmd(override val commandId: CommandId = CommandId(),
                              override val eventSourcedId: EventSourcedId) : Command
 
 data class CreateActivatedCustomerCmd(override val commandId: CommandId,
@@ -84,7 +41,6 @@ data class Customer(val customerId: EventSourcedId?, val name: String?, val acti
 
 }
 
-
 // events routing and execution function
 
 val applyEventOnCustomer : (Event, Customer) -> Customer = { event, customer ->
@@ -112,4 +68,29 @@ val handleCustomerCommands : (Snapshot<Customer>, Command, (Event, Customer) -> 
         else -> null
     }
 }
+
+// customer commands
+
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "commandType")
+@JsonSubTypes(
+        JsonSubTypes.Type(value = CreateCustomerCmd::class, name = "CreateCustomerCmd"),
+        JsonSubTypes.Type(value = CreateActivatedCustomerCmd::class, name = "CreateActivatedCustomerCmd"))
+interface Command {
+    val commandId: CommandId
+    val eventSourcedId : EventSourcedId
+}
+
+// customer events
+
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "eventType")
+@JsonSubTypes(
+        JsonSubTypes.Type(value = CustomerCreated::class, name = "CustomerCreated"),
+        JsonSubTypes.Type(value = CustomerActivated::class, name = "CustomerActivated"))
+interface Event
 
