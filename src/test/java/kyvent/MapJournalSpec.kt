@@ -3,6 +3,8 @@ package kyvent
 import org.jetbrains.spek.api.Spek
 import java.time.LocalDateTime
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 
 class MapJournalSpec: Spek() {
     init {
@@ -16,6 +18,20 @@ class MapJournalSpec: Spek() {
                     val expected: MutableList<CustomerUnitOfWork> = mutableListOf(uow)
                     val current: MutableList<CustomerUnitOfWork>? = journal.map[cmd.customerId]
                     assertEquals(expected, current)
+                }
+            }
+        }
+        given("An empty journal") {
+            val journal = MapJournal<CustomerId, CustomerUnitOfWork>(versionExtractor = { uow -> uow.version })
+            on("adding a new unitOfWork with version =2") {
+                val cmd: CreateCustomerCmd = CreateCustomerCmd(CommandId(), CustomerId())
+                val uow = CustomerUnitOfWork(customerCommand = cmd, version = Version(2), events = listOf(CustomerCreated(cmd.customerId)))
+                it("should throw an exception since version should be 1") {
+                    try {
+                        journal.append(cmd.customerId, uow!!)
+                    } catch (e: IllegalArgumentException) {
+                        assertTrue(true, "should throw IllegalArgumentException")
+                    }
                 }
             }
         }
