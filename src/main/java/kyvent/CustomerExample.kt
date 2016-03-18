@@ -47,6 +47,9 @@ data class CustomerUnitOfWork(val id: UnitOfWorkId = UnitOfWorkId(),
 data class CreateCustomerCmd(override val commandId: CommandId = CommandId(),
                              override val customerId: CustomerId) : CustomerCommand
 
+data class ActivateCustomerCmd(override val commandId: CommandId = CommandId(),
+                              override val customerId: CustomerId) : CustomerCommand
+
 data class CreateActivatedCustomerCmd(override val commandId: CommandId,
                                       override val customerId: CustomerId) : CustomerCommand
 
@@ -92,6 +95,8 @@ val handleCustomerCommands : (Snapshot<Customer>, CustomerCommand, (CustomerEven
     when(command) {
         is CreateCustomerCmd -> CustomerUnitOfWork(customerCommand = command, version = snapshot.nextVersion(),
                 events = snapshot.eventSourced.create(command.customerId))
+        is ActivateCustomerCmd -> CustomerUnitOfWork(customerCommand = command, version = snapshot.nextVersion(),
+                events = snapshot.eventSourced.activate())
         is CreateActivatedCustomerCmd -> {
             val events = with(StateTransitionsTracker(snapshot.eventSourced, applyEventOn)) {
                 apply(snapshot.eventSourced.create(command.customerId))

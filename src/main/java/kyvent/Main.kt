@@ -14,11 +14,9 @@ fun main(args : Array<String>) {
 }
 
 fun test1() {
-    println("---> single step")
     val cmd : CreateCustomerCmd = CreateCustomerCmd(CommandId(), CustomerId())
     val snapshot : Snapshot<Customer> = Snapshot(Customer(), Version(0))
     val uow = handleCustomerCommands(snapshot, cmd, applyEventOnCustomer)
-    println(uow)
 }
 
 fun uow2(): CustomerUnitOfWork? {
@@ -34,18 +32,13 @@ fun jacksonTest() {
     mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 
     val uow = uow2()
-    println("--> uow")
-    println(uow)
     val uowAsJson = mapper.writeValueAsString(uow)
-    println(uowAsJson)
 
     val jsonHelper = JsonHelper<CustomerUnitOfWork>(mapper)
     val uowFromJson = jsonHelper.fromJson(uowAsJson, CustomerUnitOfWork::class.java)
-    println(uowFromJson)
 
     val jsonHelper2 = JsonHelper<List<CustomerEvent>>(mapper)
     val onlyTheEvents: List<CustomerEvent> = jsonHelper2.fromJsonAt("/events", uowAsJson, List::class.java)
 
-    println(onlyTheEvents)
 
 }

@@ -14,8 +14,8 @@ class RunSamplesInJUnitTest {
         }
     }
 
-    @test fun try_console() {
-        main(arrayOf(".", "kyvent", "-f", "text"))
-    }
+//    @test fun try_console() {
+//        main(arrayOf(".", "kyvent", "-f", "text"))
+//    }
 
 }

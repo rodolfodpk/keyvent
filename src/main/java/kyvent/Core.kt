@@ -24,7 +24,7 @@ class StateTransitionsTracker<E, V> (val instance: E, val applyEventOn: (event: 
         var i = 0
         for ((instance, event) in stateTransitions) {
             i++
-            println("on event $i -> $event \ninstance   -> $instance")
+            // println("on event $i -> $event \ninstance   -> $instance")
         }
         return stateTransitions.map { pair -> pair.second }
     }
