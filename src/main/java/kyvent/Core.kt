@@ -3,8 +3,7 @@ package kyvent
 data class Version(val version: Long)
 
 class Snapshot<E> (val eventSourced: E, val version: Version) {
-    fun nextVersion(): Version { return Version(version.version.inc())
-    }
+    fun nextVersion(): Version { return Version(version.version.inc())}
 }
 
 class StateTransitionsTracker<E, V> (val instance: E, val applyEventOn: (event: V, E) -> E) {
@@ -25,3 +24,11 @@ class StateTransitionsTracker<E, V> (val instance: E, val applyEventOn: (event: 
     }
 }
 
+interface EventRepository<ID, UOW> {
+    fun eventsFor(id : ID, deser: (UOW) -> String)
+    fun eventsForAfter(id : ID, deser: (UOW) -> String, afterVersion: Version)
+}
+
+interface Journal<ID, CMD, UOW> {
+    fun append(targetId: ID, command: CMD, unitOfWork: UOW)
+}
