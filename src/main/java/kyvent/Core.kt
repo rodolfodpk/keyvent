@@ -1,9 +1,15 @@
 package kyvent
 
-data class Version(val version: Long)
+import java.util.*
+
+data class CommandId(val uuid: UUID = UUID.randomUUID())
+data class UnitOfWorkId(val uuid: UUID = UUID.randomUUID())
+data class Version(val version: Long) {
+    fun nextVersion(): Version { return Version(version.inc())}
+}
 
 class Snapshot<E> (val eventSourced: E, val version: Version) {
-    fun nextVersion(): Version { return Version(version.version.inc())}
+    fun nextVersion(): Version { return version.nextVersion()}
 }
 
 class StateTransitionsTracker<E, V> (val instance: E, val applyEventOn: (event: V, E) -> E) {
@@ -25,10 +31,38 @@ class StateTransitionsTracker<E, V> (val instance: E, val applyEventOn: (event: 
 }
 
 interface EventRepository<ID, UOW> {
-    fun eventsFor(id : ID, deser: (UOW) -> String)
-    fun eventsForAfter(id : ID, deser: (UOW) -> String, afterVersion: Version)
+    fun eventsForAfter(id : ID, afterVersion: Version) : List<UOW>
 }
 
-interface Journal<ID, CMD, UOW> {
-    fun append(targetId: ID, command: CMD, unitOfWork: UOW)
+interface Journal<ID, UOW> {
+    fun append(targetId: ID, unitOfWork: UOW)
+}
+
+class MapEventRepository<ID, UOW> (val map: MutableMap<ID, MutableList<UOW>> = mutableMapOf(),
+                                   val versionExtractor: (UOW) -> Version)
+                            : EventRepository<ID, UOW> {
+    override fun eventsForAfter(id: ID, afterVersion: Version): List<UOW> {
+        val targetInstance: MutableList<UOW>? = map[id]
+        if (targetInstance == null) {
+            return listOf()
+        } else {
+            return targetInstance.filter { uow -> versionExtractor(uow).version > afterVersion.version}
+        }
+    }
+
+}
+
+class MapJournal<ID, UOW> (val map: MutableMap<ID, MutableList<UOW>> = mutableMapOf(),
+                           val versionExtractor: (UOW) -> Version) : Journal<ID, UOW> {
+    override fun append(targetId: ID, unitOfWork: UOW) {
+        val targetInstance: MutableList<UOW>? = map[targetId]
+        if (targetInstance == null) {
+            require(versionExtractor(unitOfWork) == Version(1))
+            map.put(targetId, mutableListOf((unitOfWork)))
+        } else {
+            val lastVersion = versionExtractor(targetInstance.last())
+            require(versionExtractor(unitOfWork) == lastVersion.nextVersion())
+            targetInstance.add(unitOfWork)
+        }
+    }
 }

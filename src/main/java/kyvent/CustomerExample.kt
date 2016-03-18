@@ -8,8 +8,6 @@ import java.util.*
 // customer value objects
 
 data class CustomerId(val uuid: UUID = UUID.randomUUID())
-data class CommandId(val uuid: UUID = UUID.randomUUID())
-data class UnitOfWorkId(val uuid: UUID = UUID.randomUUID())
 
 // customer commands
 
@@ -105,4 +103,3 @@ val handleCustomerCommands : (Snapshot<Customer>, CustomerCommand, (CustomerEven
         else -> null
     }
 }
-

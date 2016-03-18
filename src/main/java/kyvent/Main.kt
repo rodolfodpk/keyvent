@@ -43,6 +43,9 @@ fun jacksonTest() {
     val uowFromJson = jsonHelper.fromJson(uowAsJson, CustomerUnitOfWork::class.java)
     println(uowFromJson)
 
-    println(jsonHelper.fromJsonAt("/events", uowAsJson, List::class.java))
+    val jsonHelper2 = JsonHelper<List<CustomerEvent>>(mapper)
+    val onlyTheEvents: List<CustomerEvent> = jsonHelper2.fromJsonAt("/events", uowAsJson, List::class.java)
+
+    println(onlyTheEvents)
 
 }

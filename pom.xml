@@ -9,9 +9,9 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
-		<kotlin.version>1.0.1</kotlin.version>
+		<kotlin.version>1.0.0</kotlin.version>
 		<jackson-core-version>2.7.2</jackson-core-version>
-		<junit.version>4.10</junit.version>
+		<!--<junit.version>4.11</junit.version>-->
 	</properties>
 
 	<build>
@@ -74,6 +74,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.jetbrains.kotlin</groupId>
+			<artifactId>kotlin-runtime</artifactId>
+			<version>${kotlin.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jetbrains.kotlin</groupId>
 			<artifactId>kotlin-reflect</artifactId>
 			<version>${kotlin.version}</version>
 		</dependency>
@@ -97,11 +102,10 @@
 			<artifactId>jackson-datatype-jsr310</artifactId>
 			<version>${jackson-core-version}</version>
 		</dependency>
-
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>${junit.version}</version>
+			<groupId>org.jetbrains.kotlin</groupId>
+			<artifactId>kotlin-test</artifactId>
+			<version>${kotlin.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
