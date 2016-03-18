@@ -1,6 +1,7 @@
 package kyvent
 
 import org.jetbrains.spek.api.Spek
+import java.time.LocalDateTime
 import kotlin.test.assertEquals
 
 class MapJournalSpec: Spek() {
@@ -9,8 +10,7 @@ class MapJournalSpec: Spek() {
             val journal = MapJournal<CustomerId, CustomerUnitOfWork>(versionExtractor = { uow -> uow.version })
             on("adding a new unitOfWork") {
                 val cmd: CreateCustomerCmd = CreateCustomerCmd(CommandId(), CustomerId())
-                val snapshot: Snapshot<Customer> = Snapshot(Customer(), Version(0))
-                val uow = handleCustomerCommands(snapshot, cmd, applyEventOnCustomer)
+                val uow = CustomerUnitOfWork(customerCommand = cmd, version = Version(1), events = listOf(CustomerCreated(cmd.customerId)))
                 journal.append(cmd.customerId, uow!!)
                 it("should result in a journal with the respective entry") {
                     val expected: MutableList<CustomerUnitOfWork> = mutableListOf(uow)
@@ -21,16 +21,14 @@ class MapJournalSpec: Spek() {
         }
         given("A journal with one uow") {
             val createCustomerCmd: CreateCustomerCmd = CreateCustomerCmd(CommandId(), CustomerId())
-            val snapshot: Snapshot<Customer> = Snapshot(Customer(), Version(0))
-            val uow1 = handleCustomerCommands(snapshot, createCustomerCmd, applyEventOnCustomer)
-            val expected: MutableList<CustomerUnitOfWork> = mutableListOf(uow1!!)
-            val journal = MapJournal(map = mutableMapOf(Pair(createCustomerCmd.customerId, expected)),
+            val uow1 = CustomerUnitOfWork(customerCommand= createCustomerCmd,
+                                          version = Version(1),
+                                          events = listOf(CustomerCreated(createCustomerCmd.customerId)))
+            val journal = MapJournal(map = mutableMapOf(Pair(createCustomerCmd.customerId, mutableListOf(uow1!!))),
                     versionExtractor = { uow -> uow.version })
             on("adding a new unitOfWork") {
                 val activateCmd: ActivateCustomerCmd = ActivateCustomerCmd(CommandId(), createCustomerCmd.customerId)
-                val snapshot = Snapshot(Customer(customerId = createCustomerCmd.customerId, name = null,
-                        active = false, activatedSince = null), Version(1))
-                val uow2 = handleCustomerCommands(snapshot, activateCmd, applyEventOnCustomer)
+                val uow2 = CustomerUnitOfWork(customerCommand = activateCmd, version = Version(2), events = listOf(CustomerActivated(LocalDateTime.now())))
                 journal.append(createCustomerCmd.customerId, uow2!!)
                 it("should result in a journal with the respective first and second entries") {
                     val expected: MutableList<CustomerUnitOfWork> = mutableListOf(uow1, uow2)
