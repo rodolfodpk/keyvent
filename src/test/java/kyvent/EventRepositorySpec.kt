@@ -3,7 +3,6 @@ package kyvent
 import org.jetbrains.spek.api.Spek
 import java.time.LocalDateTime
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class EventRepositorySpec: Spek() {
     init {
