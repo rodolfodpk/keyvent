@@ -31,7 +31,7 @@ class StateTransitionsTracker<E, V> (val instance: E, val applyEventOn: (event: 
 }
 
 interface EventRepository<ID, UOW> {
-    fun eventsForAfter(id : ID, afterVersion: Version) : List<UOW>
+    fun eventsAfter(id : ID, afterVersion: Version) : List<UOW>
 }
 
 interface Journal<ID, UOW> {
@@ -41,7 +41,7 @@ interface Journal<ID, UOW> {
 class MapEventRepository<ID, UOW> (val map: MutableMap<ID, MutableList<UOW>> = mutableMapOf(),
                                    val versionExtractor: (UOW) -> Version)
                             : EventRepository<ID, UOW> {
-    override fun eventsForAfter(id: ID, afterVersion: Version): List<UOW> {
+    override fun eventsAfter(id: ID, afterVersion: Version): List<UOW> {
         val targetInstance: MutableList<UOW>? = map[id]
         if (targetInstance == null) {
             return listOf()
