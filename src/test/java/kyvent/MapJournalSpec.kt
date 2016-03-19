@@ -35,14 +35,14 @@ class MapJournalSpec: Spek() {
                 }
             }
         }
-        given("A journal with one uow") {
+        given("A journal with one uow with version =1") {
             val createCustomerCmd: CreateCustomerCmd = CreateCustomerCmd(CommandId(), CustomerId())
             val uow1 = CustomerUnitOfWork(customerCommand= createCustomerCmd,
                                           version = Version(1),
                                           events = listOf(CustomerCreated(createCustomerCmd.customerId)))
             val journal = MapJournal(map = mutableMapOf(Pair(createCustomerCmd.customerId, mutableListOf(uow1))),
                     versionExtractor = { uow -> uow.version })
-            on("adding a new unitOfWork") {
+            on("adding a new unitOfWork with version =2") {
                 val activateCmd: ActivateCustomerCmd = ActivateCustomerCmd(CommandId(), createCustomerCmd.customerId)
                 val uow2 = CustomerUnitOfWork(customerCommand = activateCmd, version = Version(2), events = listOf(CustomerActivated(LocalDateTime.now())))
                 journal.append(createCustomerCmd.customerId, uow2)

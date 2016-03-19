@@ -42,12 +42,9 @@ class MapEventRepository<ID, UOW> (val map: MutableMap<ID, MutableList<UOW>> = m
                                    val versionExtractor: (UOW) -> Version)
                             : EventRepository<ID, UOW> {
     override fun eventsAfter(id: ID, afterVersion: Version): List<UOW> {
-        val targetInstance: MutableList<UOW>? = map[id]
-        if (targetInstance == null) {
-            return listOf()
-        } else {
-            return targetInstance.filter { uow -> versionExtractor(uow).version > afterVersion.version}
-        }
+        val targetInstance = map[id]
+        return if (targetInstance == null) listOf()
+        else targetInstance.filter { uow -> versionExtractor(uow).version > afterVersion.version}
     }
 
 }
@@ -55,7 +52,7 @@ class MapEventRepository<ID, UOW> (val map: MutableMap<ID, MutableList<UOW>> = m
 class MapJournal<ID, UOW> (val map: MutableMap<ID, MutableList<UOW>> = mutableMapOf(),
                            val versionExtractor: (UOW) -> Version) : Journal<ID, UOW> {
     override fun append(targetId: ID, unitOfWork: UOW) {
-        val targetInstance: MutableList<UOW>? = map[targetId]
+        val targetInstance =  map[targetId]
         if (targetInstance == null) {
             require(versionExtractor(unitOfWork) == Version(1))
             map.put(targetId, mutableListOf((unitOfWork)))

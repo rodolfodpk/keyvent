@@ -10,7 +10,7 @@ class RunSamplesInJUnitTest {
     @test fun try_junit() {
         with(JUnitCore()) {
             addListener(TextListener(RealSystem()))
-            run(MapJournalSpec::class.java)
+            run(MapJournalSpec::class.java, EventRepositorySpec::class.java)
         }
     }
 
