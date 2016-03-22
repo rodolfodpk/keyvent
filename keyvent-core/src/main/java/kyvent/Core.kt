@@ -12,10 +12,10 @@ class Snapshot<E> (val eventSourced: E, val version: Version) {
     fun nextVersion(): Version { return version.nextVersion()}
 }
 
-class StateTransitionsTracker<E, V> (val instance: E, val applyEventOn: (event: V, E) -> E) {
+class StateTransitionsTracker<E, V> (val originalInstance: E, val applyEventOn: (event: V, E) -> E) {
     val stateTransitions : MutableList<Pair<E, V>> = mutableListOf()
     fun apply(events: List<V>) {
-        val last = if (stateTransitions.size == 0) instance else stateTransitions.last().first
+        val last = if (stateTransitions.size == 0) originalInstance else stateTransitions.last().first
         for (event in events) {
             stateTransitions.add(Pair(applyEventOn(event, last), event))
         }
@@ -31,26 +31,38 @@ class StateTransitionsTracker<E, V> (val instance: E, val applyEventOn: (event: 
 }
 
 interface EventRepository<ID, UOW> {
-    fun eventsAfter(id : ID, afterVersion: Version) : List<UOW>
+    object Defaults {
+        val _version = 0L
+        val _limit = 10000
+    }
+    fun eventsAfter(id: ID, version: Version = Version(Defaults._version), limit: Int = Defaults._limit) : List<UOW>
+    fun lastVersion(id: ID) : Version
 }
 
 interface Journal<ID, UOW> {
     fun append(targetId: ID, unitOfWork: UOW)
 }
 
-class MapEventRepository<ID, UOW> (val map: MutableMap<ID, MutableList<UOW>> = mutableMapOf(),
-                                   val versionExtractor: (UOW) -> Version)
+class SimpleEventRepository<ID, UOW> (val map: MutableMap<ID, MutableList<UOW>> = mutableMapOf(),
+                                      val versionExtractor: (UOW) -> Version)
                             : EventRepository<ID, UOW> {
-    override fun eventsAfter(id: ID, afterVersion: Version): List<UOW> {
+
+    override fun lastVersion(id: ID): Version {
+        val targetInstance = map[id]
+        return if (targetInstance == null) Version(0)
+        else versionExtractor(targetInstance.last())
+    }
+
+    override fun eventsAfter(id: ID, version: Version, limit: Int): List<UOW> {
         val targetInstance = map[id]
         return if (targetInstance == null) listOf()
-        else targetInstance.filter { uow -> versionExtractor(uow).version > afterVersion.version}
+        else targetInstance.filter { uow -> versionExtractor(uow).version > version.version}.take(limit)
     }
 
 }
 
-class MapJournal<ID, UOW> (val map: MutableMap<ID, MutableList<UOW>> = mutableMapOf(),
-                           val versionExtractor: (UOW) -> Version) : Journal<ID, UOW> {
+class SimpleJournal<ID, UOW> (val map: MutableMap<ID, MutableList<UOW>> = mutableMapOf(),
+                              val versionExtractor: (UOW) -> Version) : Journal<ID, UOW> {
     override fun append(targetId: ID, unitOfWork: UOW) {
         val targetInstance =  map[targetId]
         if (targetInstance == null) {

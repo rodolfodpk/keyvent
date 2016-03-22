@@ -3,13 +3,12 @@ package kyvent
 import org.jetbrains.spek.api.Spek
 import java.time.LocalDateTime
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class MapJournalSpec: Spek() {
+class SimpleJournalSpec : Spek() {
     init {
         given("An empty journal") {
-            val journal = MapJournal<CustomerId, CustomerUnitOfWork>(versionExtractor = { uow -> uow.version })
+            val journal = SimpleJournal<CustomerId, CustomerUnitOfWork>(versionExtractor = { uow -> uow.version })
             on("adding a new unitOfWork with version=1") {
                 val cmd: CreateCustomerCmd = CreateCustomerCmd(CommandId(), CustomerId())
                 val uow = CustomerUnitOfWork(customerCommand = cmd, version = Version(1), events = listOf(CustomerCreated(cmd.customerId)))
@@ -22,7 +21,7 @@ class MapJournalSpec: Spek() {
             }
         }
         given("An empty journal") {
-            val journal = MapJournal<CustomerId, CustomerUnitOfWork>(versionExtractor = { uow -> uow.version })
+            val journal = SimpleJournal<CustomerId, CustomerUnitOfWork>(versionExtractor = { uow -> uow.version })
             on("adding a new unitOfWork with version =2") {
                 val cmd: CreateCustomerCmd = CreateCustomerCmd(CommandId(), CustomerId())
                 val uow = CustomerUnitOfWork(customerCommand = cmd, version = Version(2), events = listOf(CustomerCreated(cmd.customerId)))
@@ -40,7 +39,7 @@ class MapJournalSpec: Spek() {
             val uow1 = CustomerUnitOfWork(customerCommand= createCustomerCmd,
                                           version = Version(1),
                                           events = listOf(CustomerCreated(createCustomerCmd.customerId)))
-            val journal = MapJournal(map = mutableMapOf(Pair(createCustomerCmd.customerId, mutableListOf(uow1))),
+            val journal = SimpleJournal(map = mutableMapOf(Pair(createCustomerCmd.customerId, mutableListOf(uow1))),
                     versionExtractor = { uow -> uow.version })
             on("adding a new unitOfWork with version =2") {
                 val activateCmd: ActivateCustomerCmd = ActivateCustomerCmd(CommandId(), createCustomerCmd.customerId)
