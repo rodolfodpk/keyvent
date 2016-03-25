@@ -1,6 +1,5 @@
-package keyvent.core.test
+package keyvent.core.impl.mem
 
-import keyvent.core.*
 import keyvent.core.kotlin.*
 import org.jetbrains.spek.api.Spek
 import java.time.LocalDateTime
@@ -8,7 +7,7 @@ import java.util.function.Function
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class SimpleJavaJournalSpec : Spek() {
+class SimpleJournalSpec : Spek() {
 
     val createCustomerCmd: CreateCustomerCmd = CreateCustomerCmd(CommandId(), CustomerId())
     val uow1 = CustomerUnitOfWork(customerCommand = createCustomerCmd,
@@ -18,7 +17,7 @@ class SimpleJavaJournalSpec : Spek() {
     val activateCmd: ActivateCustomerCmd = ActivateCustomerCmd(CommandId(), createCustomerCmd.customerId)
     val uow2 = CustomerUnitOfWork(customerCommand = activateCmd, version = Version(2), events = listOf(CustomerActivated(LocalDateTime.now())))
 
-    val versionExtractor = Function<CustomerUnitOfWork, Long> { uow -> uow.version.version}
+    val versionExtractor = Function<CustomerUnitOfWork, Long> { uow -> uow.version.version }
 
     init {
         given("An empty journal") {

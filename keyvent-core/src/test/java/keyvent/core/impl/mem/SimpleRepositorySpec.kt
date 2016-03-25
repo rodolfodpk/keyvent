@@ -1,8 +1,6 @@
-package keyvent.core.test
+package keyvent.core.impl.mem
 
-import keyvent.core.*
 import keyvent.core.kotlin.*
-import keyvent.core.test.SimpleEventRepository
 import org.jetbrains.spek.api.Spek
 import java.time.LocalDateTime
 import java.util.function.Function

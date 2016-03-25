@@ -1,4 +1,4 @@
-package keyvent.core.test;
+package keyvent.core.impl.mem;
 
 import keyvent.core.StateTransitionTracker;
 

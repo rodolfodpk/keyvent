@@ -1,6 +1,6 @@
 package keyvent.core
 
-import keyvent.core.test.SimpleJavaJournalSpec
+import keyvent.core.impl.mem.SimpleJournalSpec
 import org.junit.internal.RealSystem
 import org.junit.internal.TextListener
 import org.junit.runner.JUnitCore
@@ -11,7 +11,7 @@ class RunSamplesInJUnitTest {
     @org.junit.Test fun try_junit() {
         with(JUnitCore()) {
             addListener(TextListener(RealSystem()))
-            run(SimpleJavaJournalSpec::class.java)
+            run(SimpleJournalSpec::class.java)
         }
     }
 

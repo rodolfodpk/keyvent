@@ -1,4 +1,4 @@
-package keyvent.core.test
+package keyvent.core.impl.mem
 
 import keyvent.core.kotlin.*
 import org.jetbrains.spek.api.Spek
@@ -11,12 +11,13 @@ class SimpleStateTransitionsTrackerSpec : Spek() {
     init {
         given("An empty tracker and customer") {
             val applyEventsFn = BiFunction<CustomerEvent, Customer, Customer>({
-                event, instance -> applyEventOnCustomer.invoke(event, instance)
+                event, instance ->
+                applyEventOnCustomer.invoke(event, instance)
             })
-            val tracker = SimpleStateTransitionTracker<CustomerEvent, Customer>(Customer(), applyEventsFn,
+            val customer = Customer()
+            val tracker = SimpleStateTransitionTracker<CustomerEvent, Customer>(customer, applyEventsFn,
                     mutableListOf())
             on("applying an customerCreated event against it") {
-                val customer = Customer()
                 val event = CustomerCreated(CustomerId())
                 tracker.apply(listOf(event), customer)
                 it("should have 1 transition with proper event and resulting instance") {
@@ -31,12 +32,13 @@ class SimpleStateTransitionsTrackerSpec : Spek() {
         }
         given("An empty tracker and customer") {
             val applyEventsFn = BiFunction<CustomerEvent, Customer, Customer>({
-                event, instance -> applyEventOnCustomer.invoke(event, instance)
+                event, instance ->
+                applyEventOnCustomer.invoke(event, instance)
             })
-            val tracker = SimpleStateTransitionTracker<CustomerEvent, Customer>(Customer(), applyEventsFn,
+            val customer = Customer()
+            val tracker = SimpleStateTransitionTracker<CustomerEvent, Customer>(customer, applyEventsFn,
                     mutableListOf())
             on("applying both customerCreated and customerActivated events against it") {
-                val customer = Customer()
                 val event1 = CustomerCreated(CustomerId())
                 val event2 = CustomerActivated(LocalDateTime.now())
                 tracker.apply(listOf(event1, event2), customer)
