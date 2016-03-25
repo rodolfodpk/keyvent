@@ -1,7 +1,8 @@
-package kyvent
+package keyvent.core.kotlin
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
+import keyvent.core.kotlin.*
 import java.time.LocalDateTime
 import java.util.*
 
@@ -48,7 +49,7 @@ data class CreateCustomerCmd(override val commandId: CommandId = CommandId(),
                              override val customerId: CustomerId) : CustomerCommand
 
 data class ActivateCustomerCmd(override val commandId: CommandId = CommandId(),
-                              override val customerId: CustomerId) : CustomerCommand
+                               override val customerId: CustomerId) : CustomerCommand
 
 data class CreateActivatedCustomerCmd(override val commandId: CommandId,
                                       override val customerId: CustomerId) : CustomerCommand

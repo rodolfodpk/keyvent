@@ -1,4 +1,4 @@
-package kyvent
+package keyvent.core.kotlin
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature

@@ -1,5 +1,6 @@
-package kyvent
+package keyvent.core.kotlin
 
+import keyvent.core.kotlin.*
 import org.jetbrains.spek.api.Spek
 import java.time.LocalDateTime
 import kotlin.test.assertEquals
@@ -36,9 +37,9 @@ class SimpleJournalSpec : Spek() {
         }
         given("A journal with one uow with version =1") {
             val createCustomerCmd: CreateCustomerCmd = CreateCustomerCmd(CommandId(), CustomerId())
-            val uow1 = CustomerUnitOfWork(customerCommand= createCustomerCmd,
-                                          version = Version(1),
-                                          events = listOf(CustomerCreated(createCustomerCmd.customerId)))
+            val uow1 = CustomerUnitOfWork(customerCommand = createCustomerCmd,
+                    version = Version(1),
+                    events = listOf(CustomerCreated(createCustomerCmd.customerId)))
             val journal = SimpleJournal(map = mutableMapOf(Pair(createCustomerCmd.customerId, mutableListOf(uow1))),
                     versionExtractor = { uow -> uow.version })
             on("adding a new unitOfWork with version =2") {

@@ -1,11 +1,12 @@
-package kyvent
+package keyvent.core.kotlin
 
 import java.util.*
 
 data class CommandId(val uuid: UUID = UUID.randomUUID())
 data class UnitOfWorkId(val uuid: UUID = UUID.randomUUID())
 data class Version(val version: Long) {
-    fun nextVersion(): Version { return Version(version.inc())}
+    fun nextVersion(): Version { return Version(version.inc())
+    }
 }
 
 class Snapshot<E> (val eventSourced: E, val version: Version) {
@@ -75,3 +76,4 @@ class SimpleJournal<ID, UOW> (val map: MutableMap<ID, MutableList<UOW>> = mutabl
         }
     }
 }
+
