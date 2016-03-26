@@ -1,4 +1,4 @@
-package keyvent.core.impl.mem;
+package keyvent.core.impl;
 
 import keyvent.core.EventRepository;
 
@@ -14,6 +14,7 @@ public class SimpleEventRepository<ID, UOW> implements EventRepository<ID, UOW> 
 
     final Function<UOW, Long> versionExtractor;
     final Map<ID, List<UOW>> map;
+    final int DEFAULT_LIMIT = 1000;
 
     public SimpleEventRepository(Function<UOW, Long> versionExtractor, Map<ID, List<UOW>> map) {
         this.versionExtractor = versionExtractor;
@@ -22,7 +23,7 @@ public class SimpleEventRepository<ID, UOW> implements EventRepository<ID, UOW> 
 
     @Override
     public List<UOW> eventsAfter(ID id, Long version) {
-        return eventsAfter(id, version, Integer.MAX_VALUE);
+        return eventsAfter(id, version, DEFAULT_LIMIT);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package keyvent.core.impl.mem;
+package keyvent.core.impl;
 
 import keyvent.core.Journal;
 

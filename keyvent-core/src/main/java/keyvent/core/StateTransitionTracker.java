@@ -4,6 +4,8 @@ import java.util.List;
 
 public interface StateTransitionTracker<EV, AR> {
 
-    void apply(List<EV> events, AR aggregateRootInstance);
+    AR originalInstance();
+    void apply(List<EV> events);
     List<EV> collectedEvents();
+    AR resultingInstance();
 }

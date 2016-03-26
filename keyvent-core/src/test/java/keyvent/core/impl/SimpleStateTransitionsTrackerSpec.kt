@@ -1,4 +1,4 @@
-package keyvent.core.impl.mem
+package keyvent.core.impl
 
 import keyvent.core.kotlin.*
 import org.jetbrains.spek.api.Spek
@@ -17,9 +17,14 @@ class SimpleStateTransitionsTrackerSpec : Spek() {
             val customer = Customer()
             val tracker = SimpleStateTransitionTracker<CustomerEvent, Customer>(customer, applyEventsFn,
                     mutableListOf())
+            on("simple checking") {
+                it ("should have the correct originalInstance") {
+                    assertEquals(customer, tracker.originalInstance())
+                }
+            }
             on("applying an customerCreated event against it") {
                 val event = CustomerCreated(CustomerId())
-                tracker.apply(listOf(event), customer)
+                tracker.apply(listOf(event))
                 it("should have 1 transition with proper event and resulting instance") {
                     assertEquals(1, tracker.stateTransitions.size)
                     assertEquals(event, tracker.stateTransitions.get(0).event)
@@ -27,6 +32,9 @@ class SimpleStateTransitionsTrackerSpec : Spek() {
                 }
                 it("should result in a list with customerCreated event when calling collectedEvents") {
                     assertEquals(tracker.collectedEvents(), listOf(event))
+                }
+                it("should result in a proper customer instance when calling resultingInstance") {
+                    assertEquals(tracker.resultingInstance(), Customer(event.customerId, null, false, null))
                 }
             }
         }
@@ -38,10 +46,15 @@ class SimpleStateTransitionsTrackerSpec : Spek() {
             val customer = Customer()
             val tracker = SimpleStateTransitionTracker<CustomerEvent, Customer>(customer, applyEventsFn,
                     mutableListOf())
+            on("simple checking") {
+                it ("should have the correct originalInstance") {
+                    assertEquals(customer, tracker.originalInstance())
+                }
+            }
             on("applying both customerCreated and customerActivated events against it") {
                 val event1 = CustomerCreated(CustomerId())
                 val event2 = CustomerActivated(LocalDateTime.now())
-                tracker.apply(listOf(event1, event2), customer)
+                tracker.apply(listOf(event1, event2))
                 it("should have 2 transition2 with proper event and resulting instance") {
                     assertEquals(2, tracker.stateTransitions.size)
                     assertEquals(event1, tracker.stateTransitions.get(0).event)
@@ -51,6 +64,9 @@ class SimpleStateTransitionsTrackerSpec : Spek() {
                 }
                 it("should result in a list with both customerCreated and customerActivated events when calling collectedEvents") {
                     assertEquals(tracker.collectedEvents(), listOf(event1, event2))
+                }
+                it("should result in a proper customer instance when calling resultingInstance") {
+                    assertEquals(tracker.resultingInstance(), Customer(event1.customerId, null, true, event2.date))
                 }
             }
         }

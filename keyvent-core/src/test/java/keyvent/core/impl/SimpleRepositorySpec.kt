@@ -1,6 +1,7 @@
-package keyvent.core.impl.mem
+package keyvent.core.impl
 
 import keyvent.core.kotlin.*
+import keyvent.core.kotlin.SimpleEventRepository
 import org.jetbrains.spek.api.Spek
 import java.time.LocalDateTime
 import java.util.function.Function
@@ -20,7 +21,7 @@ class SimpleRepositorySpec : Spek() {
 
     init {
         given("An empty event repo") {
-            val eventRepo = SimpleEventRepository<CustomerId, CustomerUnitOfWork>(versionExtractor, mutableMapOf())
+            val eventRepo = keyvent.core.kotlin.SimpleEventRepository<CustomerId, CustomerUnitOfWork>(versionExtractor, mutableMapOf())
             on("querying for a non existent id ") {
                 val customerId = CustomerId()
                 val uowList = eventRepo.eventsAfter(customerId, 0, Int.MAX_VALUE)
@@ -30,7 +31,7 @@ class SimpleRepositorySpec : Spek() {
             }
         }
         given("An event repo with one uow") {
-            val eventRepo = SimpleEventRepository<CustomerId, CustomerUnitOfWork>(versionExtractor, mutableMapOf())
+            val eventRepo = keyvent.core.kotlin.SimpleEventRepository<CustomerId, CustomerUnitOfWork>(versionExtractor, mutableMapOf())
             eventRepo.map.put(createCustomerCmd.customerId, mutableListOf(uow1))
             on("querying for an existent id ") {
                 val current: List<CustomerUnitOfWork> = eventRepo.eventsAfter(createCustomerCmd.customerId, 0)
@@ -41,7 +42,7 @@ class SimpleRepositorySpec : Spek() {
             }
         }
         given("An event repo with a couple of uow versioned as 1 and 2") {
-            val eventRepo = SimpleEventRepository<CustomerId, CustomerUnitOfWork>(versionExtractor, mutableMapOf())
+            val eventRepo = keyvent.core.kotlin.SimpleEventRepository<CustomerId, CustomerUnitOfWork>(versionExtractor, mutableMapOf())
             eventRepo.map.put(createCustomerCmd.customerId, mutableListOf(uow1, uow2))
             on("querying for an existent id with version greater than 1") {
                 val current: List<CustomerUnitOfWork> = eventRepo.eventsAfter(createCustomerCmd.customerId, 1)
@@ -52,7 +53,7 @@ class SimpleRepositorySpec : Spek() {
             }
         }
         given("An event repo with a couple of uow versioned as 1 and 2") {
-            val eventRepo = SimpleEventRepository<CustomerId, CustomerUnitOfWork>(versionExtractor, mutableMapOf())
+            val eventRepo = keyvent.core.kotlin.SimpleEventRepository<CustomerId, CustomerUnitOfWork>(versionExtractor, mutableMapOf())
             eventRepo.map.put(createCustomerCmd.customerId, mutableListOf(uow1, uow2))
             on("querying for an existent id with version greater than 0 and limit =1") {
                 val current: List<CustomerUnitOfWork> = eventRepo.eventsAfter(createCustomerCmd.customerId, 0, 1)
@@ -63,7 +64,7 @@ class SimpleRepositorySpec : Spek() {
             }
         }
         given("An event repo with a couple of uow versioned as 1 and 2") {
-            val eventRepo = SimpleEventRepository<CustomerId, CustomerUnitOfWork>(versionExtractor, mutableMapOf())
+            val eventRepo = keyvent.core.kotlin.SimpleEventRepository<CustomerId, CustomerUnitOfWork>(versionExtractor, mutableMapOf())
             eventRepo.map.put(createCustomerCmd.customerId, mutableListOf(uow1, uow2))
             on("querying for lastVersion") {
                 val lastVersion = eventRepo.lastVersion(createCustomerCmd.customerId)

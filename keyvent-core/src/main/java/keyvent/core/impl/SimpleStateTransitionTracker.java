@@ -1,4 +1,4 @@
-package keyvent.core.impl.mem;
+package keyvent.core.impl;
 
 import keyvent.core.StateTransitionTracker;
 
@@ -22,7 +22,12 @@ public class SimpleStateTransitionTracker<EV, AR> implements StateTransitionTrac
     }
 
     @Override
-    public void apply(List<EV> events, AR aggregateRootInstance) {
+    public AR originalInstance() {
+        return originalInstance;
+    }
+
+    @Override
+    public void apply(List<EV> events) {
         for (EV event : events) {
             final AR last = stateTransitions.size() == 0 ?
                     originalInstance :
@@ -34,6 +39,11 @@ public class SimpleStateTransitionTracker<EV, AR> implements StateTransitionTrac
     @Override
     public List<EV> collectedEvents() {
         return stateTransitions.stream().map(stateTransition -> stateTransition.event).collect(toList());
+    }
+
+    @Override
+    public AR resultingInstance() {
+        return stateTransitions.get(stateTransitions.size()-1).aggregateRootInstance;
     }
 
     class StateTransition<EV, AR> {
