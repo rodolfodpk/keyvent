@@ -69,6 +69,8 @@
 
 	<modules>
 		<module>keyvent-core</module>
+		<module>keyvent-sample</module>
+		<module>keyvent-tests</module>
 		<!--<module>keyvent-postgresql</module>-->
 		<!--<module>keyvent-kafka</module>-->
 	</modules>
@@ -79,7 +81,12 @@
 			<dependency>
 				<groupId>com.rdpk</groupId>
 				<artifactId>keyvent-core</artifactId>
-				<version>${pom.version}</version>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.rdpk</groupId>
+				<artifactId>keyvent-sample</artifactId>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.immutables</groupId>
@@ -87,7 +94,6 @@
 				<version>2.1.15</version>
 				<scope>provided</scope>
 			</dependency>
-
 			<dependency>
 				<groupId>io.javaslang</groupId>
 				<artifactId>javaslang</artifactId>
@@ -114,11 +120,11 @@
 				<artifactId>jackson-module-kotlin</artifactId>
 				<version>2.7.1-2</version>
 			</dependency>
-			<!--<dependency>-->
-			<!--<groupId>com.fasterxml.jackson.core</groupId>-->
-			<!--<artifactId>jackson-core</artifactId>-->
-			<!--<version>${jackson-core-version}</version>-->
-			<!--</dependency>-->
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-core</artifactId>
+				<version>${jackson-core-version}</version>
+			</dependency>
 			<dependency>
 				<groupId>com.fasterxml.jackson.datatype</groupId>
 				<artifactId>jackson-datatype-jdk8</artifactId>

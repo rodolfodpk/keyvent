@@ -8,10 +8,15 @@
     <version>1.0-SNAPSHOT</version>
    </parent>
 
-	<artifactId>keyvent-core</artifactId>
+	<artifactId>keyvent-sample</artifactId>
 	<packaging>jar</packaging>
 
 	<dependencies>
+
+		<dependency>
+			<groupId>com.rdpk</groupId>
+			<artifactId>keyvent-core</artifactId>
+		</dependency>
 
 		<dependency>
 			<groupId>org.immutables</groupId>

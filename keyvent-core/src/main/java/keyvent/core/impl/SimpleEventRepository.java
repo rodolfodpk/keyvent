@@ -1,42 +1,39 @@
 package keyvent.core.impl;
 
+import javaslang.Tuple2;
+import javaslang.collection.List;
+import javaslang.collection.Map;
 import keyvent.core.EventRepository;
+import keyvent.core.data.Version;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import static java.util.Collections.emptyList;
-
+import java.util.Optional;
 
 public class SimpleEventRepository<ID, UOW> implements EventRepository<ID, UOW> {
 
-    final Function<UOW, Long> versionExtractor;
-    final Map<ID, List<UOW>> map;
+    final Map<ID, List<Tuple2<UOW, Version>>> map;
     final int DEFAULT_LIMIT = 1000;
 
-    public SimpleEventRepository(Function<UOW, Long> versionExtractor, Map<ID, List<UOW>> map) {
-        this.versionExtractor = versionExtractor;
+    public SimpleEventRepository(Map<ID, List<Tuple2<UOW, Version>>> map) {
         this.map = map;
     }
 
     @Override
-    public List<UOW> eventsAfter(ID id, Long version) {
+    public java.util.List<UOW> eventsAfter(ID id, Version version) {
         return eventsAfter(id, version, DEFAULT_LIMIT);
     }
 
     @Override
-    public List<UOW> eventsAfter(ID id, Long version, int limit) {
-        List<UOW> events = map.get(id);
-        return events == null ? emptyList() : events.stream()
-                .filter(uow -> versionExtractor.apply(uow) > version)
-                .limit(limit).collect(Collectors.toList());
+    public java.util.List<UOW> eventsAfter(ID id, Version version, int limit) {
+        List<Tuple2<UOW, Version>> events = map.get(id).getOrElse(List.empty());
+        return events
+                .filter(tuple -> tuple._2.value() > version.value())
+                .map(tuple -> tuple._1)
+                .take(limit).toJavaList();
     }
 
     @Override
-    public Long lastVersion(ID id) {
-        List<UOW> events = map.get(id);
-        return events == null ? 0L : versionExtractor.apply(events.get(events.size()-1));
+    public Optional<Version> lastVersion(ID id) {
+        List<Tuple2<UOW, Version>> events = map.get(id).getOrElse(List.empty());
+        return events.size() == 0 ? Optional.empty() : Optional.of(events.get(events.size()-1)._2);
     }
 }

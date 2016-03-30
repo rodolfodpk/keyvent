@@ -3,27 +3,23 @@ package keyvent.core.data;
 public class Snapshot<T> {
 
     private final T instance;
-    private final Long version;
+    private final VersionVal version;
 
-    public Snapshot(T instance, Long version) {
+    public Snapshot(T instance, VersionVal version) {
         this.instance = instance;
         this.version = version;
     }
 
-    T instance() {
-        return null;
-    }
-
-    Long version() {
-        return null;
-    }
-
-    public T getInstance() {
+    public T instance() {
         return instance;
     }
 
-    public Long getVersion() {
+    public VersionVal version() {
         return version;
+    }
+
+    public VersionVal nextVersion() {
+        return VersionVal.of(version.value()+1);
     }
 
     @Override
@@ -33,15 +29,15 @@ public class Snapshot<T> {
 
         Snapshot<?> snapshot = (Snapshot<?>) o;
 
-        if (!getInstance().equals(snapshot.getInstance())) return false;
-        return getVersion().equals(snapshot.getVersion());
+        if (!instance().equals(snapshot.instance())) return false;
+        return version().equals(snapshot.version());
 
     }
 
     @Override
     public int hashCode() {
-        int result = getInstance().hashCode();
-        result = 31 * result + getVersion().hashCode();
+        int result = instance().hashCode();
+        result = 31 * result + version().hashCode();
         return result;
     }
 

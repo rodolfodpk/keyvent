@@ -1,0 +1,5 @@
+http://www.lispcast.com/3-things-java-can-steal-from-clojure
+http://stackoverflow.com/questions/16265692/clojure-equivalent-of-java-concurrenthashmap-using-atom-map
+http://archive.eclipse.org/jetty/8.0.0.M2/apidocs/org/eclipse/jetty/util/MultiMap.html
+http://dhruba.name/2011/06/11/concurrency-pattern-concurrent-multimaps-in-java/
+http://stackoverflow.com/questions/35304864/memoization-function-in-kotlin
