@@ -1,11 +1,41 @@
 package keyvent.core.data;
 
-import keyvent.core.utils.Wrapped;
-import keyvent.core.utils.Wrapper;
-import org.immutables.value.Value;
-
+import java.io.Serializable;
 import java.util.UUID;
 
-@Value.Immutable
-@Wrapped
-public abstract class AggregateRootId extends Wrapper<UUID> {}
+public class AggregateRootId implements Serializable {
+
+    private final UUID value;
+
+    public AggregateRootId() {
+        this.value = UUID.randomUUID();
+    }
+
+    public AggregateRootId(UUID value) {
+        this.value = value;
+    }
+
+    public UUID value() {
+        return value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AggregateRootId)) return false;
+        AggregateRootId that = (AggregateRootId) o;
+        return value.equals(that.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return value.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "AggregateRootId{" +
+                "value=" + value +
+                '}';
+    }
+}

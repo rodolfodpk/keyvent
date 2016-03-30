@@ -8,8 +8,7 @@ import javaslang.collection.List;
 import keyvent.core.data.CommandId;
 import keyvent.core.data.UnitOfWorkId;
 import keyvent.core.data.Version;
-import keyvent.core.data.VersionVal;
-import keyvent.core.utils.*;
+import keyvent.sample.annotations.*;
 import org.immutables.value.Value;
 
 import java.time.Instant;

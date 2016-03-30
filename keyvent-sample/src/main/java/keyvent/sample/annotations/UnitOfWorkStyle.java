@@ -1,4 +1,4 @@
-package keyvent.core.utils;
+package keyvent.sample.annotations;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.immutables.value.Value;

@@ -1,11 +1,13 @@
 package keyvent.core.data;
 
-public class Snapshot<T> {
+import java.io.Serializable;
+
+public class Snapshot<T> implements Serializable {
 
     private final T instance;
-    private final VersionVal version;
+    private final Version version;
 
-    public Snapshot(T instance, VersionVal version) {
+    public Snapshot(T instance, Version version) {
         this.instance = instance;
         this.version = version;
     }
@@ -14,24 +16,21 @@ public class Snapshot<T> {
         return instance;
     }
 
-    public VersionVal version() {
+    public Version version() {
         return version;
     }
 
-    public VersionVal nextVersion() {
-        return VersionVal.of(version.value()+1);
+    public Version nextVersion() {
+        return new Version(version.value()+1);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Snapshot)) return false;
-
         Snapshot<?> snapshot = (Snapshot<?>) o;
-
         if (!instance().equals(snapshot.instance())) return false;
         return version().equals(snapshot.version());
-
     }
 
     @Override

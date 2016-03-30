@@ -1,4 +1,4 @@
-package keyvent.core.utils;
+package keyvent.sample.annotations;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;

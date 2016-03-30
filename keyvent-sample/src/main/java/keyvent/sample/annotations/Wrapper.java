@@ -1,4 +1,4 @@
-package keyvent.core.utils;
+package keyvent.sample.annotations;
 
 import org.immutables.value.Value;
 

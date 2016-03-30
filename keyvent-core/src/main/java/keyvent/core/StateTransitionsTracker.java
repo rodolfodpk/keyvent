@@ -1,8 +1,7 @@
 package keyvent.core;
 
+import javaslang.collection.List;
 import keyvent.core.data.Snapshot;
-
-import java.util.List;
 
 public interface StateTransitionsTracker<EV, AR> {
 

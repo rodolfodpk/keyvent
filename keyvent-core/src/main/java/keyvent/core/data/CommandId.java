@@ -1,12 +1,41 @@
 package keyvent.core.data;
 
-import keyvent.core.utils.Wrapped;
-import keyvent.core.utils.Wrapper;
-import org.immutables.value.Value;
-
+import java.io.Serializable;
 import java.util.UUID;
 
-@Value.Immutable
-@Wrapped
-public abstract class CommandId extends Wrapper<UUID> {}
+public class CommandId implements Serializable {
+
+    private final UUID value;
+
+    public CommandId() {
+        this.value = UUID.randomUUID();
+    }
+    public CommandId(UUID value) {
+        this.value = value;
+    }
+
+    public UUID value() {
+        return value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CommandId)) return false;
+        CommandId that = (CommandId) o;
+        return value.equals(that.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return value.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "CommandId{" +
+                "value=" + value +
+                '}';
+    }
+}
 

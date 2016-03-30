@@ -29,7 +29,7 @@ public class SimpleStateTransitionsTracker<EV, AR> implements StateTransitionsTr
     }
 
     @Override
-    public void apply(java.util.List<EV> events) {
+    public void apply(List<EV> events) {
         for (EV event : events) {
             final AR last = stateTransitions.size() == 0 ?
                     originalInstance.instance() :
@@ -39,8 +39,8 @@ public class SimpleStateTransitionsTracker<EV, AR> implements StateTransitionsTr
     }
 
     @Override
-    public java.util.List<EV> appliedEvents() {
-        return stateTransitions.map(stateTransition -> stateTransition.event).toJavaList();
+    public List<EV> appliedEvents() {
+        return stateTransitions.map(stateTransition -> stateTransition.event).toList();
     }
 
     @Override
@@ -49,8 +49,8 @@ public class SimpleStateTransitionsTracker<EV, AR> implements StateTransitionsTr
     }
 
     @Override
-    public java.util.List<StateTransition<EV, AR>> stateTransitions() {
-        return stateTransitions.toJavaList();
+    public List<StateTransition<EV, AR>> stateTransitions() {
+        return stateTransitions.toList();
     }
 
 }

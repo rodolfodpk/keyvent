@@ -4,10 +4,9 @@ import javaslang.Tuple2
 import javaslang.collection.HashMap
 import javaslang.collection.List
 import javaslang.collection.Map
-import keyvent.core.data.CommandIdVal
-import keyvent.core.data.UnitOfWorkIdVal
+import keyvent.core.data.CommandId
+import keyvent.core.data.UnitOfWorkId
 import keyvent.core.data.Version
-import keyvent.core.data.VersionVal
 import keyvent.sample.customer.*
 import org.jetbrains.spek.api.Spek
 import java.time.Instant
@@ -18,23 +17,23 @@ import kotlin.test.assertEquals
 class SimpleJournalSpec : Spek() {
 
     val createCustomerCmd: CreateCustomerCmd = CreateCustomerCmd.builder()
-            .commandId(CommandIdVal.of(UUID.randomUUID()))
+            .commandId(CommandId())
             .customerId(CustomerIdVal.of(UUID.randomUUID())).build()
 
     val uow1 = CustomerUow.builder()
-            .id(UnitOfWorkIdVal.of(UUID.randomUUID()))
+            .id(UnitOfWorkId())
             .command(createCustomerCmd)
-            .version(VersionVal.of(1))
+            .version(Version(1))
             .events(javaslang.collection.List.of(CustomerCreatedEvt.builder().customerId(createCustomerCmd.customerId()).build()))
             .instant(Instant.now())
             .build()
 
-    val activateCmd = ActivateCustomerCmd.builder().commandId(CommandIdVal.of(UUID.randomUUID()))
+    val activateCmd = ActivateCustomerCmd.builder().commandId(CommandId())
             .customerId(createCustomerCmd.customerId()).build()
 
-    val uow2 = CustomerUow.builder().id(UnitOfWorkIdVal.of(UUID.randomUUID()))
+    val uow2 = CustomerUow.builder().id(UnitOfWorkId())
             .command(activateCmd)
-            .version(VersionVal.of(2L))
+            .version(Version(2L))
             .events(javaslang.collection.List.of(CustomerActivatedEvt.builder()
                     .customerId(activateCmd.customerId())
                     .date(LocalDateTime.now()).build()))
@@ -46,9 +45,9 @@ class SimpleJournalSpec : Spek() {
                 val map: Map<CustomerSchema.CustomerId, List<Tuple2<CustomerUow, Version>>> = HashMap.empty()
                 val journal = SimpleJournal<CustomerSchema.CustomerId, CustomerUow>(map)
                 on("adding a new unitOfWork with version=1") {
-                   val globalSeq: Long? = journal.append(createCustomerCmd.customerId(), uow1, Version.of(1))
+                   val globalSeq: Long? = journal.append(createCustomerCmd.customerId(), uow1, Version(1))
                     it("should result in a journal with the respective entry") {
-                        val expected: List<Tuple2<CustomerUow, Version>> = List.of(Tuple2(uow1, Version.of(1)))
+                        val expected: List<Tuple2<CustomerUow, Version>> = List.of(Tuple2(uow1, Version(1)))
                         val current: List<Tuple2<CustomerUow, Version>> = journal.map().get(createCustomerCmd.customerId()).get()
                         assertEquals(expected, current)
                     }

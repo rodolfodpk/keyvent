@@ -1,4 +1,4 @@
-package keyvent.core.utils;
+package keyvent.sample.annotations;
 
 import org.immutables.value.Value;
 
@@ -7,6 +7,8 @@ import org.immutables.value.Value;
         typeAbstract = "*",
         // Generate without any suffix, just raw detected name
         typeImmutable = "*Val",
+        // construct builder using 'new' instead of factory method
+        builder = "new",
         // Make generated it public, leave underscored as package private
         visibility = Value.Style.ImplementationVisibility.PUBLIC,
         // Seems unnecessary to have builder or superfluous copy method
