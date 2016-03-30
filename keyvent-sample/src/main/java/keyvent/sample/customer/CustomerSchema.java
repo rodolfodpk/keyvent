@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import javaslang.collection.List;
 import keyvent.core.data.CommandId;
 import keyvent.core.data.UnitOfWorkId;
+import keyvent.core.data.Version;
 import keyvent.core.data.VersionVal;
 import keyvent.core.utils.*;
 import org.immutables.value.Value;
@@ -29,7 +30,7 @@ public class CustomerSchema {
             include = JsonTypeInfo.As.PROPERTY,
             property = "commandType")
     @JsonSubTypes({
-            @JsonSubTypes.Type(value = CreateCustomer.class, name = "CreateCustomercmd"),
+            @JsonSubTypes.Type(value = CreateCustomer.class, name = "CreateCustomerCmd"),
             @JsonSubTypes.Type(value = CreateAndActivateCustomer.class, name = "CreateActivatedCustomerCmd")
             })
     public interface CustomerCommand {
@@ -109,7 +110,7 @@ public class CustomerSchema {
     public interface CustomerUnitOfWork {
         UnitOfWorkId id();
         CustomerCommand command();
-        VersionVal version();
+        Version version();
         List<CustomerEvent> events();
         Instant instant();
     }
