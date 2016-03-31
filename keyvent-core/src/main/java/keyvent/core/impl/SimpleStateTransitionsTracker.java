@@ -33,7 +33,7 @@ public class SimpleStateTransitionsTracker<EV, AR> implements StateTransitionsTr
         for (EV event : events) {
             final AR last = stateTransitions.size() == 0 ?
                     originalInstance.instance() :
-                    stateTransitions.get(stateTransitions.size()-1).resultingInstance;
+                    stateTransitions.last().resultingInstance;
             this.stateTransitions = stateTransitions.append(new StateTransition<>(event, applyEventsFn.apply(event, last)));
         }
     }
@@ -45,7 +45,7 @@ public class SimpleStateTransitionsTracker<EV, AR> implements StateTransitionsTr
 
     @Override
     public Snapshot<AR> resultingInstance() {
-        return new Snapshot<>(stateTransitions.get(stateTransitions.size()-1).resultingInstance, originalInstance.nextVersion());
+        return new Snapshot<>(stateTransitions.last().resultingInstance, originalInstance.nextVersion());
     }
 
     @Override
