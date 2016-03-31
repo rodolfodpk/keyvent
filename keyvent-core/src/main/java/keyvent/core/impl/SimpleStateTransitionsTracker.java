@@ -5,6 +5,8 @@ import javaslang.collection.List;
 import keyvent.core.StateTransitionsTracker;
 import keyvent.core.data.Snapshot;
 
+import java.util.Objects;
+
 public class SimpleStateTransitionsTracker<EV, AR> implements StateTransitionsTracker<EV, AR> {
 
     final Snapshot<AR> originalInstance;
@@ -12,12 +14,17 @@ public class SimpleStateTransitionsTracker<EV, AR> implements StateTransitionsTr
     List<StateTransition<EV, AR>> stateTransitions;
 
     public SimpleStateTransitionsTracker(Snapshot<AR> originalInstance, Function2<EV, AR, AR> applyEventsFn, List<StateTransition<EV, AR>> stateTransitions) {
+        Objects.requireNonNull(originalInstance);
+        Objects.requireNonNull(applyEventsFn);
+        Objects.requireNonNull(stateTransitions);
         this.originalInstance = originalInstance;
         this.applyEventsFn = applyEventsFn;
         this.stateTransitions = stateTransitions;
     }
 
     public SimpleStateTransitionsTracker(Snapshot<AR> originalInstance, Function2<EV, AR, AR> applyEventsFn) {
+        Objects.requireNonNull(originalInstance);
+        Objects.requireNonNull(applyEventsFn);
         this.originalInstance = originalInstance;
         this.applyEventsFn = applyEventsFn;
         this.stateTransitions = List.empty();
@@ -30,6 +37,7 @@ public class SimpleStateTransitionsTracker<EV, AR> implements StateTransitionsTr
 
     @Override
     public void apply(List<EV> events) {
+        Objects.requireNonNull(events);
         for (EV event : events) {
             final AR last = stateTransitions.size() == 0 ?
                     originalInstance.instance() :

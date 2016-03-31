@@ -23,6 +23,7 @@ public class SimpleJournal<ID, UOW> implements Journal<ID, UOW> {
     public Long append(ID targetId, UOW unitOfWork, Version version) {
         Objects.requireNonNull(targetId);
         Objects.requireNonNull(unitOfWork);
+        Objects.requireNonNull(version);
         List<Tuple2<UOW, Version>> currentEvents = map.get(targetId).getOrElse(List.empty());
         if (currentEvents.isEmpty()) {
             if (version.value() != 1)

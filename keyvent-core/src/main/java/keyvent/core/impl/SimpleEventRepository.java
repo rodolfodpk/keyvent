@@ -7,6 +7,8 @@ import javaslang.control.Option;
 import keyvent.core.EventRepository;
 import keyvent.core.data.Version;
 
+import java.util.Objects;
+
 public class SimpleEventRepository<ID, UOW> implements EventRepository<ID, UOW> {
 
     final Map<ID, List<Tuple2<UOW, Version>>> map;
@@ -23,6 +25,8 @@ public class SimpleEventRepository<ID, UOW> implements EventRepository<ID, UOW> 
 
     @Override
     public List<UOW> eventsAfter(ID id, Version version, int limit) {
+        Objects.requireNonNull(id);
+        Objects.requireNonNull(version);
         List<Tuple2<UOW, Version>> events = map.get(id).getOrElse(List.empty());
         return events
                 .filter(tuple -> tuple._2.value() > version.value())
