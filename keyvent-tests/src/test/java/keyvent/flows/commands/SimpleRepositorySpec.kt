@@ -1,11 +1,11 @@
-package keyvent.cmdhandling
+package keyvent.flows.commands
 
 import javaslang.Tuple2
 import javaslang.collection.HashMap
 import javaslang.collection.List
 import javaslang.collection.Map
 import javaslang.control.Option
-import keyvent.cmdhandling.SimpleEventRepository
+import keyvent.flows.commands.SimpleEventRepository
 import keyvent.sample.CommandId
 import keyvent.sample.UnitOfWorkId
 import keyvent.data.Version

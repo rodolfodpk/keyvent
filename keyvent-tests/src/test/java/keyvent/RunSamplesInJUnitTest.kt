@@ -1,6 +1,6 @@
 package keyvent
 
-import keyvent.cmdhandling.SimpleJournalSpec
+import keyvent.flows.commands.SimpleJournalSpec
 import org.junit.internal.RealSystem
 import org.junit.internal.TextListener
 import org.junit.runner.JUnitCore

@@ -1,10 +1,10 @@
-package keyvent.cmdhandling
+package keyvent.flows.commands
 
 import javaslang.Tuple2
 import javaslang.collection.HashMap
 import javaslang.collection.List
 import javaslang.collection.Map
-import keyvent.cmdhandling.SimpleJournal
+import keyvent.flows.commands.SimpleJournal
 import keyvent.sample.CommandId
 import keyvent.sample.UnitOfWorkId
 import keyvent.data.Version

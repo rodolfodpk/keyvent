@@ -1,4 +1,4 @@
-package keyvent.cmdhandling
+package keyvent.flows.commands
 
 import javaslang.collection.List
 import keyvent.data.Snapshot

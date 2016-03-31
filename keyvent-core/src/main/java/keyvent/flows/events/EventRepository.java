@@ -1,4 +1,4 @@
-package keyvent.evthandling;
+package keyvent.flows.events;
 
 import javaslang.collection.List;
 
