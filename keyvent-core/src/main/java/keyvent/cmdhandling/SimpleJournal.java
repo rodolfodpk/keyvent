@@ -1,10 +1,10 @@
-package keyvent.core.impl;
+package keyvent.cmdhandling;
 
 import javaslang.Tuple2;
 import javaslang.collection.List;
 import javaslang.collection.Map;
-import keyvent.core.Journal;
-import keyvent.core.data.Version;
+import keyvent.cmdhandling.Journal;
+import keyvent.data.Version;
 
 import java.util.Objects;
 

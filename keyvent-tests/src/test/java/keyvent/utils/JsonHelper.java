@@ -1,4 +1,4 @@
-package keyvent.sample.utils;
+package keyvent.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 

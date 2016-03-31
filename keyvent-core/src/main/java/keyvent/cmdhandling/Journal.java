@@ -1,6 +1,6 @@
-package keyvent.core;
+package keyvent.cmdhandling;
 
-import keyvent.core.data.Version;
+import keyvent.data.Version;
 
 public interface Journal<ID, UOW> {
 

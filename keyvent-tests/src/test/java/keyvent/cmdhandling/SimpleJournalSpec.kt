@@ -1,12 +1,13 @@
-package keyvent.core.impl
+package keyvent.cmdhandling
 
 import javaslang.Tuple2
 import javaslang.collection.HashMap
 import javaslang.collection.List
 import javaslang.collection.Map
-import keyvent.core.data.CommandId
-import keyvent.core.data.UnitOfWorkId
-import keyvent.core.data.Version
+import keyvent.cmdhandling.SimpleJournal
+import keyvent.sample.CommandId
+import keyvent.sample.UnitOfWorkId
+import keyvent.data.Version
 import keyvent.sample.customer.*
 import org.jetbrains.spek.api.Spek
 import java.time.Instant
@@ -43,7 +44,7 @@ class SimpleJournalSpec : Spek() {
 
     init {
         given("An empty journal") {
-            val map: Map<CustomerSchema.CustomerId, List<Tuple2<CustomerUow, Version>>> = HashMap.empty()
+            val map: Map<CustomerSchema.CustomerId, List<Tuple2<CustomerUow, Version>>> = javaslang.collection.HashMap.empty()
             val journal = SimpleJournal<CustomerSchema.CustomerId, CustomerUow>(map)
             on("adding a new unitOfWork with version=1") {
                 val globalSeq: Long? = journal.append(createCustomerCmd.customerId(), uow1, Version(1))
@@ -58,7 +59,7 @@ class SimpleJournalSpec : Spek() {
             }
         }
         given("An empty journal") {
-            val map: Map<CustomerSchema.CustomerId, List<Tuple2<CustomerUow, Version>>> = HashMap.empty()
+            val map: Map<CustomerSchema.CustomerId, List<Tuple2<CustomerUow, Version>>> = javaslang.collection.HashMap.empty()
             val journal = SimpleJournal<CustomerSchema.CustomerId, CustomerUow>(map)
             on("adding a new unitOfWork with version =2") {
                 it("should throw an exception since version should be 1") {
@@ -72,7 +73,7 @@ class SimpleJournalSpec : Spek() {
         }
         given("A journal with one uow with version =1") {
             val map: Map<CustomerSchema.CustomerId, List<Tuple2<CustomerUow, Version>>> =
-                    HashMap.of(createCustomerCmd.customerId(), List.of(Tuple2(uow1, Version.firstVersion())))
+                    javaslang.collection.HashMap.of(createCustomerCmd.customerId(), List.of(Tuple2(uow1, Version.firstVersion())))
             val journal = SimpleJournal<CustomerSchema.CustomerId, CustomerUow>(map)
             on("adding a new unitOfWork with version =2") {
                 val globalSeq = journal.append(createCustomerCmd.customerId(), uow2, Version(2))

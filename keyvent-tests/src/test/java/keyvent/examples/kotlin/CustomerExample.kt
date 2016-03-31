@@ -1,4 +1,4 @@
-package keyvent.core.examples.kotlin
+package keyvent.examples.kotlin
 
 //
 //// customer value objects

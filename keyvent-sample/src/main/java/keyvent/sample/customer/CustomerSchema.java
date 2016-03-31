@@ -5,9 +5,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import javaslang.collection.List;
-import keyvent.core.data.CommandId;
-import keyvent.core.data.UnitOfWorkId;
-import keyvent.core.data.Version;
+import keyvent.sample.CommandId;
+import keyvent.sample.UnitOfWorkId;
+import keyvent.data.Version;
 import keyvent.sample.annotations.*;
 import org.immutables.value.Value;
 

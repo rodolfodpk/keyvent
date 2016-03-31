@@ -1,16 +1,17 @@
-package keyvent.core.data;
+package keyvent.sample;
 
 import java.io.Serializable;
 import java.util.UUID;
 
-public class CommandId implements Serializable {
+public class AggregateRootId implements Serializable {
 
     private final UUID value;
 
-    public CommandId() {
+    public AggregateRootId() {
         this.value = UUID.randomUUID();
     }
-    public CommandId(UUID value) {
+
+    public AggregateRootId(UUID value) {
         this.value = value;
     }
 
@@ -21,8 +22,8 @@ public class CommandId implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof CommandId)) return false;
-        CommandId that = (CommandId) o;
+        if (!(o instanceof AggregateRootId)) return false;
+        AggregateRootId that = (AggregateRootId) o;
         return value.equals(that.value);
     }
 
@@ -33,9 +34,8 @@ public class CommandId implements Serializable {
 
     @Override
     public String toString() {
-        return "CommandId{" +
+        return "AggregateRootId{" +
                 "value=" + value +
                 '}';
     }
 }
-

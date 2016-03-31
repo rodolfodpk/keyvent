@@ -1,9 +1,9 @@
-package keyvent.core.impl;
+package keyvent;
 
 import javaslang.Function2;
 import javaslang.collection.List;
-import keyvent.core.StateTransitionsTracker;
-import keyvent.core.data.Snapshot;
+import keyvent.StateTransitionsTracker;
+import keyvent.data.Snapshot;
 
 import java.util.Objects;
 

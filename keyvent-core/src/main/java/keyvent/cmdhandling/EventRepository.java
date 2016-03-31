@@ -1,8 +1,8 @@
-package keyvent.core;
+package keyvent.cmdhandling;
 
 import javaslang.collection.List;
 import javaslang.control.Option;
-import keyvent.core.data.Version;
+import keyvent.data.Version;
 
 public interface EventRepository<ID, UOW> {
 

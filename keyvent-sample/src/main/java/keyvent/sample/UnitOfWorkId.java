@@ -1,4 +1,4 @@
-package keyvent.core.data;
+package keyvent.sample;
 
 import java.io.Serializable;
 import java.util.UUID;

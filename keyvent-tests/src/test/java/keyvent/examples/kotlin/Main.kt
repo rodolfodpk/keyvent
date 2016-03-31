@@ -1,4 +1,4 @@
-package keyvent.core.examples.kotlin
+package keyvent.examples.kotlin
 
 fun main(args : Array<String>) {
     //   test1()

@@ -1,8 +1,9 @@
-package keyvent.core.impl
+package keyvent.cmdhandling
 
 import javaslang.collection.List
-import keyvent.core.data.Snapshot
-import keyvent.core.data.Version
+import keyvent.data.Snapshot
+import keyvent.data.Version
+import keyvent.SimpleStateTransitionsTracker
 import keyvent.sample.customer.*
 import org.jetbrains.spek.api.Spek
 import java.time.LocalDateTime
@@ -30,9 +31,9 @@ class SimpleStateTransitionsTrackerSpec : Spek() {
                 val event: CustomerSchema.CustomerEvent = CustomerCreatedEvt.builder().customerId(CustomerIdVal.of(UUID.randomUUID())).build()
                 tracker.apply(List.of(event))
                 it("should have 1 transition with proper event and resulting instance") {
-                    assertEquals(1, tracker.stateTransitions.size())
-                    assertEquals(event, tracker.stateTransitions.get(0).event)
-                    assertEquals(CustomerAgg.builder().id(event.customerId()).build(), tracker.stateTransitions.get(0).resultingInstance)
+                    assertEquals(1, tracker.stateTransitions().size())
+                    assertEquals(event, tracker.stateTransitions().get(0).event)
+                    assertEquals(CustomerAgg.builder().id(event.customerId()).build(), tracker.stateTransitions().get(0).resultingInstance)
                 }
                 it("should result in a list with customerCreated event when calling appliedEvents") {
                     assertEquals(tracker.appliedEvents(), List.of(event))
@@ -56,11 +57,11 @@ class SimpleStateTransitionsTrackerSpec : Spek() {
                         .isActive(true)
                         .activeSince(event2.date()).build()
                 it("should have 2 transition2 with proper event and resulting instance") {
-                    assertEquals(2, tracker.stateTransitions.size())
-                    assertEquals(event1, tracker.stateTransitions.get(0).event)
-                    assertEquals(expected1, tracker.stateTransitions.get(0).resultingInstance)
-                    assertEquals(event2, tracker.stateTransitions.get(1).event)
-                    assertEquals(expected2, tracker.stateTransitions.get(1).resultingInstance)
+                    assertEquals(2, tracker.stateTransitions().size())
+                    assertEquals(event1, tracker.stateTransitions().get(0).event)
+                    assertEquals(expected1, tracker.stateTransitions().get(0).resultingInstance)
+                    assertEquals(event2, tracker.stateTransitions().get(1).event)
+                    assertEquals(expected2, tracker.stateTransitions().get(1).resultingInstance)
                 }
                 it("should result in a list with both customerCreated and customerActivated events when calling appliedEvents") {
                     assertEquals(tracker.appliedEvents(), List.of(event1, event2))

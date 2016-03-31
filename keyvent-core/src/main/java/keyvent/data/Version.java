@@ -1,4 +1,4 @@
-package keyvent.core.data;
+package keyvent.data;
 
 import java.io.Serializable;
 

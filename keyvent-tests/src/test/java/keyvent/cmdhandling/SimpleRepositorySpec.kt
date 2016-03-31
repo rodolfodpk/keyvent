@@ -1,13 +1,14 @@
-package keyvent.core.impl
+package keyvent.cmdhandling
 
 import javaslang.Tuple2
 import javaslang.collection.HashMap
 import javaslang.collection.List
 import javaslang.collection.Map
 import javaslang.control.Option
-import keyvent.core.data.CommandId
-import keyvent.core.data.UnitOfWorkId
-import keyvent.core.data.Version
+import keyvent.cmdhandling.SimpleEventRepository
+import keyvent.sample.CommandId
+import keyvent.sample.UnitOfWorkId
+import keyvent.data.Version
 import keyvent.sample.customer.*
 import org.jetbrains.spek.api.Spek
 import java.time.Instant
@@ -43,7 +44,7 @@ class SimpleRepositorySpec : Spek() {
 
     init {
         given("An empty event repo") {
-            val map: Map<CustomerSchema.CustomerId, List<Tuple2<CustomerUow, Version>>> = HashMap.empty()
+            val map: Map<CustomerSchema.CustomerId, List<Tuple2<CustomerUow, Version>>> = javaslang.collection.HashMap.empty()
             val eventRepo = SimpleEventRepository<CustomerSchema.CustomerId, CustomerUow>(map)
             on("querying for a non existent id ") {
                 val customerId = CustomerIdVal.of(UUID.randomUUID())
@@ -55,10 +56,10 @@ class SimpleRepositorySpec : Spek() {
         }
         given("An event repo with one uow") {
             val map: Map<CustomerSchema.CustomerId, List<Tuple2<CustomerUow, Version>>> =
-                    HashMap.of(createCustomerCmd.customerId(), List.of(Tuple2(uow1, Version(1))))
+                    javaslang.collection.HashMap.of(createCustomerCmd.customerId(), List.of(Tuple2(uow1, Version(1))))
             val eventRepo = SimpleEventRepository<CustomerSchema.CustomerId, CustomerUow>(map)
             on("querying for an existent id ") {
-                val current:List<CustomerUow> = eventRepo.eventsAfter(createCustomerCmd.customerId(), Version(0))
+                val current: List<CustomerUow> = eventRepo.eventsAfter(createCustomerCmd.customerId(), Version(0))
                 it("should result in a list with the respective uow") {
                     val expected: List<CustomerUow> = List.of(uow1)
                     assertEquals(expected, current)
@@ -67,7 +68,7 @@ class SimpleRepositorySpec : Spek() {
         }
         given("An event repo with a couple of uow versioned as 1 and 2") {
             val map: Map<CustomerSchema.CustomerId, List<Tuple2<CustomerUow, Version>>> =
-                    HashMap.of(createCustomerCmd.customerId(),
+                    javaslang.collection.HashMap.of(createCustomerCmd.customerId(),
                             List.of(Tuple2(uow1, Version(1)), Tuple2(uow2, Version(2))))
             val eventRepo = SimpleEventRepository<CustomerSchema.CustomerId, CustomerUow>(map)
             on("querying for an existent id with version greater than 1") {
