@@ -27,7 +27,8 @@ public class SimpleEventRepository<ID, UOW> implements EventRepository<ID, UOW> 
         return events
                 .filter(tuple -> tuple._2.value() > version.value())
                 .map(tuple -> tuple._1)
-                .take(limit).toList();
+                .take(limit)
+                .toList();
     }
 
     @Override
