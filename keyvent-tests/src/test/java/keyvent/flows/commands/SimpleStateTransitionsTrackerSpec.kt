@@ -1,8 +1,7 @@
 package keyvent.flows.commands
 
+import javaslang.Tuple2
 import javaslang.collection.List
-import keyvent.data.Snapshot
-import keyvent.data.Version
 import keyvent.SimpleStateTransitionsTracker
 import keyvent.sample.customer.*
 import org.jetbrains.spek.api.Spek
@@ -14,17 +13,17 @@ class SimpleStateTransitionsTrackerSpec : Spek() {
 
     init {
         given("A fresh tracker for a given customer snapshot with version 0") {
-            val snapshotZero = Snapshot(CustomerAgg.builder().build(), Version(0))
+            val snapshotZero = Tuple2(CustomerAgg.builder().build(), 0L)
             val tracker: SimpleStateTransitionsTracker<CustomerSchema.CustomerEvent, CustomerAgg> =
                     SimpleStateTransitionsTracker(snapshotZero, CustomerEvtFn(), List.empty())
             on("simple checking") {
-                it ("should have the correct originalInstance") {
-                    assertEquals(snapshotZero, tracker.originalInstance())
+                it ("should have the correct originalSnapshot") {
+                    assertEquals(snapshotZero, tracker.originalSnapshot())
                 }
             }
         }
         given("A fresh tracker for a given customer snapshot with version 0") {
-            val snapshotZero = Snapshot(CustomerAgg.builder().build(), Version(0))
+            val snapshotZero = Tuple2(CustomerAgg.builder().build(), 0L)
             val tracker: SimpleStateTransitionsTracker<CustomerSchema.CustomerEvent, CustomerAgg> =
                     SimpleStateTransitionsTracker(snapshotZero, CustomerEvtFn(), List.empty())
             on("applying an customerCreated event against it") {
@@ -40,12 +39,12 @@ class SimpleStateTransitionsTrackerSpec : Spek() {
                 }
                 it("should result in a proper customer instance when calling resultingSnapshot") {
                     val expected: CustomerSchema.Customer = CustomerAgg.builder().id(event.customerId()).build()
-                    assertEquals(expected, tracker.resultingSnapshot().instance())
+                    assertEquals(expected, tracker.resultingSnapshot()._1())
                 }
             }
         }
         given("A fresh tracker for a given customer snapshot with version 0") {
-            val snapshotZero = Snapshot(CustomerAgg.builder().build(), Version(0))
+            val snapshotZero = Tuple2(CustomerAgg.builder().build(), 0L)
             val tracker: SimpleStateTransitionsTracker<CustomerSchema.CustomerEvent, CustomerAgg> =
                     SimpleStateTransitionsTracker(snapshotZero, CustomerEvtFn(), List.empty())
             on("applying both customerCreated and customerActivated events against it") {
@@ -67,7 +66,7 @@ class SimpleStateTransitionsTrackerSpec : Spek() {
                     assertEquals(tracker.appliedEvents(), List.of(event1, event2))
                 }
                 it("should result in a proper customer instance when calling resultingSnapshot") {
-                    assertEquals(tracker.resultingSnapshot(), Snapshot(expected2, Version(1)))
+                    assertEquals(tracker.resultingSnapshot(), Tuple2(expected2, 1L))
                 }
             }
 

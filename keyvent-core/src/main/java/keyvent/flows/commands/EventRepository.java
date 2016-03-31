@@ -2,11 +2,10 @@ package keyvent.flows.commands;
 
 import javaslang.collection.List;
 import javaslang.control.Option;
-import keyvent.data.Version;
 
 public interface EventRepository<ID, UOW> {
 
-    List<UOW> eventsAfter(ID id, Version version);
-    List<UOW> eventsAfter(ID id, Version version, int limit);
-    Option<Version> lastVersion(ID id);
+    List<UOW> eventsAfter(ID id, Long version);
+    List<UOW> eventsAfter(ID id, Long version, int limit);
+    Option<Long> lastVersion(ID id);
 }

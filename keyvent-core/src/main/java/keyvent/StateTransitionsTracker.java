@@ -1,14 +1,14 @@
 package keyvent;
 
+import javaslang.Tuple2;
 import javaslang.collection.List;
-import keyvent.data.Snapshot;
 
 public interface StateTransitionsTracker<EV, AR> {
 
-    Snapshot<AR> originalInstance();
+    Tuple2<AR, Long> originalSnapshot();
     void apply(List<EV> events);
     List<EV> appliedEvents();
-    Snapshot<AR> resultingSnapshot();
+    Tuple2<AR, Long> resultingSnapshot();
     List<StateTransition<EV, AR>> stateTransitions();
 
     class StateTransition<EV, AR> {

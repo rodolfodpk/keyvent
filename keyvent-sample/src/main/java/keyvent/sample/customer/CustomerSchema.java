@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import javaslang.collection.List;
 import keyvent.sample.CommandId;
 import keyvent.sample.UnitOfWorkId;
-import keyvent.data.Version;
 import keyvent.sample.annotations.*;
 import org.immutables.value.Value;
 
@@ -109,7 +108,7 @@ public class CustomerSchema {
     public interface CustomerUnitOfWork {
         UnitOfWorkId id();
         CustomerCommand command();
-        Version version();
+        Long version();
         List<CustomerEvent> events();
         Instant instant();
     }

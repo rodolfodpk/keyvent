@@ -15,25 +15,31 @@
 
 		<dependency>
 			<groupId>com.rdpk</groupId>
+			<artifactId>keyvent-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.rdpk</groupId>
 			<artifactId>keyvent-sample</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.immutables</groupId>
-			<artifactId>value</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.javaslang</groupId>
-			<artifactId>javaslang</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.datatype</groupId>
-			<artifactId>jackson-datatype-jdk8</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.datatype</groupId>
-			<artifactId>jackson-datatype-jsr310</artifactId>
-		</dependency>
+		<!--<dependency>-->
+			<!--<groupId>org.immutables</groupId>-->
+			<!--<artifactId>value</artifactId>-->
+			<!--<scope>provided</scope>-->
+		<!--</dependency>-->
+		<!--<dependency>-->
+			<!--<groupId>io.javaslang</groupId>-->
+			<!--<artifactId>javaslang</artifactId>-->
+		<!--</dependency>-->
+		<!--<dependency>-->
+			<!--<groupId>com.fasterxml.jackson.datatype</groupId>-->
+			<!--<artifactId>jackson-datatype-jdk8</artifactId>-->
+		<!--</dependency>-->
+		<!--<dependency>-->
+			<!--<groupId>com.fasterxml.jackson.datatype</groupId>-->
+			<!--<artifactId>jackson-datatype-jsr310</artifactId>-->
+		<!--</dependency>-->
+
+		<!-- Test -->
 
 		<dependency>
 			<groupId>org.jetbrains.kotlin</groupId>

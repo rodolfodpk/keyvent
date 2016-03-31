@@ -1,19 +1,18 @@
 package keyvent;
 
 import javaslang.Function2;
+import javaslang.Tuple2;
 import javaslang.collection.List;
-import keyvent.StateTransitionsTracker;
-import keyvent.data.Snapshot;
 
 import java.util.Objects;
 
 public class SimpleStateTransitionsTracker<EV, AR> implements StateTransitionsTracker<EV, AR> {
 
-    final Snapshot<AR> originalInstance;
+    final Tuple2<AR, Long> originalInstance;
     final Function2<EV, AR, AR> applyEventsFn;
     List<StateTransition<EV, AR>> stateTransitions;
 
-    public SimpleStateTransitionsTracker(Snapshot<AR> originalInstance, Function2<EV, AR, AR> applyEventsFn, List<StateTransition<EV, AR>> stateTransitions) {
+    public SimpleStateTransitionsTracker(Tuple2<AR, Long> originalInstance, Function2<EV, AR, AR> applyEventsFn, List<StateTransition<EV, AR>> stateTransitions) {
         Objects.requireNonNull(originalInstance);
         Objects.requireNonNull(applyEventsFn);
         Objects.requireNonNull(stateTransitions);
@@ -22,7 +21,7 @@ public class SimpleStateTransitionsTracker<EV, AR> implements StateTransitionsTr
         this.stateTransitions = stateTransitions;
     }
 
-    public SimpleStateTransitionsTracker(Snapshot<AR> originalInstance, Function2<EV, AR, AR> applyEventsFn) {
+    public SimpleStateTransitionsTracker(Tuple2<AR, Long> originalInstance, Function2<EV, AR, AR> applyEventsFn) {
         Objects.requireNonNull(originalInstance);
         Objects.requireNonNull(applyEventsFn);
         this.originalInstance = originalInstance;
@@ -31,7 +30,7 @@ public class SimpleStateTransitionsTracker<EV, AR> implements StateTransitionsTr
     }
 
     @Override
-    public Snapshot<AR> originalInstance() {
+    public Tuple2<AR, Long> originalSnapshot() {
         return originalInstance;
     }
 
@@ -40,7 +39,7 @@ public class SimpleStateTransitionsTracker<EV, AR> implements StateTransitionsTr
         Objects.requireNonNull(events);
         for (EV event : events) {
             final AR last = stateTransitions.size() == 0 ?
-                    originalInstance.instance() :
+                    originalInstance._1() :
                     stateTransitions.last().resultingInstance;
             this.stateTransitions = stateTransitions.append(new StateTransition<>(event, applyEventsFn.apply(event, last)));
         }
@@ -52,8 +51,8 @@ public class SimpleStateTransitionsTracker<EV, AR> implements StateTransitionsTr
     }
 
     @Override
-    public Snapshot<AR> resultingSnapshot() {
-        return new Snapshot<>(stateTransitions.last().resultingInstance, originalInstance.nextVersion());
+    public Tuple2<AR, Long> resultingSnapshot() {
+        return new Tuple2<>(stateTransitions.last().resultingInstance, originalInstance._2()+1);
     }
 
     @Override
