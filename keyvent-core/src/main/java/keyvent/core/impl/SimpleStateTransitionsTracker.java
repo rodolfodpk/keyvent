@@ -52,7 +52,7 @@ public class SimpleStateTransitionsTracker<EV, AR> implements StateTransitionsTr
     }
 
     @Override
-    public Snapshot<AR> resultingInstance() {
+    public Snapshot<AR> resultingSnapshot() {
         return new Snapshot<>(stateTransitions.last().resultingInstance, originalInstance.nextVersion());
     }
 

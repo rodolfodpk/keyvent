@@ -8,7 +8,7 @@ public interface StateTransitionsTracker<EV, AR> {
     Snapshot<AR> originalInstance();
     void apply(List<EV> events);
     List<EV> appliedEvents();
-    Snapshot<AR> resultingInstance();
+    Snapshot<AR> resultingSnapshot();
     List<StateTransition<EV, AR>> stateTransitions();
 
     class StateTransition<EV, AR> {
