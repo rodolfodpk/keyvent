@@ -12,11 +12,11 @@ package keyvent.examples.kotlin
 //        include = JsonTypeInfo.As.PROPERTY,
 //        property = "commandType")
 //@JsonSubTypes(
-//        JsonSubTypes.Type(value = CreateCustomerCmd::class, name = "CreateCustomerCmd"),
-//        JsonSubTypes.Type(value = CreateActivatedCustomerCmd::class, name = "CreateActivatedCustomerCmd"))
+//        JsonSubTypes.Type(value = CreateCustomerCmd::class, getName = "CreateCustomerCmd"),
+//        JsonSubTypes.Type(value = CreateActivatedCustomerCmd::class, getName = "CreateActivatedCustomerCmd"))
 //interface CustomerCommand {
-//    val commandId: CommandId
-//    val customerId: CustomerId
+//    val getCommandId: CommandId
+//    val getCustomerId: CustomerId
 //}
 //
 //// customer events
@@ -26,8 +26,8 @@ package keyvent.examples.kotlin
 //        include = JsonTypeInfo.As.PROPERTY,
 //        property = "eventType")
 //@JsonSubTypes(
-//        JsonSubTypes.Type(value = CustomerCreated::class, name = "CustomerCreated"),
-//        JsonSubTypes.Type(value = CustomerActivated::class, name = "CustomerActivated"))
+//        JsonSubTypes.Type(value = CustomerCreated::class, getName = "CustomerCreated"),
+//        JsonSubTypes.Type(value = CustomerActivated::class, getName = "CustomerActivated"))
 //interface CustomerEvent
 //
 //// customer unitOfWork
@@ -40,33 +40,33 @@ package keyvent.examples.kotlin
 //
 //// commands
 //
-//data class CreateCustomerCmd(override val commandId: CommandId = CommandId.of(UUID.randomUUID()),
-//                             override val customerId: CustomerId) : CustomerCommand
+//data class CreateCustomerCmd(override val getCommandId: CommandId = CommandId.of(UUID.randomUUID()),
+//                             override val getCustomerId: CustomerId) : CustomerCommand
 //
-//data class ActivateCustomerCmd(override val commandId: CommandId = CommandId.of(UUID.randomUUID()),
-//                               override val customerId: CustomerId) : CustomerCommand
+//data class ActivateCustomerCmd(override val getCommandId: CommandId = CommandId.of(UUID.randomUUID()),
+//                               override val getCustomerId: CustomerId) : CustomerCommand
 //
-//data class CreateActivatedCustomerCmd(override val commandId: CommandId,
-//                                      override val customerId: CustomerId) : CustomerCommand
+//data class CreateActivatedCustomerCmd(override val getCommandId: CommandId,
+//                                      override val getCustomerId: CustomerId) : CustomerCommand
 //
 //// events
 //
-//data class CustomerCreated(val customerId: CustomerId) : CustomerEvent
+//data class CustomerCreated(val getCustomerId: CustomerId) : CustomerEvent
 //
 //data class CustomerActivated(val date: LocalDateTime) : CustomerEvent
 //
 //// aggregate root
 //
-//data class Customer(val customerId: CustomerId?, val name: String?, val active: Boolean, val activatedSince : LocalDateTime?) {
+//data class Customer(val getCustomerId: CustomerId?, val getName: String?, val active: Boolean, val activatedSince : LocalDateTime?) {
 //
 //    constructor() : this(null, null, false, null)
 //
 //    // behaviour
 //
-//    fun create(customerId: CustomerId) : List<CustomerEvent> {
+//    fun create(getCustomerId: CustomerId) : List<CustomerEvent> {
 //        // check if new then
-//        require(this.customerId==null, {"customer already exists! customerId should be null but is $this.customerId"})
-//        return listOf(CustomerCreated(customerId))
+//        require(this.getCustomerId==null, {"customer already exists! getCustomerId should be null but is $this.getCustomerId"})
+//        return listOf(CustomerCreated(getCustomerId))
 //    }
 //
 //    fun activate() : List<CustomerEvent> {
@@ -79,7 +79,7 @@ package keyvent.examples.kotlin
 //
 //val applyEventOnCustomer : (CustomerEvent, Customer) -> Customer = { event, customer ->
 //    when(event) {
-//        is CustomerCreated -> customer.copy(customerId = event.customerId)
+//        is CustomerCreated -> customer.copy(getCustomerId = event.getCustomerId)
 //        is CustomerActivated -> customer.copy(active = true, activatedSince = event.date)
 //        else -> customer
 //    }
@@ -97,7 +97,7 @@ package keyvent.examples.kotlin
 //val handleCustomerCommands : (Snapshot<Customer>, CustomerCommand, (CustomerEvent, Customer) -> Customer) -> CustomerUnitOfWork? = { snapshot, command, applyEventOn ->
 //    when(command) {
 //        is CreateCustomerCmd -> CustomerUnitOfWork(customerCommand = command, version = snapshot.nextVersionOf(),
-//                events = snapshot.instance().create(command.customerId))
+//                events = snapshot.instance().create(command.getCustomerId))
 //        is ActivateCustomerCmd -> CustomerUnitOfWork(customerCommand = command, version = snapshot.nextVersionOf(),
 //                events = snapshot.instance().activate())
 //        is CreateActivatedCustomerCmd -> {
@@ -105,7 +105,7 @@ package keyvent.examples.kotlin
 //                    SimpleStateTransitionsTracker(snapshot.instance(), )
 //
 //            val events = with((snapshot.instance(), applyEventOn)) {
-//                apply(snapshot.instance().create(command.customerId))
+//                apply(snapshot.instance().create(command.getCustomerId))
 //                apply(snapshot.instance().activate())
 //                collectedEvents()
 //            }

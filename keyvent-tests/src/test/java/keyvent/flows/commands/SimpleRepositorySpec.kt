@@ -23,18 +23,18 @@ class SimpleRepositorySpec : Spek() {
             .id(UnitOfWorkId())
             .command(createCustomerCmd)
             .version(1)
-            .events(List.of(CustomerCreatedEvt.builder().customerId(createCustomerCmd.customerId()).build()))
+            .events(List.of(CustomerCreatedEvt.builder().customerId(createCustomerCmd.getCustomerId()).build()))
             .instant(Instant.now())
             .build()
 
     val activateCmd = ActivateCustomerCmd.builder().commandId(CommandId())
-            .customerId(createCustomerCmd.customerId()).build()
+            .customerId(createCustomerCmd.getCustomerId()).build()
 
     val uow2 = CustomerUow.builder().id(UnitOfWorkId())
             .command(activateCmd)
             .version(2)
             .events(List.of(CustomerActivatedEvt.builder()
-                    .customerId(activateCmd.customerId())
+                    .customerId(activateCmd.getCustomerId())
                     .date(LocalDateTime.now()).build()))
             .instant(Instant.now())
             .build()
@@ -53,10 +53,10 @@ class SimpleRepositorySpec : Spek() {
         }
         given("An event repo with one uow") {
             val map: Map<CustomerSchema.CustomerId, List<Tuple2<CustomerUow, Long>>> =
-                    javaslang.collection.HashMap.of(createCustomerCmd.customerId(), List.of(Tuple2(uow1, 1L)))
+                    javaslang.collection.HashMap.of(createCustomerCmd.getCustomerId(), List.of(Tuple2(uow1, 1L)))
             val eventRepo = SimpleEventRepository<CustomerSchema.CustomerId, CustomerUow>(map)
             on("querying for an existent id ") {
-                val current: List<CustomerUow> = eventRepo.eventsAfter(createCustomerCmd.customerId(), 0L)
+                val current: List<CustomerUow> = eventRepo.eventsAfter(createCustomerCmd.getCustomerId(), 0L)
                 it("should result in a list with the respective uow") {
                     val expected: List<CustomerUow> = List.of(uow1)
                     assertEquals(expected, current)
@@ -65,25 +65,25 @@ class SimpleRepositorySpec : Spek() {
         }
         given("An event repo with a couple of uow versioned as 1 and 2") {
             val map: Map<CustomerSchema.CustomerId, List<Tuple2<CustomerUow, Long>>> =
-                    javaslang.collection.HashMap.of(createCustomerCmd.customerId(),
+                    javaslang.collection.HashMap.of(createCustomerCmd.getCustomerId(),
                             List.of(Tuple2(uow1, 1L), Tuple2(uow2, 2L)))
             val eventRepo = SimpleEventRepository<CustomerSchema.CustomerId, CustomerUow>(map)
             on("querying for an existent id with version greater than 1") {
-                val current: List<CustomerUow> = eventRepo.eventsAfter(createCustomerCmd.customerId(), 1L)
+                val current: List<CustomerUow> = eventRepo.eventsAfter(createCustomerCmd.getCustomerId(), 1L)
                 it("should result in a list with the uow 2") {
                     val expected: List<CustomerUow> = List.of(uow2)
                     assertEquals(expected, current)
                 }
             }
             on("querying for an existent id with version greater than 0 and limit =1") {
-                val current: List<CustomerUow> = eventRepo.eventsAfter(createCustomerCmd.customerId(), 0L, 1)
+                val current: List<CustomerUow> = eventRepo.eventsAfter(createCustomerCmd.getCustomerId(), 0L, 1)
                 it("should result in a list with the uow 1") {
                     val expected: List<CustomerUow> = List.of(uow1)
                     assertEquals(expected, current)
                 }
             }
             on("querying for lastLong") {
-                val lastLong: Option<Long> = eventRepo.lastVersion(createCustomerCmd.customerId())
+                val lastLong: Option<Long> = eventRepo.lastVersion(createCustomerCmd.getCustomerId())
                 it("should result in 2") {
                     assertEquals(lastLong.get(), 2L)
                 }

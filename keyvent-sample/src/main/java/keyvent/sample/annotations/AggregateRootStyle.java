@@ -1,7 +1,5 @@
 package keyvent.sample.annotations;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.immutables.value.Value;
 
 import java.lang.annotation.ElementType;
@@ -12,8 +10,10 @@ import java.lang.annotation.Target;
 @Target({ElementType.PACKAGE, ElementType.TYPE})
 @Retention(RetentionPolicy.CLASS) // Make it class retention for incremental compilation
 @Value.Style(
-      //  passAnnotations = {JsonTypeInfo.class, JsonSubTypes.class, NotNull.class, Min.class, Size.class},
-        passAnnotations = {JsonTypeInfo.class, JsonSubTypes.class, Nullable.class},
+        privateNoargConstructor = true,
+//        optionalAcceptNullable = true,
+        allParameters = true,
+        passAnnotations = {Nullable.class},
       //  get = {"is*", "get*"}, // Detect 'get' and 'is' prefixes in accessor methods
       //  init = "set*", // Builder initialization methods will have 'set' prefix
         typeAbstract = {"*"}, // 'Abstract' prefix will be detected and trimmed

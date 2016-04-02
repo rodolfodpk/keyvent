@@ -12,6 +12,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.PACKAGE, ElementType.TYPE})
 @Retention(RetentionPolicy.CLASS) // Make it class retention for incremental compilation
 @Value.Style(
+        allParameters = true,
        // passAnnotations = {JsonTypeInfo.class, JsonSubTypes.class},
         // get = {"is*", "get*"}, // Detect 'get' and 'is' prefixes in accessor methods
         // init = "set*", // Builder initialization methods will have 'set' prefix

@@ -10,6 +10,8 @@ import keyvent.sample.UnitOfWorkId;
 import keyvent.sample.annotations.*;
 import org.immutables.value.Value;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Pattern;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -26,33 +28,38 @@ public class CustomerSchema {
     @JsonTypeInfo(
             use = JsonTypeInfo.Id.NAME,
             include = JsonTypeInfo.As.PROPERTY,
-            property = "commandType")
+            property = "getCommandType")
     @JsonSubTypes({
             @JsonSubTypes.Type(value = CreateCustomer.class, name = "CreateCustomerCmd"),
             @JsonSubTypes.Type(value = CreateAndActivateCustomer.class, name = "CreateActivatedCustomerCmd")
-            })
+    })
     public interface CustomerCommand {
-        CommandId commandId();
-        CustomerId customerId();
+        CommandId getCommandId();
+        CustomerId getCustomerId();
     }
 
     @CommandStyle
     @Value.Immutable
-        @JsonSerialize(as = CreateCustomerCmd.class)
-        @JsonDeserialize(as = CreateCustomerCmd.class)
-    public interface CreateCustomer extends CustomerCommand {}
+    @JsonSerialize(as = CreateCustomerCmd.class)
+    @JsonDeserialize(as = CreateCustomerCmd.class)
+    public interface CreateCustomer extends CustomerCommand {
+        @Pattern(regexp = "[a-zA-Z ]")
+        String getName();
+        @Min(18)
+        Integer getAge();
+    }
 
     @CommandStyle
     @Value.Immutable
-        @JsonSerialize(as = ActivateCustomerCmd.class)
-        @JsonDeserialize(as = ActivateCustomerCmd.class)
+    @JsonSerialize(as = ActivateCustomerCmd.class)
+    @JsonDeserialize(as = ActivateCustomerCmd.class)
     public interface ActivateCustomer extends CustomerCommand {
     }
 
     @Value.Immutable
     @CommandStyle
-        @JsonSerialize(as = CreateAndActivateCustomerCmd.class)
-        @JsonDeserialize(as = CreateAndActivateCustomerCmd.class)
+    @JsonSerialize(as = CreateAndActivateCustomerCmd.class)
+    @JsonDeserialize(as = CreateAndActivateCustomerCmd.class)
     public interface CreateAndActivateCustomer extends CustomerCommand {
     }
 
@@ -93,6 +100,10 @@ public class CustomerSchema {
     public interface Customer {
         @Nullable
         CustomerId id();
+        @Nullable
+        String name();
+        @Nullable
+        Integer age();
         @Nullable
         Boolean isActive();
         @Nullable
