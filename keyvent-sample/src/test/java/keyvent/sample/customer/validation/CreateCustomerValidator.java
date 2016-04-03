@@ -5,8 +5,6 @@ import javaslang.collection.CharSeq;
 import javaslang.collection.List;
 import javaslang.control.Validation;
 import keyvent.sample.CommandId;
-import keyvent.sample.customer.CreateCustomerCmd;
-import keyvent.sample.customer.CustomerIdVal;
 import keyvent.sample.customer.CustomerSchema;
 
 import javax.validation.ConstraintViolation;
@@ -22,9 +20,9 @@ public class CreateCustomerValidator {
 
     public static void main(String[] args) {
 
-        CreateCustomer cmd = CreateCustomerCmd.builder()
+        CreateCustomer cmd = CreateCustomer.builder()
                 .commandId(new CommandId(UUID.randomUUID()))
-                .customerId(CustomerIdVal.of(UUID.randomUUID()))
+                .customerId(new CustomerId(UUID.randomUUID()))
                 .name("!@#¨#(#(")
                 .age(17)
                 .build();
@@ -56,7 +54,7 @@ public class CreateCustomerValidator {
 
         Function4<CommandId, CustomerSchema.CustomerId, String, Integer, CustomerSchema.CreateCustomer> f =
                 (commandId1, customerId1, s, integer) ->
-                        CreateCustomerCmd.builder()
+                        CreateCustomer.builder()
                                 .commandId(commandId1)
                                 .customerId(customerId1)
                                 .name(s)

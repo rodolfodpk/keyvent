@@ -1,5 +1,6 @@
 package keyvent.sample.customer
 
+import keyvent.sample.customer.CustomerSchema.*
 import java.time.LocalDateTime
 import java.util.*
 import kotlin.test.assertEquals
@@ -10,23 +11,23 @@ class CustomerEvtFnSpec : org.jetbrains.spek.api.Spek() {
 
     init {
         given("An empty Customer ") {
-            val empty = CustomerAgg.builder().build()
+            val empty = Customer.builder().build()
             on("applying a customerCreated event") {
-                val created = CustomerCreatedEvt.builder().customerId(CustomerIdVal.of(UUID.randomUUID())).build()
+                val created = CustomerCreated.builder().customerId(CustomerId(UUID.randomUUID())).build()
                 it("should result in a proper Customer instance") {
-                    val expected = CustomerAgg.builder().id(created.customerId()).build()
+                    val expected = Customer.builder().id(created.getCustomerId()).build()
                     val current = applyEventFn.apply(created, empty)
                     assertEquals(expected, current)
                 }
             }
         }
         given("A created Customer ") {
-            val customer = CustomerAgg.builder().id(CustomerIdVal.of(UUID.randomUUID())).build()
+            val customer = Customer.builder().id(CustomerId(UUID.randomUUID())).build()
             on("applying a customerActivated event") {
-                val activated = CustomerActivatedEvt.builder().customerId(customer.id()).date(LocalDateTime.now()).build()
+                val activated = CustomerActivated.builder().customerId(customer.getId()).date(LocalDateTime.now()).build()
                 it("should result in a proper Customer instance") {
-                    val expected = CustomerAgg.builder().id(activated.customerId())
-                            .isActive(true).activeSince(activated.date()).build()
+                    val expected = Customer.builder().id(activated.getCustomerId())
+                            .isActive(true).activeSince(activated.getDate()).build()
                     val current = applyEventFn.apply(activated, customer)
                     assertEquals(expected, current)
                 }

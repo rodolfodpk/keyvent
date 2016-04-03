@@ -14,11 +14,6 @@
 	<dependencies>
 
 		<dependency>
-			<groupId>org.immutables</groupId>
-			<artifactId>value</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
 			<groupId>io.javaslang</groupId>
 			<artifactId>javaslang</artifactId>
 		</dependency>

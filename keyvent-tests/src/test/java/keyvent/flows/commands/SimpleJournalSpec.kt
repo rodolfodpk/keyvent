@@ -6,6 +6,8 @@ import javaslang.collection.Map
 import keyvent.sample.CommandId
 import keyvent.sample.UnitOfWorkId
 import keyvent.sample.customer.*
+import keyvent.sample.customer.CustomerSchema.CreateCustomer
+import keyvent.sample.customer.CustomerSchema.CustomerUow
 import org.jetbrains.spek.api.Spek
 import java.time.Instant
 import java.time.LocalDateTime
@@ -15,9 +17,9 @@ import kotlin.test.assertTrue
 
 class SimpleJournalSpec : Spek() {
 
-    val createCustomerCmd: CreateCustomerCmd = CreateCustomerCmd.builder()
+    val createCustomerCmd: CreateCustomer = CreateCustomer.builder()
             .commandId(CommandId())
-            .customerId(CustomerIdVal.of(UUID.randomUUID()))
+            .customerId(CustomerSchema.CustomerId(UUID.randomUUID()))
             .name("alice")
             .age(35)
             .build()
@@ -26,17 +28,17 @@ class SimpleJournalSpec : Spek() {
             .id(UnitOfWorkId())
             .command(createCustomerCmd)
             .version(1)
-            .events(List.of(CustomerCreatedEvt.builder().customerId(createCustomerCmd.getCustomerId()).build()))
+            .events(List.of(CustomerSchema.CustomerCreated.builder().customerId(createCustomerCmd.getCustomerId()).build()))
             .instant(Instant.now())
             .build()
 
-    val activateCmd = ActivateCustomerCmd.builder().commandId(CommandId())
+    val activateCmd = CustomerSchema.ActivateCustomer.builder().commandId(CommandId())
             .customerId(createCustomerCmd.getCustomerId()).build()
 
     val uow2 = CustomerUow.builder().id(UnitOfWorkId())
             .command(activateCmd)
             .version(2)
-            .events(List.of(CustomerActivatedEvt.builder()
+            .events(List.of(CustomerSchema.CustomerActivated.builder()
                     .customerId(activateCmd.getCustomerId())
                     .date(LocalDateTime.now()).build()))
             .instant(Instant.now())

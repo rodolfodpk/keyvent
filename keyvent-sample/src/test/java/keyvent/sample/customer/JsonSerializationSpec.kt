@@ -12,8 +12,8 @@ import kotlin.test.assertEquals
 class JsonSerializationSpec : Spek() {
 
     val mapper = ObjectMapper()
-    val createdEvent = CustomerCreatedEvt.builder().customerId(CustomerIdVal.of(UUID.randomUUID())).build()
-    val activatedEvent = CustomerActivatedEvt.builder().customerId(createdEvent.customerId()).date(LocalDateTime.now()).build()
+    val createdEvent = CustomerSchema.CustomerCreated.builder().customerId(CustomerSchema.CustomerId(UUID.randomUUID())).build()
+    val activatedEvent = CustomerSchema.CustomerActivated.builder().customerId(createdEvent.getCustomerId()).date(LocalDateTime.now()).build()
 
     init {
         mapper.registerModules(Jdk8Module(), JSR310Module())
@@ -22,13 +22,13 @@ class JsonSerializationSpec : Spek() {
             on("serializing it") {
                 val asJson = mapper.writeValueAsString(createdEvent)
                 it("should result in a proper json") {
-                    val expected = "{\"eventType\":\"CustomerCreatedEvt\",\"getCustomerId\":{\"value\":\"${createdEvent.customerId().value()}\"}}"
+                    val expected = "{\"eventType\":\"CustomerCreatedEvt\",\"getCustomerId\":{\"value\":\"${createdEvent.getCustomerId().getUuid()}\"}}"
                     assertEquals(expected, asJson)
                 }
             }
         }
         given("A serialized customerCreated event") {
-            val asJson = "{\"eventType\":\"CustomerCreatedEvt\",\"getCustomerId\":{\"value\":\"${createdEvent.customerId().value()}\"}}"
+            val asJson = "{\"eventType\":\"CustomerCreatedEvt\",\"getCustomerId\":{\"value\":\"${createdEvent.getCustomerId().getUuid()}\"}}"
             on("deserialize it") {
                 val event = mapper.readValue(asJson, CustomerSchema.CustomerCreated::class.java)
                 it("should result in a proper value") {
@@ -40,13 +40,13 @@ class JsonSerializationSpec : Spek() {
             on("serializing it") {
                 val asJson = mapper.writeValueAsString(activatedEvent)
                 it("should result in a proper json") {
-                    val expected = """{"eventType":"CustomerActivatedEvt","date":"${activatedEvent.date()}","getCustomerId":{"value":"${createdEvent.customerId().value()}"}}"""
+                    val expected = """{"eventType":"CustomerActivatedEvt","date":"${activatedEvent.getDate()}","getCustomerId":{"value":"${createdEvent.getCustomerId().getUuid()}"}}"""
                     assertEquals(expected, asJson)
                 }
             }
         }
         given("A serialized customerActivated event") {
-            val asJson = """{"eventType":"CustomerActivatedEvt","date":"${activatedEvent.date()}","getCustomerId":{"value":"${createdEvent.customerId().value()}"}}"""
+            val asJson = """{"eventType":"CustomerActivatedEvt","date":"${activatedEvent.getDate()}","getCustomerId":{"value":"${createdEvent.getCustomerId().getUuid()}"}}"""
             on("deserialize it") {
                 val event = mapper.readValue(asJson, CustomerSchema.CustomerActivated::class.java)
                 it("should result in a proper value") {

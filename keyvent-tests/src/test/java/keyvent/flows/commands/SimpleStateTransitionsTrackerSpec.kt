@@ -3,7 +3,9 @@ package keyvent.flows.commands
 import javaslang.Tuple2
 import javaslang.collection.List
 import keyvent.SimpleStateTransitionsTracker
-import keyvent.sample.customer.*
+import keyvent.sample.customer.CustomerEvtFn
+import keyvent.sample.customer.CustomerSchema
+import keyvent.sample.customer.CustomerSchema.*
 import org.jetbrains.spek.api.Spek
 import java.time.LocalDateTime
 import java.util.*
@@ -13,8 +15,8 @@ class SimpleStateTransitionsTrackerSpec : Spek() {
 
     init {
         given("A fresh tracker for a given customer snapshot with version 0") {
-            val snapshotZero = Tuple2(CustomerAgg.builder().build(), 0L)
-            val tracker: SimpleStateTransitionsTracker<CustomerSchema.CustomerEvent, CustomerAgg> =
+            val snapshotZero = Tuple2(Customer.builder().build(), 0L)
+            val tracker: SimpleStateTransitionsTracker<CustomerSchema.CustomerEvent, Customer> =
                     SimpleStateTransitionsTracker(snapshotZero, CustomerEvtFn(), List.empty())
             on("simple checking") {
                 it ("should have the correct originalSnapshot") {
@@ -23,38 +25,38 @@ class SimpleStateTransitionsTrackerSpec : Spek() {
             }
         }
         given("A fresh tracker for a given customer snapshot with version 0") {
-            val snapshotZero = Tuple2(CustomerAgg.builder().build(), 0L)
-            val tracker: SimpleStateTransitionsTracker<CustomerSchema.CustomerEvent, CustomerAgg> =
+            val snapshotZero = Tuple2(Customer.builder().build(), 0L)
+            val tracker: SimpleStateTransitionsTracker<CustomerSchema.CustomerEvent, Customer> =
                     SimpleStateTransitionsTracker(snapshotZero, CustomerEvtFn(), List.empty())
             on("applying an customerCreated event against it") {
-                val event: CustomerSchema.CustomerEvent = CustomerCreatedEvt.builder().customerId(CustomerIdVal.of(UUID.randomUUID())).build()
+                val event: CustomerSchema.CustomerEvent = CustomerCreated.builder().customerId(CustomerId(UUID.randomUUID())).build()
                 tracker.apply(List.of(event))
                 it("should have 1 transition with proper event and resulting instance") {
                     assertEquals(1, tracker.stateTransitions().size())
                     assertEquals(event, tracker.stateTransitions().get(0).event)
-                    assertEquals(CustomerAgg.builder().id(event.customerId()).build(), tracker.stateTransitions().get(0).resultingInstance)
+                    assertEquals(Customer.builder().id(event.getCustomerId()).build(), tracker.stateTransitions().get(0).resultingInstance)
                 }
                 it("should result in a list with customerCreated event when calling appliedEvents") {
                     assertEquals(tracker.appliedEvents(), List.of(event))
                 }
                 it("should result in a proper customer instance when calling resultingSnapshot") {
-                    val expected: CustomerSchema.Customer = CustomerAgg.builder().id(event.customerId()).build()
+                    val expected: CustomerSchema.Customer = Customer.builder().id(event.getCustomerId()).build()
                     assertEquals(expected, tracker.resultingSnapshot()._1())
                 }
             }
         }
         given("A fresh tracker for a given customer snapshot with version 0") {
-            val snapshotZero = Tuple2(CustomerAgg.builder().build(), 0L)
-            val tracker: SimpleStateTransitionsTracker<CustomerSchema.CustomerEvent, CustomerAgg> =
+            val snapshotZero = Tuple2(Customer.builder().build(), 0L)
+            val tracker: SimpleStateTransitionsTracker<CustomerSchema.CustomerEvent, Customer> =
                     SimpleStateTransitionsTracker(snapshotZero, CustomerEvtFn(), List.empty())
             on("applying both customerCreated and customerActivated events against it") {
-                val event1 = CustomerCreatedEvt.builder().customerId(CustomerIdVal.of(UUID.randomUUID())).build()
-                val event2 = CustomerActivatedEvt.builder().customerId(event1.customerId()).date(LocalDateTime.now()).build()
+                val event1 = CustomerCreated.builder().customerId(CustomerId(UUID.randomUUID())).build()
+                val event2 = CustomerActivated.builder().customerId(event1.getCustomerId()).date(LocalDateTime.now()).build()
                 tracker.apply(List.of(event1, event2))
-                val expected1 = CustomerAgg.builder().id(event1.customerId()).build()
-                val expected2 = CustomerAgg.builder().id(event1.customerId())
+                val expected1 = Customer.builder().id(event1.getCustomerId()).build()
+                val expected2 = Customer.builder().id(event1.getCustomerId())
                         .isActive(true)
-                        .activeSince(event2.date()).build()
+                        .activeSince(event2.getDate()).build()
                 it("should have 2 transition2 with proper event and resulting instance") {
                     assertEquals(2, tracker.stateTransitions().size())
                     assertEquals(event1, tracker.stateTransitions().get(0).event)

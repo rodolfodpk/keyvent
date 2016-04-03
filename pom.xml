@@ -89,12 +89,6 @@
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.immutables</groupId>
-				<artifactId>value</artifactId>
-				<version>2.1.15</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
 				<groupId>io.javaslang</groupId>
 				<artifactId>javaslang</artifactId>
 				<version>${javaslang.version}</version>

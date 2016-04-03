@@ -2,13 +2,14 @@ package keyvent.sample.customer;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import javaslang.collection.List;
 import keyvent.sample.CommandId;
 import keyvent.sample.UnitOfWorkId;
-import keyvent.sample.annotations.*;
-import org.immutables.value.Value;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.Value;
+import lombok.experimental.Wither;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
@@ -18,10 +19,10 @@ import java.util.UUID;
 
 public class CustomerSchema {
 
-    @Value.Immutable
-    @Wrapped
-    @JsonDeserialize(as = CustomerIdVal.class)
-    public static abstract class CustomerId extends Wrapper<UUID> {}
+    @Value
+    public static class CustomerId {
+        UUID uuid;
+    }
 
     // commands
 
@@ -38,29 +39,29 @@ public class CustomerSchema {
         CustomerId getCustomerId();
     }
 
-    @CommandStyle
-    @Value.Immutable
-    @JsonSerialize(as = CreateCustomerCmd.class)
-    @JsonDeserialize(as = CreateCustomerCmd.class)
-    public interface CreateCustomer extends CustomerCommand {
+    @Value
+    @Builder
+    public static class CreateCustomer implements CustomerCommand {
+        CommandId commandId;
+        CustomerId customerId;
         @Pattern(regexp = "[a-zA-Z ]")
-        String getName();
+        String name;
         @Min(18)
-        Integer getAge();
+        Integer age;
     }
 
-    @CommandStyle
-    @Value.Immutable
-    @JsonSerialize(as = ActivateCustomerCmd.class)
-    @JsonDeserialize(as = ActivateCustomerCmd.class)
-    public interface ActivateCustomer extends CustomerCommand {
+    @Value
+    @Builder
+    public static class ActivateCustomer implements CustomerCommand {
+        CommandId commandId;
+        CustomerId customerId;
     }
 
-    @Value.Immutable
-    @CommandStyle
-    @JsonSerialize(as = CreateAndActivateCustomerCmd.class)
-    @JsonDeserialize(as = CreateAndActivateCustomerCmd.class)
-    public interface CreateAndActivateCustomer extends CustomerCommand {
+    @Value
+    @Builder
+    public static class CreateAndActivateCustomer implements CustomerCommand {
+        CommandId commandId;
+        CustomerId customerId;
     }
 
     // events
@@ -73,55 +74,46 @@ public class CustomerSchema {
             @JsonSubTypes.Type(value = CustomerCreated.class, name = "CustomerCreatedEvt"),
             @JsonSubTypes.Type(value = CustomerActivated.class, name = "CustomerActivatedEvt")})
     public interface CustomerEvent {
-        CustomerId customerId();
+        CustomerId getCustomerId();
     }
 
-    @Value.Immutable
-    @EventStyle
-    @JsonSerialize(as = CustomerCreatedEvt.class)
-    @JsonDeserialize(as = CustomerCreatedEvt.class)
-    public interface CustomerCreated extends CustomerEvent {
+    @Value
+    @Builder
+    public static class CustomerCreated implements CustomerEvent {
+        CustomerId customerId;
     }
 
-    @Value.Immutable
-    @EventStyle
-    @JsonSerialize(as = CustomerActivatedEvt.class)
-    @JsonDeserialize(as = CustomerActivatedEvt.class)
-    public interface CustomerActivated extends CustomerEvent {
-        LocalDateTime date();
+    @Value
+    @Builder
+    public static class CustomerActivated implements CustomerEvent {
+        CustomerId customerId;
+        LocalDateTime date;
     }
 
     // Aggregate root
 
-    @Value.Immutable
-    @AggregateRootStyle
-    @JsonSerialize(as = CustomerAgg.class)
-    @JsonDeserialize(as = CustomerAgg.class)
-    public interface Customer {
-        @Nullable
-        CustomerId id();
-        @Nullable
-        String name();
-        @Nullable
-        Integer age();
-        @Nullable
-        Boolean isActive();
-        @Nullable
-        LocalDateTime activeSince();
+    @Data
+    @Builder
+    @Wither
+    @AllArgsConstructor
+    public static class Customer {
+        CustomerId id;
+        String name;
+        Integer age;
+        Boolean isActive;
+        LocalDateTime activeSince;
     }
 
     // unit of work
 
-    @Value.Immutable
-    @UnitOfWorkStyle
-    @JsonSerialize(as = CustomerUnitOfWork.class)
-    @JsonDeserialize(as = CustomerUnitOfWork.class)
-    public interface CustomerUnitOfWork {
-        UnitOfWorkId id();
-        CustomerCommand command();
-        Long version();
-        List<CustomerEvent> events();
-        Instant instant();
+    @Value
+    @Builder
+    public static class CustomerUow {
+        UnitOfWorkId id;
+        CustomerCommand command;
+        Long version;
+        List<CustomerEvent> events;
+        Instant instant;
     }
 
 }

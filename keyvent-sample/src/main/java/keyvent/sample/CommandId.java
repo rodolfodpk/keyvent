@@ -1,8 +1,13 @@
 package keyvent.sample;
 
+import lombok.AllArgsConstructor;
+import lombok.Value;
+
 import java.io.Serializable;
 import java.util.UUID;
 
+@Value
+@AllArgsConstructor
 public class CommandId implements Serializable {
 
     private final UUID value;
@@ -10,32 +15,10 @@ public class CommandId implements Serializable {
     public CommandId() {
         this.value = UUID.randomUUID();
     }
-    public CommandId(UUID value) {
-        this.value = value;
-    }
 
     public UUID value() {
         return value;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof CommandId)) return false;
-        CommandId that = (CommandId) o;
-        return value.equals(that.value);
-    }
-
-    @Override
-    public int hashCode() {
-        return value.hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return "CommandId{" +
-                "value=" + value +
-                '}';
-    }
 }
 
