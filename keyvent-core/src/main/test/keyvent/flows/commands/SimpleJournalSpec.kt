@@ -3,11 +3,9 @@ package keyvent.flows.commands
 import javaslang.Tuple2
 import javaslang.collection.List
 import javaslang.collection.Map
-import keyvent.sample.CommandId
-import keyvent.sample.UnitOfWorkId
-import keyvent.sample.customer.*
-import keyvent.sample.customer.CustomerSchema.CreateCustomer
-import keyvent.sample.customer.CustomerSchema.CustomerUow
+import keyvent.sample.customer.CustomerSchema
+import keyvent.sample.customer.CustomerSchema.*
+
 import org.jetbrains.spek.api.Spek
 import java.time.Instant
 import java.time.LocalDateTime
@@ -17,9 +15,9 @@ import kotlin.test.assertTrue
 
 class SimpleJournalSpec : Spek() {
 
-    val createCustomerCmd: CreateCustomer = CreateCustomer.builder()
-            .commandId(CommandId())
-            .customerId(CustomerSchema.CustomerId(UUID.randomUUID()))
+    val createCustomerCmd: CustomerSchema.CreateCustomer = CreateCustomer.builder()
+            .commandId(CommandId(UUID.randomUUID()))
+            .customerId(CustomerId(UUID.randomUUID()))
             .name("alice")
             .age(35)
             .build()
@@ -28,17 +26,17 @@ class SimpleJournalSpec : Spek() {
             .id(UnitOfWorkId())
             .command(createCustomerCmd)
             .version(1)
-            .events(List.of(CustomerSchema.CustomerCreated.builder().customerId(createCustomerCmd.getCustomerId()).build()))
+            .events(List.of(CustomerCreated.builder().customerId(createCustomerCmd.getCustomerId()).build()))
             .instant(Instant.now())
             .build()
 
-    val activateCmd = CustomerSchema.ActivateCustomer.builder().commandId(CommandId())
+    val activateCmd = ActivateCustomer.builder().commandId(CommandId(UUID.randomUUID()))
             .customerId(createCustomerCmd.getCustomerId()).build()
 
     val uow2 = CustomerUow.builder().id(UnitOfWorkId())
             .command(activateCmd)
             .version(2)
-            .events(List.of(CustomerSchema.CustomerActivated.builder()
+            .events(List.of(CustomerActivated.builder()
                     .customerId(activateCmd.getCustomerId())
                     .date(LocalDateTime.now()).build()))
             .instant(Instant.now())
@@ -47,12 +45,12 @@ class SimpleJournalSpec : Spek() {
     init {
         given("An empty journal") {
             val map: Map<CustomerSchema.CustomerId, List<Tuple2<CustomerUow, Long>>> = javaslang.collection.HashMap.empty()
-            val journal = SimpleJournal<CustomerSchema.CustomerId, CustomerUow>(map)
+            val journal = SimpleJournal<CustomerSchema.CustomerId, CustomerSchema.CustomerUow>(map)
             on("adding a new unitOfWork with version=1") {
                 val globalSeq: Long? = journal.append(createCustomerCmd.getCustomerId(), uow1, 1L)
                 it("should result in a journal with the respective entry") {
-                    val expected: List<Tuple2<CustomerUow, Long>> = List.of(Tuple2(uow1, 1L))
-                    val current: List<Tuple2<CustomerUow, Long>> = journal.map().get(createCustomerCmd.getCustomerId()).get()
+                    val expected: List<Tuple2<CustomerSchema.CustomerUow, Long>> = List.of(Tuple2(uow1, 1L))
+                    val current: List<Tuple2<CustomerSchema.CustomerUow, Long>> = journal.map().get(createCustomerCmd.getCustomerId()).get()
                     assertEquals(expected, current)
                 }
                 it("should result in a globalSequence = 1") {
@@ -61,8 +59,8 @@ class SimpleJournalSpec : Spek() {
             }
         }
         given("An empty journal") {
-            val map: Map<CustomerSchema.CustomerId, List<Tuple2<CustomerUow, Long>>> = javaslang.collection.HashMap.empty()
-            val journal = SimpleJournal<CustomerSchema.CustomerId, CustomerUow>(map)
+            val map: Map<CustomerSchema.CustomerId, List<Tuple2<CustomerSchema.CustomerUow, Long>>> = javaslang.collection.HashMap.empty()
+            val journal = SimpleJournal<CustomerSchema.CustomerId, CustomerSchema.CustomerUow>(map)
             on("adding a new unitOfWork with version =2") {
                 it("should throw an exception since version should be 1") {
                     try {

@@ -1,6 +1,8 @@
 package keyvent
 
 import keyvent.flows.commands.SimpleJournalSpec
+import keyvent.flows.commands.SimpleRepositorySpec
+import keyvent.flows.commands.SimpleStateTransitionsTracker
 import org.junit.internal.RealSystem
 import org.junit.internal.TextListener
 import org.junit.runner.JUnitCore
@@ -11,7 +13,7 @@ class RunSamplesInJUnitTest {
     @org.junit.Test fun try_junit() {
         with(JUnitCore()) {
             addListener(TextListener(RealSystem()))
-            run(SimpleJournalSpec::class.java)
+            run(SimpleJournalSpec::class.java, SimpleRepositorySpec::class.java, SimpleStateTransitionsTracker::class.java)
         }
     }
 

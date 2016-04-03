@@ -5,8 +5,6 @@ import javaslang.collection.HashMap.empty
 import javaslang.collection.List
 import javaslang.collection.Map
 import javaslang.control.Option
-import keyvent.sample.CommandId
-import keyvent.sample.UnitOfWorkId
 import keyvent.sample.customer.CustomerSchema
 import keyvent.sample.customer.CustomerSchema.*
 import org.jetbrains.spek.api.Spek
@@ -18,7 +16,7 @@ import kotlin.test.assertEquals
 class SimpleRepositorySpec : Spek() {
 
     val createCustomerCmd: CustomerSchema.CreateCustomer = CreateCustomer.builder()
-            .commandId(CommandId())
+            .commandId(CommandId(UUID.randomUUID()))
             .customerId(CustomerId(UUID.randomUUID())).build()
 
     val uow1 = CustomerUow.builder()
@@ -29,7 +27,7 @@ class SimpleRepositorySpec : Spek() {
             .instant(Instant.now())
             .build()
 
-    val activateCmd = ActivateCustomer.builder().commandId(CommandId())
+    val activateCmd = ActivateCustomer.builder().commandId(CommandId(UUID.randomUUID()))
             .customerId(createCustomerCmd.getCustomerId()).build()
 
     val uow2 = CustomerUow.builder().id(UnitOfWorkId())
@@ -43,8 +41,8 @@ class SimpleRepositorySpec : Spek() {
 
     init {
         given("An empty event repo") {
-            val map: Map<CustomerSchema.CustomerId, List<Tuple2<CustomerUow, Long>>> = empty()
-            val eventRepo = SimpleEventRepository<CustomerSchema.CustomerId, CustomerUow>(map)
+            val map: Map<CustomerSchema.CustomerId, List<Tuple2<CustomerSchema.CustomerUow, Long>>> = empty()
+            val eventRepo = SimpleEventRepository<CustomerSchema.CustomerId, CustomerSchema.CustomerUow>(map)
             on("querying for a non existent id ") {
                 val customerId = CustomerId(UUID.randomUUID())
                 val uowList = eventRepo.eventsAfter(customerId, 0, Int.MAX_VALUE)

@@ -4,7 +4,6 @@ import javaslang.Function4;
 import javaslang.collection.CharSeq;
 import javaslang.collection.List;
 import javaslang.control.Validation;
-import keyvent.sample.CommandId;
 import keyvent.sample.customer.CustomerSchema;
 
 import javax.validation.ConstraintViolation;
@@ -21,7 +20,7 @@ public class CreateCustomerValidator {
     public static void main(String[] args) {
 
         CreateCustomer cmd = CreateCustomer.builder()
-                .commandId(new CommandId(UUID.randomUUID()))
+                .commandId(new CustomerSchema.CommandId(UUID.randomUUID()))
                 .customerId(new CustomerId(UUID.randomUUID()))
                 .name("!@#¨#(#(")
                 .age(17)
@@ -50,9 +49,9 @@ public class CreateCustomerValidator {
     private static final int MIN_AGE = 18;
 
     public Validation<List<String>, CustomerSchema.CreateCustomer> validate(
-            CommandId commandId, CustomerId customerId, String name, Integer age) {
+            CustomerSchema.CommandId commandId, CustomerId customerId, String name, Integer age) {
 
-        Function4<CommandId, CustomerSchema.CustomerId, String, Integer, CustomerSchema.CreateCustomer> f =
+        Function4<CustomerSchema.CommandId, CustomerSchema.CustomerId, String, Integer, CustomerSchema.CreateCustomer> f =
                 (commandId1, customerId1, s, integer) ->
                         CreateCustomer.builder()
                                 .commandId(commandId1)

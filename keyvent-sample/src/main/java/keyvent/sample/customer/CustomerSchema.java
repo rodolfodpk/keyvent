@@ -3,8 +3,6 @@ package keyvent.sample.customer;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import javaslang.collection.List;
-import keyvent.sample.CommandId;
-import keyvent.sample.UnitOfWorkId;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +11,7 @@ import lombok.experimental.Wither;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
+import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -24,15 +23,28 @@ public class CustomerSchema {
         UUID uuid;
     }
 
+    @Value
+    public static class CommandId {
+        UUID uuid;
+    }
+
+    @Value
+    public static class UnitOfWorkId implements Serializable {
+        UUID uuid;
+        public UnitOfWorkId() {
+            this.uuid = UUID.randomUUID();
+        }
+    }
+
     // commands
 
     @JsonTypeInfo(
             use = JsonTypeInfo.Id.NAME,
             include = JsonTypeInfo.As.PROPERTY,
-            property = "getCommandType")
+            property = "commandType")
     @JsonSubTypes({
-            @JsonSubTypes.Type(value = CreateCustomer.class, name = "CreateCustomerCmd"),
-            @JsonSubTypes.Type(value = CreateAndActivateCustomer.class, name = "CreateActivatedCustomerCmd")
+            @JsonSubTypes.Type(value = CreateCustomer.class, name = "CreateCustomer"),
+            @JsonSubTypes.Type(value = CreateAndActivateCustomer.class, name = "CreateActivatedCustomer")
     })
     public interface CustomerCommand {
         CommandId getCommandId();
@@ -42,6 +54,7 @@ public class CustomerSchema {
     @Value
     @Builder
     public static class CreateCustomer implements CustomerCommand {
+        String commandType;
         CommandId commandId;
         CustomerId customerId;
         @Pattern(regexp = "[a-zA-Z ]")
@@ -53,6 +66,7 @@ public class CustomerSchema {
     @Value
     @Builder
     public static class ActivateCustomer implements CustomerCommand {
+        String commandType;
         CommandId commandId;
         CustomerId customerId;
     }
@@ -60,6 +74,7 @@ public class CustomerSchema {
     @Value
     @Builder
     public static class CreateAndActivateCustomer implements CustomerCommand {
+        String commandType;
         CommandId commandId;
         CustomerId customerId;
     }
@@ -71,8 +86,8 @@ public class CustomerSchema {
             include = JsonTypeInfo.As.PROPERTY,
             property = "eventType")
     @JsonSubTypes({
-            @JsonSubTypes.Type(value = CustomerCreated.class, name = "CustomerCreatedEvt"),
-            @JsonSubTypes.Type(value = CustomerActivated.class, name = "CustomerActivatedEvt")})
+            @JsonSubTypes.Type(value = CustomerCreated.class, name = "CustomerCreated"),
+            @JsonSubTypes.Type(value = CustomerActivated.class, name = "CustomerActivated")})
     public interface CustomerEvent {
         CustomerId getCustomerId();
     }
@@ -80,12 +95,14 @@ public class CustomerSchema {
     @Value
     @Builder
     public static class CustomerCreated implements CustomerEvent {
+        String eventType;
         CustomerId customerId;
     }
 
     @Value
     @Builder
     public static class CustomerActivated implements CustomerEvent {
+        String eventType;
         CustomerId customerId;
         LocalDateTime date;
     }

@@ -70,9 +70,6 @@
 	<modules>
 		<module>keyvent-core</module>
 		<module>keyvent-sample</module>
-		<module>keyvent-tests</module>
-		<!--<module>keyvent-postgresql</module>-->
-		<!--<module>keyvent-kafka</module>-->
 	</modules>
 
 

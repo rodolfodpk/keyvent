@@ -2,7 +2,6 @@ package keyvent.flows.commands
 
 import javaslang.Tuple2
 import javaslang.collection.List
-import keyvent.SimpleStateTransitionsTracker
 import keyvent.sample.customer.CustomerEvtFn
 import keyvent.sample.customer.CustomerSchema
 import keyvent.sample.customer.CustomerSchema.*
@@ -16,7 +15,7 @@ class SimpleStateTransitionsTrackerSpec : Spek() {
     init {
         given("A fresh tracker for a given customer snapshot with version 0") {
             val snapshotZero = Tuple2(Customer.builder().build(), 0L)
-            val tracker: SimpleStateTransitionsTracker<CustomerSchema.CustomerEvent, Customer> =
+            val tracker: SimpleStateTransitionsTracker<CustomerSchema.CustomerEvent, CustomerSchema.Customer> =
                     SimpleStateTransitionsTracker(snapshotZero, CustomerEvtFn(), List.empty())
             on("simple checking") {
                 it ("should have the correct originalSnapshot") {
@@ -26,7 +25,7 @@ class SimpleStateTransitionsTrackerSpec : Spek() {
         }
         given("A fresh tracker for a given customer snapshot with version 0") {
             val snapshotZero = Tuple2(Customer.builder().build(), 0L)
-            val tracker: SimpleStateTransitionsTracker<CustomerSchema.CustomerEvent, Customer> =
+            val tracker: SimpleStateTransitionsTracker<CustomerEvent, Customer> =
                     SimpleStateTransitionsTracker(snapshotZero, CustomerEvtFn(), List.empty())
             on("applying an customerCreated event against it") {
                 val event: CustomerSchema.CustomerEvent = CustomerCreated.builder().customerId(CustomerId(UUID.randomUUID())).build()
@@ -47,7 +46,7 @@ class SimpleStateTransitionsTrackerSpec : Spek() {
         }
         given("A fresh tracker for a given customer snapshot with version 0") {
             val snapshotZero = Tuple2(Customer.builder().build(), 0L)
-            val tracker: SimpleStateTransitionsTracker<CustomerSchema.CustomerEvent, Customer> =
+            val tracker: SimpleStateTransitionsTracker<CustomerEvent, Customer> =
                     SimpleStateTransitionsTracker(snapshotZero, CustomerEvtFn(), List.empty())
             on("applying both customerCreated and customerActivated events against it") {
                 val event1 = CustomerCreated.builder().customerId(CustomerId(UUID.randomUUID())).build()

@@ -1,4 +1,4 @@
-package keyvent;
+package keyvent.flows.commands;
 
 import javaslang.Function2;
 import javaslang.Tuple2;
