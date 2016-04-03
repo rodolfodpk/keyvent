@@ -11,14 +11,13 @@ public class CustomerEvtFn implements Function2<CustomerSchema.CustomerEvent, Cu
 
     @Override
     public CustomerSchema.Customer apply(CustomerSchema.CustomerEvent customerEvent, CustomerSchema.Customer customer) {
-//        return Match(customerEvent).of(
-//                Case(instanceOf(CustomerSchema.CustomerCreated.class),
-//                        event -> customer.withId(event.customerId())),
-//                Case(instanceOf(CustomerSchema.CustomerActivated.class),
-//                        event -> customer.withIsActive(true).withActiveSince(event.date())
-//                )
-//        );
-        return null;
+        return Match(customerEvent).of(
+                Case(instanceOf(CustomerSchema.CustomerCreated.class),
+                        event -> customer.withId(event.getCustomerId())),
+                Case(instanceOf(CustomerSchema.CustomerActivated.class),
+                        event -> customer.withIsActive(true).withActiveSince(event.getDate())
+                )
+        );
     }
 }
 
