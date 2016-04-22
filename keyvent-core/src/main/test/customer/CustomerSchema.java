@@ -1,4 +1,4 @@
-package keyvent.sample.customer;
+package customer;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -9,8 +9,6 @@ import lombok.Data;
 import lombok.Value;
 import lombok.experimental.Wither;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -57,9 +55,7 @@ public class CustomerSchema {
         String commandType;
         CommandId commandId;
         CustomerId customerId;
-        @Pattern(regexp = "[a-zA-Z ]")
         String name;
-        @Min(18)
         Integer age;
     }
 

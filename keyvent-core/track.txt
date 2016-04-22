@@ -3,3 +3,14 @@ http://stackoverflow.com/questions/16265692/clojure-equivalent-of-java-concurren
 http://archive.eclipse.org/jetty/8.0.0.M2/apidocs/org/eclipse/jetty/util/MultiMap.html
 http://dhruba.name/2011/06/11/concurrency-pattern-concurrent-multimaps-in-java/
 http://stackoverflow.com/questions/35304864/memoization-function-in-kotlin
+
+
+http://www.infoq.com/br/presentations/postgresql-e-porque-voce-nao-precisa-de-nosql
+https://github.com/intrbiz/util/tree/master/queue/src/main/java/com/intrbiz/queue/pgq
+
+at least once usando pqueue ?
+only once usando hstore key value ? (idempotency)
+json p/ store (indices)
+
+
+

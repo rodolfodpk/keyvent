@@ -1,8 +1,10 @@
 package keyvent.flows.commands;
 
+import keyvent.data.Version;
+import keyvent.data.GlobalEventSeq;
+
 public interface Journal<ID, UOW> {
 
-    Long append(ID targetId, UOW unitOfWork, Long version);
+    GlobalEventSeq append(ID targetId, UOW unitOfWork, Version resultingVersion);
 
-    Long globalEventSequence();
 }
