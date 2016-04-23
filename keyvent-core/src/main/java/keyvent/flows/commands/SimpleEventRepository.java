@@ -1,9 +1,9 @@
 package keyvent.flows.commands;
 
 import javaslang.Tuple2;
+import javaslang.collection.HashMap;
 import javaslang.collection.List;
 import javaslang.collection.Map;
-import javaslang.control.Option;
 import keyvent.data.Version;
 
 import java.util.Objects;
@@ -11,6 +11,10 @@ import java.util.Objects;
 public class SimpleEventRepository<ID, UOW> implements EventRepository<ID, UOW> {
 
     final Map<ID, List<Tuple2<UOW, Version>>> map;
+
+    public SimpleEventRepository() {
+        this.map = HashMap.empty();
+    }
 
     public SimpleEventRepository(Map<ID, List<Tuple2<UOW, Version>>> map) {
         this.map = map;
@@ -28,9 +32,4 @@ public class SimpleEventRepository<ID, UOW> implements EventRepository<ID, UOW> 
                 .toList();
     }
 
-    @Override
-    public Option<Version> lastVersion(ID id) {
-        List<Tuple2<UOW, Version>> events = map.get(id).getOrElse(List.empty());
-        return events.size() == 0 ? Option.none() : Option.of(events.get(events.size()-1)._2);
-    }
 }
