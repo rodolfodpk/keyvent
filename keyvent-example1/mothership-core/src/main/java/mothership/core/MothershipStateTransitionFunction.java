@@ -14,7 +14,7 @@ import static mothership.core.MothershipDataSchema.*;
 import static mothership.core.MothershipDataSchema.MothershipStatus.AVALIABLE;
 import static mothership.core.MothershipDataSchema.MothershipStatus.ON_MISSION;
 
-class MothershipEventFunction implements Function2<MothershipEvent, MothershipAggregateRoot, MothershipAggregateRoot> {
+class MothershipStateTransitionFunction implements Function2<MothershipEvent, MothershipAggregateRoot, MothershipAggregateRoot> {
 
     @Override
     public MothershipAggregateRoot apply(MothershipEvent mothershipEvent, MothershipAggregateRoot mothership) {

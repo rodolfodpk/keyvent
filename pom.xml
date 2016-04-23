@@ -43,7 +43,7 @@
 
 	<modules>
 		<module>keyvent-core</module>
-		<module>keyvent-sample</module>
+		<module>keyvent-example1</module>
 	</modules>
 
 	<dependencyManagement>
@@ -62,12 +62,12 @@
 			</dependency>
 
 			<!-- test -->
-			<dependency>
-				<groupId>com.rdpk</groupId>
-				<artifactId>mothership</artifactId>
-				<version>${project.version}</version>
-				<scope>test</scope>
-			</dependency>
+			<!--<dependency>-->
+				<!--<groupId>com.rdpk</groupId>-->
+				<!--<artifactId>mothership</artifactId>-->
+				<!--<version>${project.version}</version>-->
+				<!--<scope>test</scope>-->
+			<!--</dependency>-->
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>

@@ -16,6 +16,8 @@ import java.util.UUID;
 
 public class MothershipDataSchema {
 
+    // value objects
+
     @Value public static class MothershipId { String id; }
 
     public enum MothershipStatus { AVALIABLE, ON_MISSION, FINISHED_MISSION}
@@ -63,19 +65,19 @@ public class MothershipDataSchema {
         MothershipId getMothershipId();
     }
 
-    @Value @Builder public static class CreateMothership { String cmdType; CommandId commandId; MothershipId id; Set<Rover> rovers; }
+    @Value @Builder public static class CreateMothership { String cmdType = classOf(this); CommandId commandId; MothershipId id; Set<Rover> rovers; }
 
-    @Value @Builder public static class StartsMissionTo { String cmdType; CommandId commandId; MothershipId mothershipId; MissionId missionId; Plateau plateau; }
+    @Value @Builder public static class StartsMissionTo { String cmdType = classOf(this); CommandId commandId; MothershipId mothershipId; MissionId missionId; Plateau plateau; }
 
-    @Value @Builder public static class LaunchRoverTo { String cmdType; CommandId commandId; MothershipId mothershipId; RoverId roverId; PlateauLocation location; RoverDirection direction; }
+    @Value @Builder public static class LaunchRoverTo { String cmdType = classOf(this); CommandId commandId; MothershipId mothershipId; RoverId roverId; PlateauLocation location; RoverDirection direction; }
 
-    @Value @Builder public static class ChangeRoverDirection { String cmdType; CommandId commandId; MothershipId mothershipId; RoverId roverId; RoverDirection direction; }
+    @Value @Builder public static class ChangeRoverDirection { String cmdType = classOf(this); CommandId commandId; MothershipId mothershipId; RoverId roverId; RoverDirection direction; }
 
-    @Value @Builder public static class MoveRover { String cmdType; CommandId commandId; MothershipId mothershipId; RoverId roverId; int steps; }
+    @Value @Builder public static class MoveRover { String cmdType = classOf(this); CommandId commandId; MothershipId mothershipId; RoverId roverId; int steps; }
 
-    @Value @Builder public static class ComeBackRover { String cmdType; CommandId commandId; MothershipId mothershipId; RoverId roverId; }
+    @Value @Builder public static class ComeBackRover { String cmdType = classOf(this); CommandId commandId; MothershipId mothershipId; RoverId roverId; }
 
-    @Value @Builder public static class FinishCurrentMission { String cmdType; CommandId commandId; MothershipId mothershipId; }
+    @Value @Builder public static class FinishCurrentMission { String cmdType = classOf(this); CommandId commandId; MothershipId mothershipId; }
 
     // events
 
@@ -97,19 +99,19 @@ public class MothershipDataSchema {
         MothershipId getMothershipId();
     }
 
-    @Value @Builder public static class MothershipCreated { String evtType = this.getClass().getSimpleName(); MothershipId mothershipId; Set<Rover> rovers; }
+    @Value @Builder public static class MothershipCreated { String evtType = classOf(this); MothershipId mothershipId; Set<Rover> rovers; }
 
-    @Value @Builder public static class MissionStarted {String evtType = this.getClass().getSimpleName(); MothershipId mothershipId; Mission mission; }
+    @Value @Builder public static class MissionStarted {String evtType = classOf(this); MothershipId mothershipId; Mission mission; }
 
-    @Value @Builder public static class RoverLaunched {String evtType = this.getClass().getSimpleName(); MothershipId mothershipId; RoverId roverId; PlateauLocation location; RoverDirection direction; }
+    @Value @Builder public static class RoverLaunched {String evtType = classOf(this); MothershipId mothershipId; RoverId roverId; PlateauLocation location; RoverDirection direction; }
 
-    @Value @Builder public static class RoverDirectionChanged {String evtType = this.getClass().getSimpleName(); MothershipId mothershipId; MissionId missionId; RoverId roverId; RoverDirection newDirection; }
+    @Value @Builder public static class RoverDirectionChanged {String evtType = classOf(this); MothershipId mothershipId; MissionId missionId; RoverId roverId; RoverDirection newDirection; }
 
-    @Value @Builder public static class RoverMoved {String evtType = this.getClass().getSimpleName(); MothershipId mothershipId; MissionId missionId; RoverId roverId; int steps; }
+    @Value @Builder public static class RoverMoved {String evtType = classOf(this); MothershipId mothershipId; MissionId missionId; RoverId roverId; int steps; }
 
-    @Value @Builder public static class RoverIsBack {String evtType = this.getClass().getSimpleName(); MothershipId mothershipId; MissionId missionId; RoverId roverId; }
+    @Value @Builder public static class RoverIsBack {String evtType = classOf(this); MothershipId mothershipId; MissionId missionId; RoverId roverId; }
 
-    @Value @Builder public static class MissionFinished {String evtType = this.getClass().getSimpleName(); MothershipId mothershipId; MissionId missionId; }
+    @Value @Builder public static class MissionFinished {String evtType = classOf(this); MothershipId mothershipId; MissionId missionId; }
 
     // unitofwork
 
@@ -123,6 +125,12 @@ public class MothershipDataSchema {
         List<MothershipEvent> events;
         LocalDateTime localDateTime;
         Long resultingVersion;
+    }
+
+    // helpers
+
+    public static String classOf(Object obj) {
+        return obj.getClass().getSimpleName();
     }
 
 }
