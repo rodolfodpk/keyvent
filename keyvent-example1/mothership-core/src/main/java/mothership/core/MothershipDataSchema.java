@@ -11,7 +11,9 @@ import lombok.Value;
 import mothership.core.entities.Mission;
 import mothership.core.entities.Plateau;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -25,7 +27,7 @@ public class MothershipDataSchema {
 
     @Value public static class MissionId { String id; }
 
-    @Value public static class PlateauDimension { @Min(2) int height; @Min(2) int width; }
+    @Value public static class PlateauDimension { @Min(value = 2) int height; @Min(2) int width; }
 
     @Value public static class PlateauLocation { @Min(0) int x; @Min(0) int y; }
 
@@ -69,16 +71,20 @@ public class MothershipDataSchema {
     // String cmdType = classOf(this);
 
     @Value @Builder @AllArgsConstructor @JsonTypeName("CreateMothership")
-    public static class CreateMothership implements MothershipCommand { CommandId commandId; MothershipId mothershipId; Set<Rover> rovers; }
+    public static class CreateMothership implements MothershipCommand { CommandId commandId; MothershipId mothershipId;
+        Set<Rover> rovers; }
 
     @Value @Builder @AllArgsConstructor @JsonTypeName("StartsMissionTo")
-    public static class StartsMissionTo implements MothershipCommand {CommandId commandId; MothershipId mothershipId; MissionId missionId; Plateau plateau; }
+    public static class StartsMissionTo implements MothershipCommand {CommandId commandId; MothershipId mothershipId;
+        MissionId missionId; @NotNull @Valid Plateau plateau; }
 
     @Value @Builder @AllArgsConstructor @JsonTypeName("LaunchRoverTo")
-    public static class LaunchRoverTo implements MothershipCommand { CommandId commandId; MothershipId mothershipId; RoverId roverId; PlateauLocation location; RoverDirection direction; }
+    public static class LaunchRoverTo implements MothershipCommand { CommandId commandId; MothershipId mothershipId; RoverId roverId;
+        @Valid PlateauLocation location; RoverDirection direction; }
 
     @Value @Builder @AllArgsConstructor @JsonTypeName("ChangeRoverDirection")
-    public static class ChangeRoverDirection implements MothershipCommand { CommandId commandId; MothershipId mothershipId; RoverId roverId; RoverDirection direction; }
+    public static class ChangeRoverDirection implements MothershipCommand { CommandId commandId; MothershipId mothershipId;
+        RoverId roverId; RoverDirection direction; }
 
     @Value @Builder @AllArgsConstructor @JsonTypeName("MoveRover")
     public static class MoveRover implements MothershipCommand { CommandId commandId; MothershipId mothershipId; RoverId roverId; int steps; }

@@ -27,12 +27,13 @@ public class MothershipAggregateRoot {
     MothershipId id;
     Set<Rover> rovers;
 
+    // mutable data
     MothershipStatus status;
     Option<Mission> mission;
-
-    transient TemperatureService temperatureService;
-
     Map<Tuple2<PlateauLocation, RoverDirection>, RoverId> landedRovers;
+
+    // service
+    transient TemperatureService temperatureService;
 
     // events emitters
 

@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Value;
 import lombok.experimental.Wither;
 
+import javax.validation.Valid;
+
 import static mothership.core.MothershipDataSchema.*;
 
 @Value
@@ -16,6 +18,7 @@ import static mothership.core.MothershipDataSchema.*;
 public class Plateau {
 
     PlateauId id;
+    @Valid
     PlateauDimension dimension;
 
     public boolean canLaunchRover(RoverId roverId, PlateauLocation location, RoverDirection direction,

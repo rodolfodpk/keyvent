@@ -1,4 +1,4 @@
-package keyvent.flows.customer;
+package mothership.core;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
@@ -13,7 +13,6 @@ import javaslang.collection.Map;
 import javaslang.control.Option;
 import javaslang.jackson.datatype.JavaslangModule;
 import lombok.val;
-import mothership.core.MothershipAggregateRoot;
 import mothership.core.entities.Mission;
 import mothership.core.entities.Plateau;
 import org.junit.Ignore;
@@ -28,7 +27,7 @@ import static org.junit.Assert.assertEquals;
 
 public class SerializationTest {
 
-    static ObjectMapper mapper = new ObjectMapper();
+    static final ObjectMapper mapper = new ObjectMapper();
     static {
         mapper.setDefaultPrettyPrinter(new DefaultPrettyPrinter());
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
@@ -131,7 +130,6 @@ public class SerializationTest {
         val typeRefT2 = new TypeReference<Tuple2<PlateauLocation, RoverDirection>>() {};
         assertEquals(t2, mapper.readerFor(typeRefT2).readValue(tuple2AsJson));
 
-
         // map with tuple2 as key
         Map<Tuple2<PlateauLocation, RoverDirection>, RoverId> landedRovers =
                 HashMap.of(Tuple.of(new PlateauLocation(0, 0), RoverDirection.NORTH), new RoverId("r1"));
@@ -141,5 +139,7 @@ public class SerializationTest {
         assertEquals(landedRovers, mapper.readerFor(typeRef).readValue(mapAsJson));
 
     }
+
+    // TODO test events
 
 }
