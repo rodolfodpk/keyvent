@@ -17,7 +17,6 @@ import static junit.framework.Assert.assertEquals;
 
 public class SimpleJournalTest {
 
-
     CustomerCommand createCustomerCmd = CreateCustomer.builder()
             .commandId(new CommandId(UUID.randomUUID()))
             .customerId(new CustomerId(UUID.randomUUID())).build();
@@ -55,7 +54,7 @@ public class SimpleJournalTest {
     @Test(expected = Exception.class)
     public void after_adding_uow2_v2_without_uow1_v1_it_should_reject(){
         val journal = new SimpleJournal<CustomerId, CustomerUow>();
-        val globalSeq = journal.append(createCustomerCmd.getCustomerId(), uow2, new Version(2L));
+        journal.append(createCustomerCmd.getCustomerId(), uow2, new Version(2L));
     }
 
     @Test

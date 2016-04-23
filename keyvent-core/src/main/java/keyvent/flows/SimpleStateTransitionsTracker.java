@@ -6,13 +6,21 @@ import keyvent.data.Snapshot;
 
 import java.util.Objects;
 
-import static keyvent.data.Version.*;
+import static keyvent.data.Version.nextVersion;
 
 public class SimpleStateTransitionsTracker<EV, AR> implements StateTransitionsTracker<EV, AR> {
 
     final Snapshot<AR> originalSnapshot;
     final Function2<EV, AR, AR> applyEventsFn;
     List<StateTransition<EV, AR>> stateTransitions;
+
+    public SimpleStateTransitionsTracker(Snapshot<AR> originalSnapshot, Function2<EV, AR, AR> applyEventsFn) {
+        Objects.requireNonNull(originalSnapshot);
+        Objects.requireNonNull(applyEventsFn);
+        this.originalSnapshot = originalSnapshot;
+        this.applyEventsFn = applyEventsFn;
+        this.stateTransitions = List.empty();
+    }
 
     public SimpleStateTransitionsTracker(Snapshot<AR> originalSnapshot, Function2<EV, AR, AR> applyEventsFn, List<StateTransition<EV, AR>> stateTransitions) {
         Objects.requireNonNull(originalSnapshot);
