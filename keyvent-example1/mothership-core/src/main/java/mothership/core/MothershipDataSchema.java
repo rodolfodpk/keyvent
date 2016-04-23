@@ -2,6 +2,7 @@ package mothership.core;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import javaslang.collection.List;
 import javaslang.collection.Set;
 import lombok.AllArgsConstructor;
@@ -36,9 +37,9 @@ public class MothershipDataSchema {
 
     public enum RoverDirection { NORTH, SOUTH, EAST, WEST;}
 
-    @Value public static class CommandId { UUID uuid; }
+    @Value public static class CommandId { UUID uuid; public CommandId() { this.uuid = UUID.randomUUID(); } }
 
-    @Value public static class UnitOfWorkId { UUID uuid; }
+    @Value public static class UnitOfWorkId { UUID uuid; public UnitOfWorkId() { this.uuid = UUID.randomUUID(); }}
 
     // services
 
@@ -49,7 +50,7 @@ public class MothershipDataSchema {
     @JsonTypeInfo(
             use = JsonTypeInfo.Id.NAME,
             include = JsonTypeInfo.As.PROPERTY,
-            property = "cmdType")
+            property = "@cmdType")
     @JsonSubTypes({
             @JsonSubTypes.Type(value = CreateMothership.class, name = "CreateMothership"),
             @JsonSubTypes.Type(value = StartsMissionTo.class, name = "StartsMissionTo"),
@@ -65,26 +66,36 @@ public class MothershipDataSchema {
         MothershipId getMothershipId();
     }
 
-    @Value @Builder public static class CreateMothership { String cmdType = classOf(this); CommandId commandId; MothershipId id; Set<Rover> rovers; }
+    // String cmdType = classOf(this);
 
-    @Value @Builder public static class StartsMissionTo { String cmdType = classOf(this); CommandId commandId; MothershipId mothershipId; MissionId missionId; Plateau plateau; }
+    @Value @Builder @AllArgsConstructor @JsonTypeName("CreateMothership")
+    public static class CreateMothership implements MothershipCommand { CommandId commandId; MothershipId mothershipId; Set<Rover> rovers; }
 
-    @Value @Builder public static class LaunchRoverTo { String cmdType = classOf(this); CommandId commandId; MothershipId mothershipId; RoverId roverId; PlateauLocation location; RoverDirection direction; }
+    @Value @Builder @AllArgsConstructor @JsonTypeName("StartsMissionTo")
+    public static class StartsMissionTo implements MothershipCommand {CommandId commandId; MothershipId mothershipId; MissionId missionId; Plateau plateau; }
 
-    @Value @Builder public static class ChangeRoverDirection { String cmdType = classOf(this); CommandId commandId; MothershipId mothershipId; RoverId roverId; RoverDirection direction; }
+    @Value @Builder @AllArgsConstructor @JsonTypeName("LaunchRoverTo")
+    public static class LaunchRoverTo implements MothershipCommand { CommandId commandId; MothershipId mothershipId; RoverId roverId; PlateauLocation location; RoverDirection direction; }
 
-    @Value @Builder public static class MoveRover { String cmdType = classOf(this); CommandId commandId; MothershipId mothershipId; RoverId roverId; int steps; }
+    @Value @Builder @AllArgsConstructor @JsonTypeName("ChangeRoverDirection")
+    public static class ChangeRoverDirection implements MothershipCommand { CommandId commandId; MothershipId mothershipId; RoverId roverId; RoverDirection direction; }
 
-    @Value @Builder public static class ComeBackRover { String cmdType = classOf(this); CommandId commandId; MothershipId mothershipId; RoverId roverId; }
+    @Value @Builder @AllArgsConstructor @JsonTypeName("MoveRover")
+    public static class MoveRover implements MothershipCommand { CommandId commandId; MothershipId mothershipId; RoverId roverId; int steps; }
 
-    @Value @Builder public static class FinishCurrentMission { String cmdType = classOf(this); CommandId commandId; MothershipId mothershipId; }
+    @Value @Builder @AllArgsConstructor @JsonTypeName("ComeBackRover")
+    public static class ComeBackRover implements MothershipCommand { CommandId commandId; MothershipId mothershipId; RoverId roverId; }
+
+    @Value @Builder @AllArgsConstructor @JsonTypeName("FinishCurrentMission")
+    public static class FinishCurrentMission implements MothershipCommand { CommandId commandId; MothershipId mothershipId; }
+
 
     // events
 
     @JsonTypeInfo(
             use = JsonTypeInfo.Id.NAME,
             include = JsonTypeInfo.As.PROPERTY,
-            property = "evtType")
+            property = "@evtType")
     @JsonSubTypes({
             @JsonSubTypes.Type(value = MothershipCreated.class, name = "MothershipCreated"),
             @JsonSubTypes.Type(value = MissionStarted.class, name = "MissionStarted"),
@@ -99,19 +110,26 @@ public class MothershipDataSchema {
         MothershipId getMothershipId();
     }
 
-    @Value @Builder public static class MothershipCreated { String evtType = classOf(this); MothershipId mothershipId; Set<Rover> rovers; }
+    @Value @Builder @AllArgsConstructor @JsonTypeName("CreateMothership")
+    public static class MothershipCreated implements MothershipEvent {MothershipId mothershipId; Set<Rover> rovers; }
 
-    @Value @Builder public static class MissionStarted {String evtType = classOf(this); MothershipId mothershipId; Mission mission; }
+    @Value @Builder @AllArgsConstructor @JsonTypeName("CreateMothership")
+    public static class MissionStarted implements MothershipEvent {MothershipId mothershipId; Mission mission; }
 
-    @Value @Builder public static class RoverLaunched {String evtType = classOf(this); MothershipId mothershipId; RoverId roverId; PlateauLocation location; RoverDirection direction; }
+    @Value @Builder @AllArgsConstructor @JsonTypeName("CreateMothership")
+    public static class RoverLaunched implements MothershipEvent {MothershipId mothershipId; RoverId roverId; PlateauLocation location; RoverDirection direction; }
 
-    @Value @Builder public static class RoverDirectionChanged {String evtType = classOf(this); MothershipId mothershipId; MissionId missionId; RoverId roverId; RoverDirection newDirection; }
+    @Value @Builder @AllArgsConstructor @JsonTypeName("CreateMothership")
+    public static class RoverDirectionChanged implements MothershipEvent {MothershipId mothershipId; MissionId missionId; RoverId roverId; RoverDirection newDirection; }
 
-    @Value @Builder public static class RoverMoved {String evtType = classOf(this); MothershipId mothershipId; MissionId missionId; RoverId roverId; int steps; }
+    @Value @Builder @AllArgsConstructor @JsonTypeName("CreateMothership")
+    public static class RoverMoved implements MothershipEvent {MothershipId mothershipId; MissionId missionId; RoverId roverId; int steps; }
 
-    @Value @Builder public static class RoverIsBack {String evtType = classOf(this); MothershipId mothershipId; MissionId missionId; RoverId roverId; }
+    @Value @Builder @AllArgsConstructor @JsonTypeName("CreateMothership")
+    public static class RoverIsBack implements MothershipEvent {MothershipId mothershipId; MissionId missionId; RoverId roverId; }
 
-    @Value @Builder public static class MissionFinished {String evtType = classOf(this); MothershipId mothershipId; MissionId missionId; }
+    @Value @Builder @AllArgsConstructor @JsonTypeName("CreateMothership")
+    public static class MissionFinished implements MothershipEvent {MothershipId mothershipId; MissionId missionId; }
 
     // unitofwork
 

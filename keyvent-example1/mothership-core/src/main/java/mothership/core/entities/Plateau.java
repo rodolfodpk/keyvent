@@ -2,7 +2,6 @@ package mothership.core.entities;
 
 import javaslang.Tuple2;
 import javaslang.collection.Map;
-import javaslang.control.Option;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
@@ -18,12 +17,12 @@ public class Plateau {
 
     PlateauId id;
     PlateauDimension dimension;
-    Map<Tuple2<PlateauLocation, RoverDirection>, RoverId> rovers;
-    transient Option<TemperatureService> temperatureService;
 
-    public boolean canLaunchRover(RoverId roverId, PlateauLocation location, RoverDirection direction) {
+    public boolean canLaunchRover(RoverId roverId, PlateauLocation location, RoverDirection direction,
+                                  TemperatureService temperatureService,
+                                  Map<Tuple2<PlateauLocation, RoverDirection>, RoverId> rovers) {
 
-        if (temperatureService.get().currentTemperatureInCelsius() > 100 /*celsius*/) {
+        if (temperatureService.currentTemperatureInCelsius() > 100 /*celsius*/) {
             throw new IllegalStateException("this plateau is too hot at this moment");
         }
         if (rovers.containsKey(new Tuple2<>(location, direction))) {

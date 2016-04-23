@@ -86,6 +86,11 @@
                 <artifactId>jackson-datatype-jsr310</artifactId>
                 <version>${jackson-core-version}</version>
             </dependency>
+            <dependency>
+                <groupId>io.javaslang</groupId>
+                <artifactId>javaslang-jackson</artifactId>
+                <version>${javaslang-jackson.version}</version>
+            </dependency>
 
             <!-- test -->
 

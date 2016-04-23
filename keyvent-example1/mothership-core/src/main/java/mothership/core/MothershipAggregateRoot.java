@@ -1,6 +1,8 @@
 package mothership.core;
 
+import javaslang.Tuple2;
 import javaslang.collection.List;
+import javaslang.collection.Map;
 import javaslang.collection.Set;
 import javaslang.control.Option;
 import lombok.AllArgsConstructor;
@@ -28,6 +30,10 @@ public class MothershipAggregateRoot {
     MothershipStatus status;
     Option<Mission> mission;
 
+    transient TemperatureService temperatureService;
+
+    Map<Tuple2<PlateauLocation, RoverDirection>, RoverId> landedRovers;
+
     // events emitters
 
     public List<? super MothershipEvent> create(MothershipId id, Set<Rover> rovers) {
@@ -45,7 +51,7 @@ public class MothershipAggregateRoot {
     public List<? super MothershipEvent> landRover(RoverId roverId, PlateauLocation location, RoverDirection direction) {
         isNotNew();
         statusIs(ON_MISSION);
-        mission.get().canLaunchRover(roverId, location, direction);
+        mission.get().canLaunchRover(roverId, location, direction, temperatureService, landedRovers);
         return List.of(new RoverLaunched(id, roverId, location, direction));
     }
 
