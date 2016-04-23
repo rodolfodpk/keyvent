@@ -1,10 +1,11 @@
 package keyvent.flows.commands;
 
 import javaslang.Tuple2;
+import javaslang.collection.HashMap;
 import javaslang.collection.List;
 import javaslang.collection.Map;
-import keyvent.data.Version;
 import keyvent.data.GlobalEventSeq;
+import keyvent.data.Version;
 
 import java.util.Objects;
 
@@ -12,6 +13,11 @@ public class SimpleJournal<ID, UOW> implements Journal<ID, UOW> {
 
     private Map<ID, List<Tuple2<UOW, Version>>> map;
     private GlobalEventSeq globalEventSequence;
+
+    public SimpleJournal() {
+        this.map = HashMap.empty();
+        this.globalEventSequence = new GlobalEventSeq(new Integer(map.size()).longValue());
+    }
 
     public SimpleJournal(Map<ID, List<Tuple2<UOW, Version>>> map) {
         Objects.requireNonNull(map);

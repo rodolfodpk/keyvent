@@ -15,6 +15,7 @@
 		<jackson-core-version>2.7.2</jackson-core-version>
 		<hibernate-validator.version>5.2.4.Final</hibernate-validator.version>
 		<javax.el-api.version>2.2.4</javax.el-api.version>
+		<kotlin.version>1.0.0</kotlin.version>
 	</properties>
 
 	<build>
@@ -74,7 +75,7 @@
 				<scope>test</scope>
 			</dependency>
 
-			<!-- json fo test-->
+			<!-- json for test-->
 
 			<dependency>
 				<groupId>com.fasterxml.jackson.core</groupId>
@@ -94,7 +95,16 @@
 				<version>${jackson-core-version}</version>
 				<scope>test</scope>
 			</dependency>
+
 		</dependencies>
 	</dependencyManagement>
+
+	<repositories>
+		<repository>
+			<id>jebrains-all</id>
+			<url>http://repository.jetbrains.com/all</url>
+		</repository>
+	</repositories>
+
 
 </project>
