@@ -1,8 +1,6 @@
 package mothership.core;
 
-import javaslang.Tuple2;
 import javaslang.collection.List;
-import javaslang.collection.Map;
 import javaslang.collection.Set;
 import javaslang.control.Option;
 import lombok.AllArgsConstructor;
@@ -30,16 +28,16 @@ public class MothershipAggregateRoot {
     // mutable data
     MothershipStatus status;
     Option<Mission> mission;
-    Map<Tuple2<PlateauLocation, RoverDirection>, RoverId> landedRovers;
 
     // service
     transient TemperatureService temperatureService;
 
     // events emitters
 
-    public List<? super MothershipEvent> create(MothershipId id, Set<Rover> rovers) {
+    public List<? super MothershipEvent> create(MothershipId id, Set<Rover> avaliableRovers) {
         isNew();
-        return List.of(new MothershipCreated(id, rovers));
+        hasAtLeastOneRover(avaliableRovers.size());
+        return List.of(new MothershipCreated(id, avaliableRovers));
     }
 
     public List<? super MothershipEvent> startMission(MissionId missionId, Plateau plateau) {
@@ -49,11 +47,11 @@ public class MothershipAggregateRoot {
         return List.of(new MissionStarted(id, new Mission(missionId, plateau)));
     }
 
-    public List<? super MothershipEvent> landRover(RoverId roverId, PlateauLocation location, RoverDirection direction) {
+    public List<? super MothershipEvent> landRover(RoverId roverId, RoverPosition roverPosition) {
         isNotNew();
         statusIs(ON_MISSION);
-        mission.get().canLaunchRover(roverId, location, direction, temperatureService, landedRovers);
-        return List.of(new RoverLaunched(id, roverId, location, direction));
+        mission.get().canLaunchRover(roverId, roverPosition, temperatureService);
+        return List.of(new RoverLaunched(id, roverId, roverPosition));
     }
 
     // guards
@@ -66,6 +64,12 @@ public class MothershipAggregateRoot {
 
     void isNew() {
         Objects.isNull(id);
+    }
+
+    void hasAtLeastOneRover(int howManyRovers) {
+         if (howManyRovers == 0) {
+             throw new IllegalStateException("you can't start a mission without any rover");
+         }
     }
 
     void isNotNew() {

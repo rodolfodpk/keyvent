@@ -31,7 +31,6 @@ public class CommandsValidationTest {
         assertEquals(constraintViolations.size(), 1);
         assertEquals("plateau", constraintViolations.iterator().next().getPropertyPath().toString());
         assertEquals("may not be null", constraintViolations.iterator().next().getMessage());
-
     }
 
     @Test
@@ -39,7 +38,7 @@ public class CommandsValidationTest {
 
         val mothershipId = new MothershipId("voyager");
         val missionId = new MissionId("deep space");
-        val plateau = Plateau.builder().id(new PlateauId("plateau1")).dimension(new PlateauDimension(1, 3)).build();
+        val plateau = new Plateau(new PlateauId("plateau1"), new PlateauDimension(1, 3));
         val cmd = StartsMissionTo.builder().mothershipId(mothershipId).missionId(missionId).plateau(plateau).build();
 
         ValidatorFactory factory = javax.validation.Validation.buildDefaultValidatorFactory();
@@ -51,5 +50,7 @@ public class CommandsValidationTest {
         assertEquals("must be greater than or equal to 2", constraintViolations.iterator().next().getMessage());
 
     }
+
+    // TODO there are more to test ?
 
 }

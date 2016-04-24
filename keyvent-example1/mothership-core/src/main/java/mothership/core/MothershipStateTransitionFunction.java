@@ -3,6 +3,7 @@ package mothership.core;
 
 import javaslang.Function2;
 import javaslang.Tuple2;
+import javaslang.collection.HashMap;
 import javaslang.control.Option;
 import mothership.core.entities.Mission;
 import mothership.core.entities.Plateau;
@@ -25,10 +26,15 @@ class MothershipStateTransitionFunction implements Function2<MothershipEvent, Mo
                         event -> mothership.withStatus(ON_MISSION).withMission(Option.of(event.getMission()))
                 ),
                 Case(instanceOf(RoverLaunched.class),
-                        event -> mothership.withLandedRovers(mothership.getLandedRovers().put(new Tuple2<>(event.getLocation(), event.getDirection()), event.getRoverId())
-                        )
-                )
-        );
+                        event -> {
+                            Mission currentMission = mothership.getMission().get();
+                            Plateau currentPlateau = currentMission.getPlateau();
+                            Plateau newPlateau = currentPlateau
+                                    .withLaunchedRovers(currentPlateau.launchedRovers()
+                                    .put(event.getRoverId().getId(), event.getRoverPosition()));
+                            return mothership.withMission(Option.of(currentMission.withPlateau(newPlateau)));
+                        })
+                );
     }
 }
 

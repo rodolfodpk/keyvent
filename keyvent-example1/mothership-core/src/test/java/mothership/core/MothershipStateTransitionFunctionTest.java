@@ -34,7 +34,8 @@ public class MothershipStateTransitionFunctionTest {
         val mId = new MothershipId("voyager");
         val rovers = HashSet.of(new Rover(new RoverId("enio")), new Rover(new RoverId("beto")));
         val avaliableMothership = MothershipAggregateRoot.builder().id(mId).rovers(rovers).mission(Option.none()).status(MothershipStatus.AVALIABLE).build();
-        val mission = Mission.builder().missionId(new MissionId("kamikaze")).plateau(new Plateau(new PlateauId("death's cave"), new PlateauDimension(2, 2))).build();
+        val initialPlateau = new Plateau(new PlateauId("death's cave"), new PlateauDimension(2, 2));
+        val mission = Mission.builder().missionId(new MissionId("kamikaze")).plateau(initialPlateau).build();
         val event = MissionStarted.builder().mothershipId(mId).mission(mission).build();
         val result = function.apply(event, avaliableMothership);
         val expected = MothershipAggregateRoot.builder().id(mId).rovers(rovers).mission(Option.of(mission)).status(MothershipStatus.ON_MISSION).build();

@@ -2,25 +2,22 @@ package mothership.core;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import javaslang.Tuple;
-import javaslang.Tuple2;
 import javaslang.collection.HashMap;
 import javaslang.collection.HashSet;
+import javaslang.collection.List;
 import javaslang.collection.Map;
-import javaslang.control.Option;
 import javaslang.jackson.datatype.JavaslangModule;
 import lombok.val;
-import mothership.core.entities.Mission;
 import mothership.core.entities.Plateau;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
 
 import static mothership.core.MothershipDataSchema.*;
 import static org.junit.Assert.assertEquals;
@@ -30,6 +27,7 @@ public class SerializationTest {
     static final ObjectMapper mapper = new ObjectMapper();
     static {
         mapper.setDefaultPrettyPrinter(new DefaultPrettyPrinter());
+        mapper.enable(MapperFeature.PROPAGATE_TRANSIENT_MARKER);
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
         mapper.registerModule(new JavaslangModule());
@@ -76,9 +74,45 @@ public class SerializationTest {
     }
 
     @Test
+    public void string_map_key_should_pass() throws IOException {
+
+        RoverPosition roverPosition1 = new RoverPosition(new PlateauLocation(2, 3), RoverDirection.NORTH);
+        RoverPosition roverPosition2 = new RoverPosition(new PlateauLocation(3, 4), RoverDirection.EAST);
+
+        Map<String, RoverPosition> map = HashMap.of(new RoverId("r1").toString(), roverPosition1,
+                                                   new RoverId("r2").toString(), roverPosition2);
+
+        val asJson1 = mapper.writeValueAsString(map);
+
+        val typeRefT2 = new TypeReference<Map<String, RoverPosition>>() {};
+
+        assertEquals(mapper.readerFor(typeRefT2).readValue(asJson1), map);
+
+    }
+
+
+
+    @Test @Ignore // failing TODO investigate https://github.com/msgpack/msgpack-java/issues/244
+    public void non_string_map_key_should_pass() throws IOException {
+
+        RoverPosition roverPosition1 = new RoverPosition(new PlateauLocation(2, 3), RoverDirection.NORTH);
+        RoverPosition roverPosition2 = new RoverPosition(new PlateauLocation(3, 4), RoverDirection.EAST);
+
+        Map<String, RoverPosition> map = HashMap.of(new RoverId("r1").toString(), roverPosition1,
+                new RoverId("r2").toString(), roverPosition2);
+
+        val asJson1 = mapper.writeValueAsString(map);
+
+        val typeRefT2 = new TypeReference<Map<RoverPosition, RoverId>>() {};
+
+        assertEquals(mapper.readerFor(typeRefT2).readValue(asJson1), map);
+
+    }
+
+    @Test // notice: if using javaslang List intead, it does not work // TODO investigate
     public void listOfCommands() throws IOException {
 
-        val typeRef = new TypeReference<List<MothershipCommand>>() {};
+        val typeRef = new TypeReference<java.util.List<MothershipCommand>>() {};
 
         val mothershipId = new MothershipId("voyager");
 
@@ -95,49 +129,15 @@ public class SerializationTest {
                 .plateau(new Plateau(new PlateauId("deadSea"), new PlateauDimension(4, 4)))
                 .build();
 
-        List<MothershipCommand> listOfCommands = Arrays.asList(createCmd, startMissionCmd);
+        java.util.List<MothershipCommand> listOfCommands = Arrays.asList(createCmd, startMissionCmd);
 
         val listJson = mapper.writerFor(typeRef).writeValueAsString(listOfCommands);
 
-        List<MothershipCommand> backToList = mapper.readValue(listJson, typeRef);
+        java.util.List<MothershipCommand> backToList = mapper.readValue(listJson, typeRef);
 
         assertEquals(createCmd, backToList.get(0));
 
         assertEquals(startMissionCmd, backToList.get(1));
-
-    }
-
-    @Test @Ignore //failing
-    public void mothership() throws IOException {
-
-        Mission mission = new Mission(new MissionId("mars"), new Plateau(new PlateauId("dead-sea"), new PlateauDimension(2, 2)));
-
-        MothershipAggregateRoot ar = MothershipAggregateRoot.builder().id(new MothershipId("voyager"))
-                                                .mission(Option.of(mission)).build();
-
-        val asJson = mapper.writeValueAsString(ar);
-
-        assertEquals(ar, mapper.readerFor(MothershipAggregateRoot.class).readValue(asJson));
-
-    }
-
-    @Test @Ignore //failing TODO investigate
-    public void testTuple2() throws IOException {
-
-        // tuple2
-        Tuple2<PlateauLocation, RoverDirection> t2 = Tuple.of(new PlateauLocation(0, 0), RoverDirection.NORTH);
-        val tuple2AsJson = mapper.writeValueAsString(t2);
-        val typeRefT2 = new TypeReference<Tuple2<PlateauLocation, RoverDirection>>() {};
-        assertEquals(t2, mapper.readerFor(typeRefT2).readValue(tuple2AsJson));
-
-        // map with tuple2 as key
-        Map<Tuple2<PlateauLocation, RoverDirection>, RoverId> landedRovers =
-                HashMap.of(Tuple.of(new PlateauLocation(0, 0), RoverDirection.NORTH), new RoverId("r1"));
-
-        val typeRef = new TypeReference<Map<Tuple2<PlateauLocation, RoverDirection>, RoverId>>() {};
-        val mapAsJson = mapper.writeValueAsString(landedRovers);
-        assertEquals(landedRovers, mapper.readerFor(typeRef).readValue(mapAsJson));
-
     }
 
     // TODO test events
