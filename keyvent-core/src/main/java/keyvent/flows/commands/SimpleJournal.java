@@ -4,8 +4,8 @@ import javaslang.Tuple2;
 import javaslang.collection.HashMap;
 import javaslang.collection.List;
 import javaslang.collection.Map;
-import keyvent.data.GlobalEventSeq;
-import keyvent.data.Version;
+import keyvent.flows.GlobalEventSeq;
+import keyvent.flows.Version;
 
 import java.util.Objects;
 

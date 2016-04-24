@@ -2,11 +2,10 @@ package keyvent.flows;
 
 import javaslang.Function2;
 import javaslang.collection.List;
-import keyvent.data.Snapshot;
 
 import java.util.Objects;
 
-import static keyvent.data.Version.nextVersion;
+import static keyvent.flows.Version.nextVersion;
 
 public class SimpleStateTransitionsTracker<EV, AR> implements StateTransitionsTracker<EV, AR> {
 

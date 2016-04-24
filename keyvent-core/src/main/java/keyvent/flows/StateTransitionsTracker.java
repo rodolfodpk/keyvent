@@ -1,7 +1,6 @@
 package keyvent.flows;
 
 import javaslang.collection.List;
-import keyvent.data.Snapshot;
 
 public interface StateTransitionsTracker<EV, AR> {
 

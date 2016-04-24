@@ -1,7 +1,7 @@
 package keyvent.flows.commands;
 
-import keyvent.data.GlobalEventSeq;
-import keyvent.data.Version;
+import keyvent.flows.GlobalEventSeq;
+import keyvent.flows.Version;
 
 public interface Journal<ID, UOW> {
 

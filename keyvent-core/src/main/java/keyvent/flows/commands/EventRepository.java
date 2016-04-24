@@ -1,7 +1,7 @@
 package keyvent.flows.commands;
 
 import javaslang.collection.List;
-import keyvent.data.Version;
+import keyvent.flows.Version;
 
 public interface EventRepository<ID, UOW> {
 

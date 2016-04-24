@@ -78,12 +78,12 @@ public class SerializationTest {
         RoverPosition roverPosition1 = new RoverPosition(new PlateauLocation(2, 3), RoverDirection.NORTH);
         RoverPosition roverPosition2 = new RoverPosition(new PlateauLocation(3, 4), RoverDirection.EAST);
 
-        Map<String, MothershipDataSchema.RoverPosition> map = HashMap.of(new RoverId("r1").toString(), roverPosition1,
+        Map<String, RoverPosition> map = HashMap.of(new RoverId("r1").toString(), roverPosition1,
                                                    new RoverId("r2").toString(), roverPosition2);
 
         val asJson1 = mapper.writeValueAsString(map);
 
-        val typeRefT2 = new TypeReference<Map<String, MothershipDataSchema.RoverPosition>>() {};
+        val typeRefT2 = new TypeReference<Map<String, RoverPosition>>() {};
 
         assertEquals(mapper.readerFor(typeRefT2).readValue(asJson1), map);
 
@@ -97,12 +97,12 @@ public class SerializationTest {
         RoverPosition roverPosition1 = new RoverPosition(new PlateauLocation(2, 3), RoverDirection.NORTH);
         RoverPosition roverPosition2 = new RoverPosition(new PlateauLocation(3, 4), RoverDirection.EAST);
 
-        Map<String, MothershipDataSchema.RoverPosition> map = HashMap.of(new RoverId("r1").toString(), roverPosition1,
+        Map<String, RoverPosition> map = HashMap.of(new RoverId("r1").toString(), roverPosition1,
                 new RoverId("r2").toString(), roverPosition2);
 
         val asJson1 = mapper.writeValueAsString(map);
 
-        val typeRefT2 = new TypeReference<Map<MothershipDataSchema.RoverPosition, MothershipDataSchema.RoverId>>() {};
+        val typeRefT2 = new TypeReference<Map<RoverPosition, RoverId>>() {};
 
         assertEquals(mapper.readerFor(typeRefT2).readValue(asJson1), map);
 
@@ -111,7 +111,7 @@ public class SerializationTest {
     @Test // notice: if using javaslang List intead, it does not work // TODO investigate
     public void listOfCommands() throws IOException {
 
-        val typeRef = new TypeReference<java.util.List<MothershipDataSchema.MothershipCommand>>() {};
+        val typeRef = new TypeReference<java.util.List<MothershipCommand>>() {};
 
         val mothershipId = new MothershipId("voyager");
 
@@ -128,11 +128,11 @@ public class SerializationTest {
                 .plateau(new Plateau(new PlateauId("deadSea"), new PlateauDimension(4, 4)))
                 .build();
 
-        java.util.List<MothershipDataSchema.MothershipCommand> listOfCommands = Arrays.asList(createCmd, startMissionCmd);
+        java.util.List<MothershipCommand> listOfCommands = Arrays.asList(createCmd, startMissionCmd);
 
         val listJson = mapper.writerFor(typeRef).writeValueAsString(listOfCommands);
 
-        java.util.List<MothershipDataSchema.MothershipCommand> backToList = mapper.readValue(listJson, typeRef);
+        java.util.List<MothershipCommand> backToList = mapper.readValue(listJson, typeRef);
 
         assertEquals(createCmd, backToList.get(0));
 

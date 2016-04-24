@@ -1,4 +1,4 @@
-package keyvent.data;
+package keyvent.flows;
 
 import lombok.Value;
 

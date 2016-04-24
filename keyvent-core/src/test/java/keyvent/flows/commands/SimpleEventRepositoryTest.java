@@ -3,7 +3,7 @@ package keyvent.flows.commands;
 import javaslang.Tuple2;
 import javaslang.collection.HashMap;
 import javaslang.collection.List;
-import keyvent.data.Version;
+import keyvent.flows.Version;
 import lombok.val;
 import org.junit.Test;
 

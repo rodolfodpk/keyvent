@@ -2,8 +2,6 @@ package keyvent.flows;
 
 import customer.CustomerEvtFn;
 import javaslang.collection.List;
-import keyvent.data.Snapshot;
-import keyvent.data.Version;
 import lombok.val;
 import org.junit.Test;
 
