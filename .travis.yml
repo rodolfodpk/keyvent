@@ -1,5 +1,10 @@
 language: java
-sudo: false # faster builds
+jdk:
+  - oraclejdk8
+before_install:
+  - sudo apt-get update
+  - sudo apt-get install --only-upgrade -y oracle-java8-installer
+  - pip install --user codecov
 after_success:
-  - bash <(curl -s https://codecov.io/bash)
-  
+  - codecov
+  - mvn clean deploy -DskipTests --settings .travis/maven-settings.xml
