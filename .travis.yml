@@ -4,9 +4,9 @@ jdk:
 before_install:
   - sudo apt-get update
   - sudo apt-get install --only-upgrade -y oracle-java8-installer
-  - pip install --user codecov
+  # - pip install --user codecov
 after_success:
-  - codecov
+  # - codecov
   - bash <(curl -s https://codecov.io/bash)
-  - mvn clean deploy -DskipTests --settings .travis/maven-settings.xml
+  # - mvn clean deploy -DskipTests --settings .travis/maven-settings.xml
   
