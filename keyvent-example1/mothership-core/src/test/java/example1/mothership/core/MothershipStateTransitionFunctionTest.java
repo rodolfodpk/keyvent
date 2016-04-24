@@ -19,13 +19,18 @@ public class MothershipStateTransitionFunctionTest {
     @Test
     public void after_created_mothership() {
 
+        // given
         val mId = new MothershipId("voyager");
         val emptyMothership = MothershipAggregateRoot.builder().build();
         val rovers = HashSet.of(new Rover(new RoverId("enio")), new Rover(new RoverId("beto")));
+
+        // when
         val event = MothershipCreated.builder().mothershipId(mId)
                 .rovers(rovers)
                 .build();
         val result = function.apply(event, emptyMothership);
+
+        // then
         val expected = MothershipAggregateRoot.builder().id(mId).rovers(rovers).mission(Option.none()).status(MothershipStatus.AVALIABLE).build();
         assertEquals(expected, result);
     }
@@ -33,13 +38,18 @@ public class MothershipStateTransitionFunctionTest {
     @Test
     public void after_started_mission() {
 
+        // given
         val mId = new MothershipId("voyager");
         val rovers = HashSet.of(new Rover(new RoverId("enio")), new Rover(new RoverId("beto")));
         val avaliableMothership = MothershipAggregateRoot.builder().id(mId).rovers(rovers).mission(Option.none()).status(MothershipStatus.AVALIABLE).build();
         val initialPlateau = new Plateau(new PlateauId("death's cave"), new PlateauDimension(2, 2));
         val mission = Mission.builder().missionId(new MissionId("kamikaze")).plateau(initialPlateau).build();
+
+        // when
         val event = MissionStarted.builder().mission(mission).build();
         val result = function.apply(event, avaliableMothership);
+
+        // then
         val expected = MothershipAggregateRoot.builder().id(mId).rovers(rovers).mission(Option.of(mission)).status(MothershipStatus.ON_MISSION).build();
         assertEquals(expected, result);
     }

@@ -15,8 +15,8 @@ import static example1.mothership.core.MothershipDataSchema.*;
     @Valid Plateau plateau;
 
     // TODO service as param ? really ?
-    public boolean canLaunchRover(RoverId roverId, RoverPosition roverPosition, TemperatureService temperatureService) {
-        return plateau.canLaunchRover(roverId, roverPosition, temperatureService);
+    public void canLaunchRover(RoverId roverId, RoverPosition roverPosition, TemperatureService temperatureService) {
+        plateau.canLaunchRover(roverId, roverPosition, temperatureService);
     }
 
 }

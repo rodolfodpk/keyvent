@@ -23,7 +23,7 @@ import static example1.mothership.core.MothershipDataSchema.*;
         this.launchedRovers = HashMap.empty();
     }
 
-    public boolean canLaunchRover(RoverId roverId, RoverPosition roverPosition, TemperatureService temperatureService) {
+    public void canLaunchRover(RoverId roverId, RoverPosition roverPosition, TemperatureService temperatureService) {
 
         if (temperatureService.currentTemperatureInCelsius() > 100 /*celsius*/) {
             throw new IllegalStateException("this plateau is too hot at this moment");
@@ -34,7 +34,6 @@ import static example1.mothership.core.MothershipDataSchema.*;
         if (launchedRovers.containsKey(roverId.getId())) {
             throw new IllegalStateException("this rover is already launched");
         }
-        return true;
     }
 
     @JsonIgnore public Map<String, RoverPosition> launchedRovers() { return launchedRovers; }

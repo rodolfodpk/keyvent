@@ -108,7 +108,7 @@ public class SerializationTest {
 
     }
 
-    @Test // notice: if using javaslang List intead, it does not work // TODO investigate
+    @Test // notice: if using javaslang List instead, it does not work // TODO investigate
     public void listOfCommands() throws IOException {
 
         val typeRef = new TypeReference<java.util.List<MothershipCommand>>() {};
