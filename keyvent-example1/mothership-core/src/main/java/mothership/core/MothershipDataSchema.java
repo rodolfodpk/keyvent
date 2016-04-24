@@ -115,30 +115,28 @@ public class MothershipDataSchema {
             @JsonSubTypes.Type(value = MissionFinished.class, name = "MissionFinished")
 
     })
-    public interface MothershipEvent {
-        MothershipId getMothershipId();
-    }
+    public interface MothershipEvent { }
 
-    @Value @Builder @AllArgsConstructor @JsonTypeName("CreateMothership")
+    @Value @Builder @AllArgsConstructor @JsonTypeName("MothershipCreated")
     public static class MothershipCreated implements MothershipEvent {MothershipId mothershipId; Set<Rover> rovers; }
 
-    @Value @Builder @AllArgsConstructor @JsonTypeName("CreateMothership")
-    public static class MissionStarted implements MothershipEvent {MothershipId mothershipId; Mission mission; }
+    @Value @Builder @AllArgsConstructor @JsonTypeName("MissionStarted")
+    public static class MissionStarted implements MothershipEvent {Mission mission; }
 
-    @Value @Builder @AllArgsConstructor @JsonTypeName("CreateMothership")
-    public static class RoverLaunched implements MothershipEvent {MothershipId mothershipId; RoverId roverId; RoverPosition roverPosition;}
+    @Value @Builder @AllArgsConstructor @JsonTypeName("RoverLaunched")
+    public static class RoverLaunched implements MothershipEvent {RoverId roverId; RoverPosition roverPosition;}
 
-    @Value @Builder @AllArgsConstructor @JsonTypeName("CreateMothership")
-    public static class RoverDirectionChanged implements MothershipEvent {MothershipId mothershipId; MissionId missionId; RoverId roverId; RoverDirection newDirection; }
+    @Value @Builder @AllArgsConstructor @JsonTypeName("RoverDirectionChanged")
+    public static class RoverDirectionChanged implements MothershipEvent {MissionId missionId; RoverId roverId; RoverDirection newDirection; }
 
-    @Value @Builder @AllArgsConstructor @JsonTypeName("CreateMothership")
-    public static class RoverMoved implements MothershipEvent {MothershipId mothershipId; MissionId missionId; RoverId roverId; int steps; }
+    @Value @Builder @AllArgsConstructor @JsonTypeName("RoverMoved")
+    public static class RoverMoved implements MothershipEvent {MissionId missionId; RoverId roverId; int steps; }
 
-    @Value @Builder @AllArgsConstructor @JsonTypeName("CreateMothership")
-    public static class RoverIsBack implements MothershipEvent {MothershipId mothershipId; MissionId missionId; RoverId roverId; }
+    @Value @Builder @AllArgsConstructor @JsonTypeName("RoverIsBack")
+    public static class RoverIsBack implements MothershipEvent {MissionId missionId; RoverId roverId; }
 
-    @Value @Builder @AllArgsConstructor @JsonTypeName("CreateMothership")
-    public static class MissionFinished implements MothershipEvent {MothershipId mothershipId; MissionId missionId; }
+    @Value @Builder @AllArgsConstructor @JsonTypeName("MissionFinished")
+    public static class MissionFinished implements MothershipEvent {MissionId missionId; }
 
     // unitofwork
 

@@ -44,14 +44,14 @@ public class MothershipAggregateRoot {
         isNotNew();
         isFirstMission();
         statusIs(AVALIABLE);
-        return List.of(new MissionStarted(id, new Mission(missionId, plateau)));
+        return List.of(new MissionStarted(new Mission(missionId, plateau)));
     }
 
     public List<? super MothershipEvent> landRover(RoverId roverId, RoverPosition roverPosition) {
         isNotNew();
         statusIs(ON_MISSION);
         mission.get().canLaunchRover(roverId, roverPosition, temperatureService);
-        return List.of(new RoverLaunched(id, roverId, roverPosition));
+        return List.of(new RoverLaunched(roverId, roverPosition));
     }
 
     // guards
