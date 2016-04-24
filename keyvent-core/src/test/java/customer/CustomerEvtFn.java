@@ -3,10 +3,10 @@ package customer;
 
 import javaslang.Function2;
 
+import static customer.CustomerSchema.*;
 import static javaslang.API.Case;
 import static javaslang.API.Match;
 import static javaslang.Predicates.instanceOf;
-import static customer.CustomerSchema.*;
 
 public class CustomerEvtFn implements Function2<CustomerEvent, Customer, Customer> {
 

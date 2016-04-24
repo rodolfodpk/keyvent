@@ -11,8 +11,6 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static customer.CustomerSchema.*;
-import static customer.CustomerSchema.Customer;
-import static customer.CustomerSchema.CustomerEvent;
 import static junit.framework.Assert.assertEquals;
 
 public class SimpleStateTransitionsTrackerTest {

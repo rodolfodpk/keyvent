@@ -3,13 +3,13 @@ package example1.mothership.core;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import example1.mothership.core.entities.Mission;
 import example1.mothership.core.entities.Plateau;
 import javaslang.collection.List;
 import javaslang.collection.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
-import example1.mothership.core.entities.Mission;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;

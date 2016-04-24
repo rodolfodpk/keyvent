@@ -1,5 +1,6 @@
 package example1.mothership.core;
 
+import example1.mothership.core.entities.Mission;
 import example1.mothership.core.entities.Plateau;
 import javaslang.collection.List;
 import javaslang.collection.Set;
@@ -8,7 +9,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
 import lombok.experimental.Wither;
-import example1.mothership.core.entities.Mission;
 
 import java.util.Objects;
 

@@ -1,17 +1,17 @@
 package example1.mothership.core;
 
 
+import example1.mothership.core.entities.Mission;
 import example1.mothership.core.entities.Plateau;
 import javaslang.Function2;
 import javaslang.control.Option;
-import example1.mothership.core.entities.Mission;
 
-import static javaslang.API.Case;
-import static javaslang.API.Match;
-import static javaslang.Predicates.instanceOf;
 import static example1.mothership.core.MothershipDataSchema.*;
 import static example1.mothership.core.MothershipDataSchema.MothershipStatus.AVALIABLE;
 import static example1.mothership.core.MothershipDataSchema.MothershipStatus.ON_MISSION;
+import static javaslang.API.Case;
+import static javaslang.API.Match;
+import static javaslang.Predicates.instanceOf;
 
 class MothershipStateTransitionFunction implements Function2<MothershipEvent, MothershipAggregateRoot, MothershipAggregateRoot> {
 
