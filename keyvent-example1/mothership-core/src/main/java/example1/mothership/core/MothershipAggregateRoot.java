@@ -1,5 +1,6 @@
-package mothership.core;
+package example1.mothership.core;
 
+import example1.mothership.core.entities.Plateau;
 import javaslang.collection.List;
 import javaslang.collection.Set;
 import javaslang.control.Option;
@@ -7,14 +8,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
 import lombok.experimental.Wither;
-import mothership.core.entities.Mission;
-import mothership.core.entities.Plateau;
+import example1.mothership.core.entities.Mission;
 
 import java.util.Objects;
 
-import static mothership.core.MothershipDataSchema.*;
-import static mothership.core.MothershipDataSchema.MothershipStatus.AVALIABLE;
-import static mothership.core.MothershipDataSchema.MothershipStatus.ON_MISSION;
+import static example1.mothership.core.MothershipDataSchema.*;
+import static example1.mothership.core.MothershipDataSchema.MothershipStatus.AVALIABLE;
+import static example1.mothership.core.MothershipDataSchema.MothershipStatus.ON_MISSION;
 
 @Value
 @AllArgsConstructor

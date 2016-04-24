@@ -1,4 +1,4 @@
-package mothership.core.entities;
+package example1.mothership.core.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,7 +7,7 @@ import lombok.experimental.Wither;
 
 import javax.validation.Valid;
 
-import static mothership.core.MothershipDataSchema.*;
+import static example1.mothership.core.MothershipDataSchema.*;
 
 @Value @Builder @Wither @AllArgsConstructor public class Mission {
 

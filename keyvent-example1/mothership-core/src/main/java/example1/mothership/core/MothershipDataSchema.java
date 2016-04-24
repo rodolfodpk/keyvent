@@ -1,15 +1,15 @@
-package mothership.core;
+package example1.mothership.core;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import example1.mothership.core.entities.Plateau;
 import javaslang.collection.List;
 import javaslang.collection.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
-import mothership.core.entities.Mission;
-import mothership.core.entities.Plateau;
+import example1.mothership.core.entities.Mission;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -78,7 +78,8 @@ public class MothershipDataSchema {
 
     @Value @Builder @AllArgsConstructor @JsonTypeName("StartsMissionTo")
     public static class StartsMissionTo implements MothershipCommand {CommandId commandId; MothershipId mothershipId;
-        MissionId missionId; @NotNull @Valid Plateau plateau; }
+        MissionId missionId; @NotNull @Valid
+        Plateau plateau; }
 
     @Value @Builder @AllArgsConstructor @JsonTypeName("LaunchRoverTo")
     public static class LaunchRoverTo implements MothershipCommand { CommandId commandId; MothershipId mothershipId; RoverId roverId;

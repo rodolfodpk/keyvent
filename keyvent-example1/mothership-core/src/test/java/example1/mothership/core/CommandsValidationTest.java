@@ -1,7 +1,7 @@
-package mothership.core;
+package example1.mothership.core;
 
 import lombok.val;
-import mothership.core.entities.Plateau;
+import example1.mothership.core.entities.Plateau;
 import org.junit.Test;
 
 import javax.validation.ConstraintViolation;
@@ -9,9 +9,9 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.util.Set;
 
-import static mothership.core.MothershipDataSchema.*;
-import static mothership.core.MothershipDataSchema.MothershipId;
-import static mothership.core.MothershipDataSchema.StartsMissionTo;
+import static example1.mothership.core.MothershipDataSchema.*;
+import static example1.mothership.core.MothershipDataSchema.MothershipId;
+import static example1.mothership.core.MothershipDataSchema.StartsMissionTo;
 import static org.junit.Assert.assertEquals;
 
 public class CommandsValidationTest {
