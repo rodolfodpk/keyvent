@@ -21,7 +21,7 @@
 		<dependency>
 			<groupId>com.rdpk</groupId>
 			<artifactId>keyvent-core</artifactId>
-			<version>${parent.version}</version>
+			<version>${project.parent.version}</version>
 		</dependency>
 
 		<!-- test -->
