@@ -70,8 +70,6 @@ public class MothershipDataSchema {
         MothershipId getMothershipId();
     }
 
-    // String cmdType = classOf(this);
-
     @Value @Builder @AllArgsConstructor @JsonTypeName("CreateMothership")
     public static class CreateMothership implements MothershipCommand { CommandId commandId; MothershipId mothershipId;
         Set<Rover> rovers; }
@@ -151,12 +149,6 @@ public class MothershipDataSchema {
         List<MothershipEvent> events;
         LocalDateTime localDateTime;
         Long resultingVersion;
-    }
-
-    // helpers
-
-    public static String classOf(Object obj) {
-        return obj.getClass().getSimpleName();
     }
 
 }
