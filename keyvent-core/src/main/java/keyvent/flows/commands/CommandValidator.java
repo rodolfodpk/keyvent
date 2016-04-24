@@ -3,8 +3,8 @@ package keyvent.flows.commands;
 import javaslang.collection.List;
 import javaslang.control.Validation;
 
-public interface CommandValidator<T> {
+public interface CommandValidator {
 
-    Validation<List<String>, T> validate(T object);
+    <T> Validation<List<String>, T> validate(T object);
 }
 
