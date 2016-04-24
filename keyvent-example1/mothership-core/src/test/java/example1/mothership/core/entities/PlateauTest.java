@@ -11,6 +11,17 @@ import static org.mockito.Mockito.when;
 
 public class PlateauTest {
 
+    @Test
+    public void should_work_on_normal_conditions() {
+
+        val plateau = new Plateau(new PlateauId("inferno"), new PlateauDimension(6, 6));
+        val mockService = mock(TemperatureService.class);
+        when(mockService.currentTemperatureInCelsius()).thenReturn(99f);
+
+        plateau.canLaunchRover(new RoverId("innocent"), new RoverPosition(new PlateauLocation(0,0), RoverDirection.NORTH), mockService);
+
+    }
+
     @Test(expected = Exception.class)
     public void should_fail_if_too_high_tempeature() {
 

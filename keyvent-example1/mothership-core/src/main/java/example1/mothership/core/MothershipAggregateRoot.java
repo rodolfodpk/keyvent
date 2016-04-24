@@ -50,8 +50,15 @@ public class MothershipAggregateRoot {
     public List<? super MothershipEvent> landRover(RoverId roverId, RoverPosition roverPosition) {
         isNotNew();
         statusIs(ON_MISSION);
+        hasRover(roverId);
         mission.get().canLaunchRover(roverId, roverPosition, temperatureService);
         return List.of(new RoverLaunched(roverId, roverPosition));
+    }
+
+    private void hasRover(RoverId roverId) {
+        if (rovers.filter(r -> r.getId().equals(roverId)).size()==0){
+            throw new IllegalStateException(String.format("this mothership does not have this rover: %s", roverId));
+        }
     }
 
     // guards
