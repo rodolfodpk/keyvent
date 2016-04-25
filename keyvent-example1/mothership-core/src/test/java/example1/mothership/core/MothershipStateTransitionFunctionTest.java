@@ -71,7 +71,7 @@ public class MothershipStateTransitionFunctionTest {
         val result = function.apply(event, avaliableMothership);
 
         // then
-        val newMission = mission.withPlateau(initialPlateau.withLaunchedRovers(HashMap.of(event.getRoverId().getId(), event.getRoverPosition())));
+        val newMission = mission.withPlateau(initialPlateau.withLandedRovers(HashMap.of(event.getRoverId().getId(), event.getRoverPosition())));
         val expected = MothershipAggregateRoot.builder().id(mId).rovers(rovers)
                 .mission(Option.of(newMission)).status(MothershipStatus.ON_MISSION).build();
         assertEquals(expected, result);

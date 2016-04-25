@@ -1,20 +1,29 @@
 package example1.mothership.core;
 
+import example1.mothership.core.MothershipExceptions.CantLandAlreadyLandedRover;
+import example1.mothership.core.MothershipExceptions.CantLandOutsidePlateau;
+import example1.mothership.core.MothershipExceptions.CantLandUnknownRover;
+import example1.mothership.core.MothershipExceptions.MothershipCanHaveJustOneMission;
 import example1.mothership.core.entities.Mission;
 import example1.mothership.core.entities.Plateau;
+import javaslang.collection.HashMap;
 import javaslang.collection.HashSet;
 import javaslang.collection.List;
+import javaslang.collection.Map;
 import javaslang.control.Option;
 import lombok.val;
 import org.junit.Test;
 
 import static example1.mothership.core.MothershipDataSchema.*;
-import static example1.mothership.core.MothershipDataSchema.MothershipStatus.*;
+import static example1.mothership.core.MothershipDataSchema.MothershipStatus.AVALIABLE;
+import static example1.mothership.core.MothershipDataSchema.MothershipStatus.ON_MISSION;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class MothershipAggregateRootTest {
+
+    // happy path scenarios
 
     @Test
     public void create_mothership_on_fresh_should_fire_event() {
@@ -67,6 +76,72 @@ public class MothershipAggregateRootTest {
 
         // then
         assertEquals(List.of(new RoverLaunched(new RoverId("enio"), new RoverPosition(new PlateauLocation(0,0), RoverDirection.NORTH))), fired_events);
+    }
+
+    // failing scenarios
+
+    @Test(expected = MothershipCanHaveJustOneMission.class)
+    public void start_mission_conflict_should_fail() {
+
+        // given
+        val mId = new MothershipId("startreck");
+        val rovers = HashSet.of(new Rover(new RoverId("enio")), new Rover(new RoverId("beto")));
+        val initialPlateau = new Plateau(new PlateauId("death's cave"), new PlateauDimension(2, 2));
+        val mission = Mission.builder().missionId(new MissionId("kamikaze")).plateau(initialPlateau).build();
+        val onMissionMothership = MothershipAggregateRoot.builder().id(mId).rovers(rovers).status(ON_MISSION).mission(Option.of(mission)).build();
+
+        // when
+        val fired_events = onMissionMothership.startMission(mission.getMissionId(), initialPlateau);
+    }
+
+    @Test(expected = CantLandUnknownRover.class)
+    public void land_a_unknown_rover_should_fail() {
+
+        // given
+        val mId = new MothershipId("startreck");
+        val rovers = HashSet.of(new Rover(new RoverId("enio")), new Rover(new RoverId("beto")));
+        val initialPlateau = new Plateau(new PlateauId("death's cave"), new PlateauDimension(2, 2));
+        val mission = Mission.builder().missionId(new MissionId("kamikaze")).plateau(initialPlateau).build();
+        val onMissionMothership = MothershipAggregateRoot.builder().id(mId).rovers(rovers).status(ON_MISSION).mission(Option.of(mission)).build();
+
+        // when
+        val fired_events = onMissionMothership.landRover(new RoverId("alien"), new RoverPosition(new PlateauLocation(0, 0), RoverDirection.NORTH));
+    }
+
+    @Test(expected = CantLandAlreadyLandedRover.class)
+    public void land_an_already_landed_rover_should_fail() {
+
+        // given
+        val mId = new MothershipId("startreck");
+        val avaliableRovers = HashSet.of(new Rover(new RoverId("enio")), new Rover(new RoverId("beto")));
+        val landedRovers = HashMap.of(new RoverId("enio").getId(), new RoverPosition(new PlateauLocation(1,1), RoverDirection.NORTH));
+        val onMissionPlateau = new Plateau(new PlateauId("death's cave"), new PlateauDimension(2, 2)).withLandedRovers(landedRovers);
+        val mockService = mock(TemperatureService.class);
+        when(mockService.currentTemperatureInCelsius()).thenReturn(99f);
+        val mission = Mission.builder().missionId(new MissionId("kamikaze")).plateau(onMissionPlateau).build();
+        val onMissionMothership = MothershipAggregateRoot.builder().id(mId).rovers(avaliableRovers).status(ON_MISSION)
+                .mission(Option.of(mission)).temperatureService(mockService).build();
+
+        // when
+        val fired_events = onMissionMothership.landRover(new RoverId("enio"), new RoverPosition(new PlateauLocation(0, 0), RoverDirection.NORTH));
+    }
+
+
+    @Test(expected = CantLandOutsidePlateau.class)
+    public void land_outside_plateau_should_fail() {
+
+        // given
+        val mId = new MothershipId("startreck");
+        val avaliableRovers = HashSet.of(new Rover(new RoverId("enio")), new Rover(new RoverId("beto")));
+        val onMissionPlateau = new Plateau(new PlateauId("death's cave"), new PlateauDimension(2, 2));
+        val mockService = mock(TemperatureService.class);
+        when(mockService.currentTemperatureInCelsius()).thenReturn(99f);
+        val mission = Mission.builder().missionId(new MissionId("kamikaze")).plateau(onMissionPlateau).build();
+        val onMissionMothership = MothershipAggregateRoot.builder().id(mId).rovers(avaliableRovers).status(ON_MISSION)
+                .mission(Option.of(mission)).temperatureService(mockService).build();
+
+        // when
+        val fired_events = onMissionMothership.landRover(new RoverId("enio"), new RoverPosition(new PlateauLocation(5, 5), RoverDirection.NORTH));
     }
 
 }

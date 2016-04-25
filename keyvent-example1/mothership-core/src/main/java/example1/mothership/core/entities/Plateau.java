@@ -10,32 +10,37 @@ import lombok.experimental.Wither;
 import javax.validation.Valid;
 
 import static example1.mothership.core.MothershipDataSchema.*;
+import static example1.mothership.core.MothershipExceptions.*;
 
 @Value @Wither @AllArgsConstructor public class Plateau {
 
     PlateauId id;
     @Valid PlateauDimension dimension;
-    @JsonIgnore Map<String, RoverPosition> launchedRovers;
+    @JsonIgnore Map<String, RoverPosition> landedRovers;
 
     public Plateau(PlateauId id, PlateauDimension dimension) {
         this.id = id;
         this.dimension = dimension;
-        this.launchedRovers = HashMap.empty();
+        this.landedRovers = HashMap.empty();
     }
 
     public void canLaunchRover(RoverId roverId, RoverPosition roverPosition, TemperatureService temperatureService) {
 
         if (temperatureService.currentTemperatureInCelsius() > 100 /*celsius*/) {
-            throw new IllegalStateException("this plateau is too hot at this moment");
+            throw new CantLandOverATooHotPlateau();
         }
-        if (launchedRovers.containsValue(roverPosition)) {
-            throw new IllegalStateException("this location is not available at this moment");
+        if (landedRovers.containsValue(roverPosition)) {
+            throw new CantLandToAnAldreadyOccupedPosition();
         }
-        if (launchedRovers.containsKey(roverId.getId())) {
-            throw new IllegalStateException("this rover is already launched");
+        if (landedRovers.containsKey(roverId.getId())) {
+            throw new CantLandAlreadyLandedRover();
+        }
+        if (roverPosition.getPlateauLocation().getX() >= dimension.getWidth() ||
+            roverPosition.getPlateauLocation().getY() >= dimension.getHeight()) {
+            throw new CantLandOutsidePlateau();
         }
     }
 
-    @JsonIgnore public Map<String, RoverPosition> launchedRovers() { return launchedRovers; }
+    @JsonIgnore public Map<String, RoverPosition> landedRovers() { return landedRovers; }
 
 }

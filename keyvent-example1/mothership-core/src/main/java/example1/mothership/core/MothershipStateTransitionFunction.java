@@ -28,7 +28,7 @@ class MothershipStateTransitionFunction implements Function2<MothershipEvent, Mo
                             Mission currentMission = mothership.getMission().get();
                             Plateau currentPlateau = currentMission.getPlateau();
                             Plateau newPlateau = currentPlateau
-                                    .withLaunchedRovers(currentPlateau.launchedRovers()
+                                    .withLandedRovers(currentPlateau.landedRovers()
                                     .put(event.getRoverId().getId(), event.getRoverPosition()));
                             return mothership.withMission(Option.of(currentMission.withPlateau(newPlateau)));
                         })

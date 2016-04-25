@@ -15,6 +15,7 @@ import java.util.Objects;
 import static example1.mothership.core.MothershipDataSchema.*;
 import static example1.mothership.core.MothershipDataSchema.MothershipStatus.AVALIABLE;
 import static example1.mothership.core.MothershipDataSchema.MothershipStatus.ON_MISSION;
+import static example1.mothership.core.MothershipExceptions.*;
 
 @Value
 @AllArgsConstructor
@@ -57,7 +58,7 @@ public class MothershipAggregateRoot {
 
     private void hasRover(RoverId roverId) {
         if (rovers.filter(r -> r.getId().equals(roverId)).size()==0){
-            throw new IllegalStateException(String.format("this mothership does not have this rover: %s", roverId));
+            throw new CantLandUnknownRover();
         }
     }
 
@@ -65,7 +66,7 @@ public class MothershipAggregateRoot {
 
     void statusIs(MothershipStatus requiredStatus) {
         if (!requiredStatus.equals(status)) {
-            throw new IllegalStateException(String.format("status must be = %s", requiredStatus));
+            throw new MothershipStatusConflict();
         }
     }
 
@@ -75,7 +76,7 @@ public class MothershipAggregateRoot {
 
     void hasAtLeastOneRover(int howManyRovers) {
          if (howManyRovers == 0) {
-             throw new IllegalStateException("you can't start a mission without any rover");
+             throw new MothershipMustHaveAtLeastOneRover();
          }
     }
 
@@ -85,7 +86,7 @@ public class MothershipAggregateRoot {
 
     void isFirstMission() {
         if (mission.isDefined()) {
-            throw new IllegalStateException("this mothership can have only 1 mission");
+            throw new MothershipCanHaveJustOneMission();
         }
     }
 
