@@ -42,10 +42,6 @@ public class MothershipDataSchema {
 
     @Value public static class UnitOfWorkId { UUID uuid; public UnitOfWorkId() { this.uuid = UUID.randomUUID(); }}
 
-    // services
-
-    public interface TemperatureService { float currentTemperatureInCelsius(); }
-
     // commands
 
     @JsonTypeInfo(
@@ -86,7 +82,7 @@ public class MothershipDataSchema {
         RoverId roverId; RoverDirection direction; }
 
     @Value @Builder @AllArgsConstructor @JsonTypeName("MoveRover")
-    public static class MoveRover implements MothershipCommand { CommandId commandId; MothershipId mothershipId; RoverId roverId; int steps; }
+    public static class MoveRover implements MothershipCommand { CommandId commandId; MothershipId mothershipId; RoverId roverId; }
 
     @Value @Builder @AllArgsConstructor @JsonTypeName("ComeBackRover")
     public static class ComeBackRover implements MothershipCommand { CommandId commandId; MothershipId mothershipId; RoverId roverId; }
@@ -126,10 +122,10 @@ public class MothershipDataSchema {
     public static class RoverDirectionChanged implements MothershipEvent {RoverId roverId; RoverDirection newDirection; }
 
     @Value @Builder @AllArgsConstructor @JsonTypeName("RoverMoved")
-    public static class RoverMoved implements MothershipEvent {MissionId missionId; RoverId roverId; int steps; }
+    public static class RoverMoved implements MothershipEvent {RoverId roverId; PlateauLocation plateauLocation; }
 
     @Value @Builder @AllArgsConstructor @JsonTypeName("RoverIsBack")
-    public static class RoverIsBack implements MothershipEvent {MissionId missionId; RoverId roverId; }
+    public static class RoverIsBack implements MothershipEvent {RoverId roverId; }
 
     @Value @Builder @AllArgsConstructor @JsonTypeName("MissionFinished")
     public static class MissionFinished implements MothershipEvent {MissionId missionId; }

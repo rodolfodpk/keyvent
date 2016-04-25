@@ -1,5 +1,6 @@
 package example1.mothership.core.entities;
 
+import example1.mothership.core.services.TemperatureService;
 import javaslang.collection.HashMap;
 import javaslang.collection.Map;
 import lombok.val;

@@ -7,6 +7,7 @@ import example1.mothership.core.MothershipExceptions.MothershipCanHaveJustOneMis
 import example1.mothership.core.entities.Mission;
 import example1.mothership.core.entities.Plateau;
 import example1.mothership.core.entities.Rover;
+import example1.mothership.core.services.TemperatureService;
 import javaslang.collection.HashMap;
 import javaslang.collection.HashSet;
 import javaslang.collection.List;

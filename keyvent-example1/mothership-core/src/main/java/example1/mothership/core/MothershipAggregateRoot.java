@@ -3,6 +3,8 @@ package example1.mothership.core;
 import example1.mothership.core.entities.Mission;
 import example1.mothership.core.entities.Plateau;
 import example1.mothership.core.entities.Rover;
+import example1.mothership.core.services.LocalizationService;
+import example1.mothership.core.services.TemperatureService;
 import javaslang.collection.List;
 import javaslang.collection.Map;
 import javaslang.collection.Set;
@@ -11,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
 import lombok.experimental.Wither;
+import lombok.val;
 
 import java.util.Objects;
 
@@ -34,6 +37,7 @@ public class MothershipAggregateRoot {
 
     // service
     transient TemperatureService temperatureService;
+    transient LocalizationService localizationService;
 
     // events emitters
 
@@ -64,6 +68,18 @@ public class MothershipAggregateRoot {
         hasRover(roverId);
         // TODO could also check if rover is already landed
         return List.of(new RoverDirectionChanged(roverId, newDirection));
+    }
+
+    public List<? super MothershipEvent> moveRoverForward(RoverId roverId) {
+        isNotNew();
+        statusIs(ON_MISSION);
+        hasRover(roverId);
+        val currentLocation = mission.get().roverLocation(roverId);
+        val currentDirection = rovers.get(roverId.getId()).get().getRoverDirection();
+        val newLocation = localizationService.calculateTargetMovingFrom(currentLocation, currentDirection);
+        mission.get().canMoveRoverTo(roverId, newLocation);
+        // TODO could also check if rover is already landed
+        return List.of(new RoverMoved(roverId, newLocation));
     }
 
     private void hasRover(RoverId roverId) {

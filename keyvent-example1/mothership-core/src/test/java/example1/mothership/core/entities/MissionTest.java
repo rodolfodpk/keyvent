@@ -1,5 +1,6 @@
 package example1.mothership.core.entities;
 
+import example1.mothership.core.services.TemperatureService;
 import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;

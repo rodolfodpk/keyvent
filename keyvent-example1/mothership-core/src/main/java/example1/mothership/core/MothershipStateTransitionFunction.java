@@ -6,11 +6,8 @@ import example1.mothership.core.entities.Plateau;
 import example1.mothership.core.entities.Rover;
 import javaslang.Function2;
 import javaslang.Tuple;
-import javaslang.Tuple2;
 import javaslang.collection.HashMap;
-import javaslang.collection.Set;
 import javaslang.control.Option;
-import lombok.val;
 
 import static example1.mothership.core.MothershipDataSchema.*;
 import static example1.mothership.core.MothershipDataSchema.MothershipStatus.AVALIABLE;
@@ -50,7 +47,3 @@ class MothershipStateTransitionFunction implements Function2<MothershipEvent, Mo
         ;
     }
 }
-
-
-//event -> mothership.withRovers(mothership.getRovers().
-//        put(event.getRoverId().getId(), new Rover(event.getRoverId(), event.getNewDirection()));

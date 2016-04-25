@@ -1,5 +1,6 @@
 package example1.mothership.core.entities;
 
+import example1.mothership.core.services.TemperatureService;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
@@ -19,4 +20,11 @@ import static example1.mothership.core.MothershipDataSchema.*;
         plateau.canLaunchRover(roverId, plateauLocation, temperatureService);
     }
 
+    public PlateauLocation roverLocation(RoverId roverId) {
+        return plateau.currentRoverLocation(roverId);
+    }
+
+    public void canMoveRoverTo(RoverId roverId, PlateauLocation newLocation) {
+        plateau.canMoveRoverTo(roverId, newLocation);
+    }
 }

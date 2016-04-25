@@ -1,6 +1,7 @@
 package example1.mothership.core.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import example1.mothership.core.services.TemperatureService;
 import javaslang.collection.HashMap;
 import javaslang.collection.Map;
 import lombok.AllArgsConstructor;
@@ -42,5 +43,26 @@ import static example1.mothership.core.MothershipExceptions.*;
     }
 
     @JsonIgnore public Map<String, PlateauLocation> landedRovers() { return landedRovers; }
+
+    public PlateauLocation currentRoverLocation(RoverId roverId) {
+        return landedRovers.get(roverId.getId()).get();
+    }
+
+    public void canMoveRoverTo(RoverId roverId, PlateauLocation newLocation) {
+
+        if (!landedRovers.containsKey(roverId.getId())) {
+            throw new IllegalStateException(); // TODO
+        }
+
+        if (newLocation.getX() >= dimension.getWidth() ||
+                newLocation.getY() >= dimension.getHeight()) {
+            throw new IllegalStateException(); // TODO
+        }
+
+        if (landedRovers.containsValue(newLocation)) {
+            throw new IllegalStateException(); // TODO
+        }
+    }
+
 
 }
