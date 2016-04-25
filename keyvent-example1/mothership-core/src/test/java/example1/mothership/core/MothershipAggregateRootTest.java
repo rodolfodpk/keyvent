@@ -19,6 +19,7 @@ import static example1.mothership.core.MothershipDataSchema.*;
 import static example1.mothership.core.MothershipDataSchema.MothershipStatus.AVALIABLE;
 import static example1.mothership.core.MothershipDataSchema.MothershipStatus.ON_MISSION;
 import static example1.mothership.core.MothershipDataSchema.RoverDirection.NORTH;
+import static example1.mothership.core.MothershipDataSchema.RoverDirection.SOUTH;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -78,6 +79,27 @@ public class MothershipAggregateRootTest {
 
         // then
         assertEquals(List.of(new RoverLaunched(new RoverId("enio"), new PlateauLocation(0,0))), fired_events);
+    }
+
+
+    @Test
+    public void change_rover_direction_should_fire_event() {
+
+        // given
+        val mId = new MothershipId("startreck");
+        Map<String, Rover> rovers = HashMap.of("enio", new Rover(new RoverId("enio"), NORTH), "beto", new Rover(new RoverId("beto"), NORTH));
+        val initialPlateau = new Plateau(new PlateauId("death's cave"), new PlateauDimension(2, 2));
+        val mission = Mission.builder().missionId(new MissionId("kamikaze")).plateau(initialPlateau).build();
+        val mockService = mock(TemperatureService.class);
+        when(mockService.currentTemperatureInCelsius()).thenReturn(99f);
+        val onMissionMothership = MothershipAggregateRoot.builder().id(mId).rovers(rovers).status(ON_MISSION).mission(Option.of(mission))
+                .temperatureService(mockService).build();
+
+        // when
+        val fired_events = onMissionMothership.changeRoverDirection(new RoverId("enio"), SOUTH);
+
+        // then
+        assertEquals(List.of(new RoverDirectionChanged(new RoverId("enio"), SOUTH)), fired_events);
     }
 
     // failing scenarios

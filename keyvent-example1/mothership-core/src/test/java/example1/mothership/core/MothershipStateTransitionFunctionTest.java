@@ -12,6 +12,7 @@ import lombok.val;
 import org.junit.Test;
 
 import static example1.mothership.core.MothershipDataSchema.*;
+import static example1.mothership.core.MothershipDataSchema.RoverDirection.*;
 import static org.junit.Assert.assertEquals;
 
 public class MothershipStateTransitionFunctionTest {
@@ -86,6 +87,28 @@ public class MothershipStateTransitionFunctionTest {
                 .mission(Option.of(newMission)).status(MothershipStatus.ON_MISSION).build();
         assertEquals(expected, result);
     }
+
+    @Test
+    public void after_change_rover_direction() {
+
+        // given
+        val mId = new MothershipId("voyager");
+        val rovers = HashSet.of(new Rover(new RoverId("enio")), new Rover(new RoverId("beto")));
+        Map<String, Rover> mapOfRovers = HashMap.ofEntries(rovers.map(rover -> Tuple.of(rover.getId().getId(), rover)));
+        val initialPlateau = new Plateau(new PlateauId("death's cave"), new PlateauDimension(2, 2));
+        val mission = Mission.builder().missionId(new MissionId("kamikaze")).plateau(initialPlateau).build();
+        val avaliableMothership = MothershipAggregateRoot.builder().id(mId).rovers(mapOfRovers)
+                .mission(Option.of(mission)).status(MothershipStatus.ON_MISSION).build();
+
+        // when
+        val event = new RoverDirectionChanged(new RoverId("enio"), SOUTH);
+        val result = function.apply(event, avaliableMothership);
+
+        // then
+        val expected = avaliableMothership.withRovers(avaliableMothership.getRovers().put("enio", new Rover(new RoverId("enio"), SOUTH)));
+        assertEquals(expected, result);
+    }
+
 
     // TODO others state transitions
 

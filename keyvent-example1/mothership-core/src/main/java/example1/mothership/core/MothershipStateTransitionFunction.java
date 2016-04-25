@@ -33,6 +33,10 @@ class MothershipStateTransitionFunction implements Function2<MothershipEvent, Mo
                 Case(instanceOf(MissionStarted.class),
                         event -> mothership.withStatus(ON_MISSION).withMission(Option.of(event.getMission()))
                 ),
+                Case(instanceOf(RoverDirectionChanged.class),
+                        event -> mothership.withRovers(mothership.getRovers().
+                                put(event.getRoverId().getId(), new Rover(event.getRoverId(), event.getNewDirection())))
+                ),
                 Case(instanceOf(RoverLaunched.class),
                         event -> {
                             Mission currentMission = mothership.getMission().get();
@@ -42,7 +46,11 @@ class MothershipStateTransitionFunction implements Function2<MothershipEvent, Mo
                                     .put(event.getRoverId().getId(), event.getPlateauLocation()));
                             return mothership.withMission(Option.of(currentMission.withPlateau(newPlateau)));
                         })
-                );
+                )
+        ;
     }
 }
 
+
+//event -> mothership.withRovers(mothership.getRovers().
+//        put(event.getRoverId().getId(), new Rover(event.getRoverId(), event.getNewDirection()));

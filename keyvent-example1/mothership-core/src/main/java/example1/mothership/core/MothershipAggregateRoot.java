@@ -59,14 +59,12 @@ public class MothershipAggregateRoot {
     }
 
     public List<? super MothershipEvent> changeRoverDirection(RoverId roverId, RoverDirection newDirection) {
-//        isNotNew();
-//        statusIs(ON_MISSION);
-//        hasRover(roverId);
-//        mission.get().canLaunchRover(roverId, newDirection, temperatureService);
-//        return List.of(new RoverLaunched(roverId, newDirection));
-        return null;
+        isNotNew();
+        statusIs(ON_MISSION);
+        hasRover(roverId);
+        // TODO could also check if rover is already landed
+        return List.of(new RoverDirectionChanged(roverId, newDirection));
     }
-
 
     private void hasRover(RoverId roverId) {
         if (!rovers.containsKey(roverId.getId())){
