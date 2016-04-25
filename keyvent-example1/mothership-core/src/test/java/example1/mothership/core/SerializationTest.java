@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import example1.mothership.core.entities.Plateau;
+import example1.mothership.core.entities.Rover;
 import javaslang.collection.HashMap;
 import javaslang.collection.HashSet;
 import javaslang.collection.Map;
@@ -19,6 +20,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import static example1.mothership.core.MothershipDataSchema.*;
+import static example1.mothership.core.MothershipDataSchema.RoverDirection.NORTH;
 import static org.junit.Assert.assertEquals;
 
 public class SerializationTest {
@@ -75,15 +77,15 @@ public class SerializationTest {
     @Test
     public void string_map_key_should_pass() throws IOException {
 
-        RoverPosition roverPosition1 = new RoverPosition(new PlateauLocation(2, 3), RoverDirection.NORTH);
-        RoverPosition roverPosition2 = new RoverPosition(new PlateauLocation(3, 4), RoverDirection.EAST);
+        PlateauLocation roverPosition1 = new PlateauLocation(2, 3);
+        PlateauLocation roverPosition2 = new PlateauLocation(3, 4);
 
-        Map<String, RoverPosition> map = HashMap.of(new RoverId("r1").toString(), roverPosition1,
+        Map<String, PlateauLocation> map = HashMap.of(new RoverId("r1").toString(), roverPosition1,
                                                    new RoverId("r2").toString(), roverPosition2);
 
         val asJson1 = mapper.writeValueAsString(map);
 
-        val typeRefT2 = new TypeReference<Map<String, RoverPosition>>() {};
+        val typeRefT2 = new TypeReference<Map<String, PlateauLocation>>() {};
 
         assertEquals(mapper.readerFor(typeRefT2).readValue(asJson1), map);
 
@@ -94,15 +96,15 @@ public class SerializationTest {
     @Test @Ignore // failing TODO investigate https://github.com/msgpack/msgpack-java/issues/244
     public void non_string_map_key_should_pass() throws IOException {
 
-        RoverPosition roverPosition1 = new RoverPosition(new PlateauLocation(2, 3), RoverDirection.NORTH);
-        RoverPosition roverPosition2 = new RoverPosition(new PlateauLocation(3, 4), RoverDirection.EAST);
+        PlateauLocation roverPosition1 = new PlateauLocation(2, 3);
+        PlateauLocation roverPosition2 = new PlateauLocation(3, 4);
 
-        Map<String, RoverPosition> map = HashMap.of(new RoverId("r1").toString(), roverPosition1,
+        Map<String, PlateauLocation> map = HashMap.of(new RoverId("r1").toString(), roverPosition1,
                 new RoverId("r2").toString(), roverPosition2);
 
         val asJson1 = mapper.writeValueAsString(map);
 
-        val typeRefT2 = new TypeReference<Map<RoverPosition, RoverId>>() {};
+        val typeRefT2 = new TypeReference<Map<PlateauLocation, RoverId>>() {};
 
         assertEquals(mapper.readerFor(typeRefT2).readValue(asJson1), map);
 
@@ -118,7 +120,7 @@ public class SerializationTest {
         val createCmd = CreateMothership.builder()
                 .commandId(new CommandId())
                 .mothershipId(mothershipId)
-                .rovers(HashSet.of(new Rover(new RoverId("enio")), new Rover(new RoverId("beto"))))
+                .rovers(HashSet.of(new Rover(new RoverId("enio"), NORTH), new Rover(new RoverId("beto"), NORTH)))
                 .build();
 
         val startMissionCmd = StartsMissionTo.builder()

@@ -23,9 +23,9 @@ public class MissionTest {
         val mission = new Mission(missionId, plateauMock);
         val service = Mockito.mock(TemperatureService.class);
 
-        mission.canLaunchRover(new RoverId("r1"), new RoverPosition(new PlateauLocation(2, 2), RoverDirection.NORTH), service);
+        mission.canLaunchRover(new RoverId("r1"), new PlateauLocation(2, 2), service);
 
-        verify(plateauMock).canLaunchRover(new RoverId("r1"), new RoverPosition(new PlateauLocation(2, 2), RoverDirection.NORTH), service);
+        verify(plateauMock).canLaunchRover(new RoverId("r1"), new PlateauLocation(2, 2), service);
 
     }
 

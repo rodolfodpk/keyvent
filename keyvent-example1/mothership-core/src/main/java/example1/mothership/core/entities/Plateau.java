@@ -16,7 +16,7 @@ import static example1.mothership.core.MothershipExceptions.*;
 
     PlateauId id;
     @Valid PlateauDimension dimension;
-    @JsonIgnore Map<String, RoverPosition> landedRovers;
+    @JsonIgnore Map<String, PlateauLocation> landedRovers;
 
     public Plateau(PlateauId id, PlateauDimension dimension) {
         this.id = id;
@@ -24,23 +24,23 @@ import static example1.mothership.core.MothershipExceptions.*;
         this.landedRovers = HashMap.empty();
     }
 
-    public void canLaunchRover(RoverId roverId, RoverPosition roverPosition, TemperatureService temperatureService) {
+    public void canLaunchRover(RoverId roverId, PlateauLocation plateauLocation, TemperatureService temperatureService) {
 
         if (temperatureService.currentTemperatureInCelsius() > 100 /*celsius*/) {
             throw new CantLandOverATooHotPlateau();
         }
-        if (landedRovers.containsValue(roverPosition)) {
-            throw new CantLandToAnAldreadyOccupedPosition();
+        if (landedRovers.containsValue(plateauLocation)) {
+            throw new CantLandToAnAlreadyOccupiedPosition();
         }
         if (landedRovers.containsKey(roverId.getId())) {
             throw new CantLandAlreadyLandedRover();
         }
-        if (roverPosition.getPlateauLocation().getX() >= dimension.getWidth() ||
-            roverPosition.getPlateauLocation().getY() >= dimension.getHeight()) {
+        if (plateauLocation.getX() >= dimension.getWidth() ||
+            plateauLocation.getY() >= dimension.getHeight()) {
             throw new CantLandOutsidePlateau();
         }
     }
 
-    @JsonIgnore public Map<String, RoverPosition> landedRovers() { return landedRovers; }
+    @JsonIgnore public Map<String, PlateauLocation> landedRovers() { return landedRovers; }
 
 }

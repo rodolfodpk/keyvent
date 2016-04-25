@@ -12,7 +12,7 @@ public class MothershipExceptions {
 
     public static class CantLandAlreadyLandedRover extends RuntimeException {}
 
-    public static class CantLandToAnAldreadyOccupedPosition extends RuntimeException {}
+    public static class CantLandToAnAlreadyOccupiedPosition extends RuntimeException {}
 
     public static class CantLandOverATooHotPlateau extends RuntimeException {}
 

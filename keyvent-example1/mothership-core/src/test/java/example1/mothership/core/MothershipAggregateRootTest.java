@@ -6,6 +6,7 @@ import example1.mothership.core.MothershipExceptions.CantLandUnknownRover;
 import example1.mothership.core.MothershipExceptions.MothershipCanHaveJustOneMission;
 import example1.mothership.core.entities.Mission;
 import example1.mothership.core.entities.Plateau;
+import example1.mothership.core.entities.Rover;
 import javaslang.collection.HashMap;
 import javaslang.collection.HashSet;
 import javaslang.collection.List;
@@ -17,6 +18,7 @@ import org.junit.Test;
 import static example1.mothership.core.MothershipDataSchema.*;
 import static example1.mothership.core.MothershipDataSchema.MothershipStatus.AVALIABLE;
 import static example1.mothership.core.MothershipDataSchema.MothershipStatus.ON_MISSION;
+import static example1.mothership.core.MothershipDataSchema.RoverDirection.NORTH;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -45,7 +47,7 @@ public class MothershipAggregateRootTest {
 
         // given
         val mId = new MothershipId("startreck");
-        val rovers = HashSet.of(new Rover(new RoverId("enio")), new Rover(new RoverId("beto")));
+        Map<String, Rover> rovers = HashMap.of("enio", new Rover(new RoverId("enio")), "beto", new Rover(new RoverId("beto")));
         val avaliableMothership = MothershipAggregateRoot.builder().id(mId).rovers(rovers).status(AVALIABLE).mission(Option.none()).build();
 
         val initialPlateau = new Plateau(new PlateauId("death's cave"), new PlateauDimension(2, 2));
@@ -63,7 +65,7 @@ public class MothershipAggregateRootTest {
 
         // given
         val mId = new MothershipId("startreck");
-        val rovers = HashSet.of(new Rover(new RoverId("enio")), new Rover(new RoverId("beto")));
+        Map<String, Rover> rovers = HashMap.of("enio", new Rover(new RoverId("enio"), NORTH), "beto", new Rover(new RoverId("beto"), NORTH));
         val initialPlateau = new Plateau(new PlateauId("death's cave"), new PlateauDimension(2, 2));
         val mission = Mission.builder().missionId(new MissionId("kamikaze")).plateau(initialPlateau).build();
         val mockService = mock(TemperatureService.class);
@@ -72,10 +74,10 @@ public class MothershipAggregateRootTest {
                     .temperatureService(mockService).build();
 
         // when
-        val fired_events = onMissionMothership.landRover(new RoverId("enio"), new RoverPosition(new PlateauLocation(0,0), RoverDirection.NORTH));
+        val fired_events = onMissionMothership.landRover(new RoverId("enio"), new PlateauLocation(0,0));
 
         // then
-        assertEquals(List.of(new RoverLaunched(new RoverId("enio"), new RoverPosition(new PlateauLocation(0,0), RoverDirection.NORTH))), fired_events);
+        assertEquals(List.of(new RoverLaunched(new RoverId("enio"), new PlateauLocation(0,0))), fired_events);
     }
 
     // failing scenarios
@@ -85,7 +87,7 @@ public class MothershipAggregateRootTest {
 
         // given
         val mId = new MothershipId("startreck");
-        val rovers = HashSet.of(new Rover(new RoverId("enio")), new Rover(new RoverId("beto")));
+        Map<String, Rover> rovers = HashMap.of("enio", new Rover(new RoverId("enio"), NORTH), "beto", new Rover(new RoverId("beto"), NORTH));
         val initialPlateau = new Plateau(new PlateauId("death's cave"), new PlateauDimension(2, 2));
         val mission = Mission.builder().missionId(new MissionId("kamikaze")).plateau(initialPlateau).build();
         val onMissionMothership = MothershipAggregateRoot.builder().id(mId).rovers(rovers).status(ON_MISSION).mission(Option.of(mission)).build();
@@ -99,13 +101,13 @@ public class MothershipAggregateRootTest {
 
         // given
         val mId = new MothershipId("startreck");
-        val rovers = HashSet.of(new Rover(new RoverId("enio")), new Rover(new RoverId("beto")));
+        Map<String, Rover> rovers = HashMap.of("enio", new Rover(new RoverId("enio"), NORTH), "beto", new Rover(new RoverId("beto"), NORTH));
         val initialPlateau = new Plateau(new PlateauId("death's cave"), new PlateauDimension(2, 2));
         val mission = Mission.builder().missionId(new MissionId("kamikaze")).plateau(initialPlateau).build();
         val onMissionMothership = MothershipAggregateRoot.builder().id(mId).rovers(rovers).status(ON_MISSION).mission(Option.of(mission)).build();
 
         // when
-        val fired_events = onMissionMothership.landRover(new RoverId("alien"), new RoverPosition(new PlateauLocation(0, 0), RoverDirection.NORTH));
+        val fired_events = onMissionMothership.landRover(new RoverId("alien"), new PlateauLocation(0, 0));
     }
 
     @Test(expected = CantLandAlreadyLandedRover.class)
@@ -113,8 +115,8 @@ public class MothershipAggregateRootTest {
 
         // given
         val mId = new MothershipId("startreck");
-        val avaliableRovers = HashSet.of(new Rover(new RoverId("enio")), new Rover(new RoverId("beto")));
-        val landedRovers = HashMap.of(new RoverId("enio").getId(), new RoverPosition(new PlateauLocation(1,1), RoverDirection.NORTH));
+        Map<String, Rover> avaliableRovers = HashMap.of("enio", new Rover(new RoverId("enio"), NORTH), "beto", new Rover(new RoverId("beto"), NORTH));
+        val landedRovers = HashMap.of(new RoverId("enio").getId(), new PlateauLocation(1,1));
         val onMissionPlateau = new Plateau(new PlateauId("death's cave"), new PlateauDimension(2, 2)).withLandedRovers(landedRovers);
         val mockService = mock(TemperatureService.class);
         when(mockService.currentTemperatureInCelsius()).thenReturn(99f);
@@ -123,7 +125,7 @@ public class MothershipAggregateRootTest {
                 .mission(Option.of(mission)).temperatureService(mockService).build();
 
         // when
-        val fired_events = onMissionMothership.landRover(new RoverId("enio"), new RoverPosition(new PlateauLocation(0, 0), RoverDirection.NORTH));
+        val fired_events = onMissionMothership.landRover(new RoverId("enio"), new PlateauLocation(0, 0));
     }
 
 
@@ -132,7 +134,7 @@ public class MothershipAggregateRootTest {
 
         // given
         val mId = new MothershipId("startreck");
-        val avaliableRovers = HashSet.of(new Rover(new RoverId("enio")), new Rover(new RoverId("beto")));
+        Map<String, Rover> avaliableRovers = HashMap.of("enio", new Rover(new RoverId("enio"), NORTH), "beto", new Rover(new RoverId("beto"), NORTH));
         val onMissionPlateau = new Plateau(new PlateauId("death's cave"), new PlateauDimension(2, 2));
         val mockService = mock(TemperatureService.class);
         when(mockService.currentTemperatureInCelsius()).thenReturn(99f);
@@ -141,7 +143,7 @@ public class MothershipAggregateRootTest {
                 .mission(Option.of(mission)).temperatureService(mockService).build();
 
         // when
-        val fired_events = onMissionMothership.landRover(new RoverId("enio"), new RoverPosition(new PlateauLocation(5, 5), RoverDirection.NORTH));
+        val fired_events = onMissionMothership.landRover(new RoverId("enio"), new PlateauLocation(5, 5));
     }
 
 }

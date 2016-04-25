@@ -2,6 +2,8 @@ package example1.mothership.core;
 
 import example1.mothership.core.entities.Mission;
 import example1.mothership.core.entities.Plateau;
+import example1.mothership.core.entities.Rover;
+import javaslang.Tuple;
 import javaslang.collection.HashMap;
 import javaslang.collection.HashSet;
 import javaslang.collection.Map;
@@ -31,7 +33,9 @@ public class MothershipStateTransitionFunctionTest {
         val result = function.apply(event, emptyMothership);
 
         // then
-        val expected = MothershipAggregateRoot.builder().id(mId).rovers(rovers).mission(Option.none()).status(MothershipStatus.AVALIABLE).build();
+        val expected = MothershipAggregateRoot.builder().id(mId)
+                .rovers(HashMap.ofEntries(event.getRovers().map(rover -> Tuple.of(rover.getId().getId(), rover))))
+                .mission(Option.none()).status(MothershipStatus.AVALIABLE).build();
         assertEquals(expected, result);
     }
 
@@ -41,7 +45,10 @@ public class MothershipStateTransitionFunctionTest {
         // given
         val mId = new MothershipId("voyager");
         val rovers = HashSet.of(new Rover(new RoverId("enio")), new Rover(new RoverId("beto")));
-        val avaliableMothership = MothershipAggregateRoot.builder().id(mId).rovers(rovers).mission(Option.none()).status(MothershipStatus.AVALIABLE).build();
+        Map<String, Rover> mapOfRovers = HashMap.ofEntries(rovers.map(rover -> Tuple.of(rover.getId().getId(), rover)));
+        val avaliableMothership = MothershipAggregateRoot.builder().id(mId)
+                .rovers(mapOfRovers)
+                .mission(Option.none()).status(MothershipStatus.AVALIABLE).build();
         val initialPlateau = new Plateau(new PlateauId("death's cave"), new PlateauDimension(2, 2));
         val mission = Mission.builder().missionId(new MissionId("kamikaze")).plateau(initialPlateau).build();
 
@@ -50,7 +57,8 @@ public class MothershipStateTransitionFunctionTest {
         val result = function.apply(event, avaliableMothership);
 
         // then
-        val expected = MothershipAggregateRoot.builder().id(mId).rovers(rovers).mission(Option.of(mission)).status(MothershipStatus.ON_MISSION).build();
+        val expected = MothershipAggregateRoot.builder().id(mId).rovers(mapOfRovers).mission(Option.of(mission))
+                .status(MothershipStatus.ON_MISSION).build();
         assertEquals(expected, result);
     }
 
@@ -61,18 +69,20 @@ public class MothershipStateTransitionFunctionTest {
         // given
         val mId = new MothershipId("voyager");
         val rovers = HashSet.of(new Rover(new RoverId("enio")), new Rover(new RoverId("beto")));
+        Map<String, Rover> mapOfRovers = HashMap.ofEntries(rovers.map(rover -> Tuple.of(rover.getId().getId(), rover)));
         val initialPlateau = new Plateau(new PlateauId("death's cave"), new PlateauDimension(2, 2));
         val mission = Mission.builder().missionId(new MissionId("kamikaze")).plateau(initialPlateau).build();
-        val avaliableMothership = MothershipAggregateRoot.builder().id(mId).rovers(rovers).mission(Option.of(mission)).status(MothershipStatus.ON_MISSION).build();
+        val avaliableMothership = MothershipAggregateRoot.builder().id(mId).rovers(mapOfRovers)
+                .mission(Option.of(mission)).status(MothershipStatus.ON_MISSION).build();
 
         // when
         val event = RoverLaunched.builder().roverId(new RoverId("enio"))
-                .roverPosition(new RoverPosition(new PlateauLocation(0,0), RoverDirection.NORTH)).build();
+                .plateauLocation(new PlateauLocation(0,0)).build();
         val result = function.apply(event, avaliableMothership);
 
         // then
-        val newMission = mission.withPlateau(initialPlateau.withLandedRovers(HashMap.of(event.getRoverId().getId(), event.getRoverPosition())));
-        val expected = MothershipAggregateRoot.builder().id(mId).rovers(rovers)
+        val newMission = mission.withPlateau(initialPlateau.withLandedRovers(HashMap.of(event.getRoverId().getId(), event.getPlateauLocation())));
+        val expected = MothershipAggregateRoot.builder().id(mId).rovers(mapOfRovers)
                 .mission(Option.of(newMission)).status(MothershipStatus.ON_MISSION).build();
         assertEquals(expected, result);
     }

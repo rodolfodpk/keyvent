@@ -18,7 +18,7 @@ public class PlateauTest {
         val mockService = mock(TemperatureService.class);
         when(mockService.currentTemperatureInCelsius()).thenReturn(99f);
 
-        plateau.canLaunchRover(new RoverId("innocent"), new RoverPosition(new PlateauLocation(0,0), RoverDirection.NORTH), mockService);
+        plateau.canLaunchRover(new RoverId("innocent"), new PlateauLocation(0,0), mockService);
 
     }
 
@@ -29,17 +29,17 @@ public class PlateauTest {
         val mockService = mock(TemperatureService.class);
         when(mockService.currentTemperatureInCelsius()).thenReturn(200f);
 
-        plateau.canLaunchRover(new RoverId("innocent"), new RoverPosition(new PlateauLocation(0,0), RoverDirection.NORTH), mockService);
+        plateau.canLaunchRover(new RoverId("innocent"), new PlateauLocation(0,0), mockService);
 
     }
 
     @Test(expected = Exception.class)
     public void should_fail_on_position_conflict() {
 
-        val roverPosition1 = new RoverPosition(new PlateauLocation(2, 3), RoverDirection.NORTH);
-        val roverPosition2 = new RoverPosition(new PlateauLocation(3, 4), RoverDirection.EAST);
+        val roverPosition1 = new PlateauLocation(2, 3);
+        val roverPosition2 = new PlateauLocation(3, 4);
 
-        Map<String, RoverPosition> map = HashMap.of(new RoverId("r1").getId(), roverPosition1,
+        Map<String, PlateauLocation> map = HashMap.of(new RoverId("r1").getId(), roverPosition1,
                 new RoverId("r2").getId(), roverPosition2);
 
         val plateau = new Plateau(new PlateauId("inferno"), new PlateauDimension(6, 6), map);
@@ -54,8 +54,8 @@ public class PlateauTest {
     @Test(expected = Exception.class)
     public void should_fail_on_rover_conflict() {
 
-        val roverPosition1 = new RoverPosition(new PlateauLocation(2, 3), RoverDirection.NORTH);
-        Map<String, RoverPosition> map = HashMap.of(new RoverId("r1").getId(), roverPosition1);
+        val roverPosition1 = new PlateauLocation(2, 3);
+        Map<String, PlateauLocation> map = HashMap.of(new RoverId("r1").getId(), roverPosition1);
 
         val plateau = new Plateau(new PlateauId("inferno"), new PlateauDimension(6, 6), map);
 

@@ -2,7 +2,9 @@ package example1.mothership.core;
 
 import example1.mothership.core.entities.Mission;
 import example1.mothership.core.entities.Plateau;
+import example1.mothership.core.entities.Rover;
 import javaslang.collection.List;
+import javaslang.collection.Map;
 import javaslang.collection.Set;
 import javaslang.control.Option;
 import lombok.AllArgsConstructor;
@@ -24,7 +26,7 @@ import static example1.mothership.core.MothershipExceptions.*;
 public class MothershipAggregateRoot {
 
     MothershipId id;
-    Set<Rover> rovers;
+    Map<String, Rover> rovers;
 
     // mutable data
     MothershipStatus status;
@@ -48,16 +50,26 @@ public class MothershipAggregateRoot {
         return List.of(new MissionStarted(new Mission(missionId, plateau)));
     }
 
-    public List<? super MothershipEvent> landRover(RoverId roverId, RoverPosition roverPosition) {
+    public List<? super MothershipEvent> landRover(RoverId roverId, PlateauLocation plateauLocation) {
         isNotNew();
         statusIs(ON_MISSION);
         hasRover(roverId);
-        mission.get().canLaunchRover(roverId, roverPosition, temperatureService);
-        return List.of(new RoverLaunched(roverId, roverPosition));
+        mission.get().canLaunchRover(roverId, plateauLocation, temperatureService);
+        return List.of(new RoverLaunched(roverId, plateauLocation));
     }
 
+    public List<? super MothershipEvent> changeRoverDirection(RoverId roverId, RoverDirection newDirection) {
+//        isNotNew();
+//        statusIs(ON_MISSION);
+//        hasRover(roverId);
+//        mission.get().canLaunchRover(roverId, newDirection, temperatureService);
+//        return List.of(new RoverLaunched(roverId, newDirection));
+        return null;
+    }
+
+
     private void hasRover(RoverId roverId) {
-        if (rovers.filter(r -> r.getId().equals(roverId)).size()==0){
+        if (!rovers.containsKey(roverId.getId())){
             throw new CantLandUnknownRover();
         }
     }

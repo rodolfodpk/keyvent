@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import example1.mothership.core.entities.Mission;
 import example1.mothership.core.entities.Plateau;
+import example1.mothership.core.entities.Rover;
 import javaslang.collection.List;
 import javaslang.collection.Set;
 import lombok.AllArgsConstructor;
@@ -31,15 +32,11 @@ public class MothershipDataSchema {
 
     @Value public static class RoverId { String id; }
 
-    @Value public static class Rover { RoverId id; }
-
     @Value public static class PlateauDimension { @Min(value = 2) int height; @Min(2) int width; }
 
     @Value public static class PlateauLocation { @Min(0) int x; @Min(0) int y; }
 
     public enum RoverDirection { NORTH, SOUTH, EAST, WEST;}
-
-    @Value public static class RoverPosition { PlateauLocation plateauLocation; RoverDirection roverDirection; }
 
     @Value public static class CommandId { UUID uuid; public CommandId() { this.uuid = UUID.randomUUID(); } }
 
@@ -82,7 +79,7 @@ public class MothershipDataSchema {
     @Value @Builder @AllArgsConstructor @JsonTypeName("LaunchRoverTo")
     public static class LaunchRoverTo implements MothershipCommand { CommandId commandId; MothershipId mothershipId; RoverId roverId;
         @Valid
-        RoverPosition roverPosition; }
+        PlateauLocation plateauLocation; }
 
     @Value @Builder @AllArgsConstructor @JsonTypeName("ChangeRoverDirection")
     public static class ChangeRoverDirection implements MothershipCommand { CommandId commandId; MothershipId mothershipId;
@@ -123,10 +120,10 @@ public class MothershipDataSchema {
     public static class MissionStarted implements MothershipEvent {Mission mission; }
 
     @Value @Builder @AllArgsConstructor @JsonTypeName("RoverLaunched")
-    public static class RoverLaunched implements MothershipEvent {RoverId roverId; RoverPosition roverPosition;}
+    public static class RoverLaunched implements MothershipEvent {RoverId roverId; PlateauLocation plateauLocation; }
 
     @Value @Builder @AllArgsConstructor @JsonTypeName("RoverDirectionChanged")
-    public static class RoverDirectionChanged implements MothershipEvent {MissionId missionId; RoverId roverId; RoverDirection newDirection; }
+    public static class RoverDirectionChanged implements MothershipEvent {RoverId roverId; RoverDirection newDirection; }
 
     @Value @Builder @AllArgsConstructor @JsonTypeName("RoverMoved")
     public static class RoverMoved implements MothershipEvent {MissionId missionId; RoverId roverId; int steps; }
