@@ -109,6 +109,13 @@ public class MothershipStateTransitionFunctionTest {
         assertEquals(expected, result);
     }
 
+    @Test
+    public void after_move_rover_forward() {
+    }
+
+    @Test
+    public void after_finish_mission() {
+    }
 
     // TODO others state transitions
 

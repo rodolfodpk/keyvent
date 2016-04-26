@@ -128,7 +128,7 @@ public class MothershipDataSchema {
     public static class RoverIsBack implements MothershipEvent {RoverId roverId; }
 
     @Value @Builder @AllArgsConstructor @JsonTypeName("MissionFinished")
-    public static class MissionFinished implements MothershipEvent {MissionId missionId; }
+    public static class MissionFinished implements MothershipEvent {}
 
     // unitofwork
 

@@ -22,11 +22,7 @@ import static example1.mothership.core.MothershipDataSchema.MothershipStatus.AVA
 import static example1.mothership.core.MothershipDataSchema.MothershipStatus.ON_MISSION;
 import static example1.mothership.core.MothershipExceptions.*;
 
-@Value
-@AllArgsConstructor
-@Wither
-@Builder
-public class MothershipAggregateRoot {
+@Value @AllArgsConstructor @Wither @Builder public class MothershipAggregateRoot {
 
     MothershipId id;
     Map<String, Rover> rovers;
@@ -82,13 +78,27 @@ public class MothershipAggregateRoot {
         return List.of(new RoverMoved(roverId, newLocation));
     }
 
+    public List<? super MothershipEvent> getBackRover(RoverId roverId) {
+        isNotNew();
+        statusIs(ON_MISSION);
+        hasRover(roverId);
+        // TODO could also check if rover is already landed
+        return List.of(new RoverIsBack(roverId));
+    }
+
+    public List<? super MothershipEvent> finishMission() {
+        isNotNew();
+        statusIs(ON_MISSION);
+        return List.of(new MissionFinished());
+    }
+
+    // guards
+
     private void hasRover(RoverId roverId) {
         if (!rovers.containsKey(roverId.getId())){
             throw new CantLandUnknownRover();
         }
     }
-
-    // guards
 
     void statusIs(MothershipStatus requiredStatus) {
         if (!requiredStatus.equals(status)) {
