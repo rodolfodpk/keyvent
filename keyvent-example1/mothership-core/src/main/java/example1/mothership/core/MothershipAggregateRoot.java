@@ -24,14 +24,15 @@ import static example1.mothership.core.MothershipExceptions.*;
 
 @Value @AllArgsConstructor @Wither @Builder public class MothershipAggregateRoot {
 
+    // these props never change
     MothershipId id;
     Map<String, Rover> rovers;
 
-    // mutable data
+    // these props can change
     MothershipStatus status;
     Option<Mission> mission;
 
-    // service
+    // services
     transient TemperatureService temperatureService;
     transient LocalizationService localizationService;
 
@@ -39,7 +40,7 @@ import static example1.mothership.core.MothershipExceptions.*;
 
     public List<? super MothershipEvent> create(MothershipId id, Set<Rover> avaliableRovers) {
         isNew();
-        hasAtLeastOneRover(avaliableRovers.size());
+        hasAtLeastOneRover(avaliableRovers);
         return List.of(new MothershipCreated(id, avaliableRovers));
     }
 
@@ -110,8 +111,8 @@ import static example1.mothership.core.MothershipExceptions.*;
         Objects.isNull(id);
     }
 
-    void hasAtLeastOneRover(int howManyRovers) {
-         if (howManyRovers == 0) {
+    void hasAtLeastOneRover(Set<Rover> avaliableRovers) {
+         if (avaliableRovers.size() == 0) {
              throw new MothershipMustHaveAtLeastOneRover();
          }
     }

@@ -73,22 +73,24 @@ public class MothershipDataSchema {
         Plateau plateau; }
 
     @Value @Builder @AllArgsConstructor @JsonTypeName("LaunchRoverTo")
-    public static class LaunchRoverTo implements MothershipCommand { CommandId commandId; MothershipId mothershipId; RoverId roverId;
-        @Valid
-        PlateauLocation plateauLocation; }
+    public static class LaunchRoverTo implements MothershipCommand { CommandId commandId; MothershipId mothershipId;
+        RoverId roverId; @Valid PlateauLocation plateauLocation; } // TODO add rover direction
 
     @Value @Builder @AllArgsConstructor @JsonTypeName("ChangeRoverDirection")
-    public static class ChangeRoverDirection implements MothershipCommand { CommandId commandId; MothershipId mothershipId;
-        RoverId roverId; RoverDirection direction; }
+    public static class ChangeRoverDirection implements MothershipCommand { CommandId commandId; MothershipId
+            mothershipId; RoverId roverId; RoverDirection direction; }
 
     @Value @Builder @AllArgsConstructor @JsonTypeName("MoveRover")
-    public static class MoveRover implements MothershipCommand { CommandId commandId; MothershipId mothershipId; RoverId roverId; }
+    public static class MoveRover implements MothershipCommand { CommandId commandId; MothershipId mothershipId;
+        RoverId roverId; }
 
     @Value @Builder @AllArgsConstructor @JsonTypeName("ComeBackRover")
-    public static class ComeBackRover implements MothershipCommand { CommandId commandId; MothershipId mothershipId; RoverId roverId; }
+    public static class ComeBackRover implements MothershipCommand { CommandId commandId; MothershipId mothershipId;
+        RoverId roverId; }
 
     @Value @Builder @AllArgsConstructor @JsonTypeName("FinishCurrentMission")
-    public static class FinishCurrentMission implements MothershipCommand { CommandId commandId; MothershipId mothershipId; }
+    public static class FinishCurrentMission implements MothershipCommand { CommandId commandId;
+        MothershipId mothershipId; }
 
 
     // events
@@ -119,7 +121,8 @@ public class MothershipDataSchema {
     public static class RoverLaunched implements MothershipEvent {RoverId roverId; PlateauLocation plateauLocation; }
 
     @Value @Builder @AllArgsConstructor @JsonTypeName("RoverDirectionChanged")
-    public static class RoverDirectionChanged implements MothershipEvent {RoverId roverId; RoverDirection newDirection; }
+    public static class RoverDirectionChanged implements MothershipEvent {RoverId roverId;
+        RoverDirection newDirection; }
 
     @Value @Builder @AllArgsConstructor @JsonTypeName("RoverMoved")
     public static class RoverMoved implements MothershipEvent {RoverId roverId; PlateauLocation plateauLocation; }

@@ -11,7 +11,7 @@ import static example1.mothership.core.MothershipDataSchema.RoverId;
 
     RoverId id;
     RoverDirection roverDirection;
-    // rover could also know if it is landed / lending / on mothership
+    // rover could also know if it is landed / on mothership
 
     public Rover(RoverId id) {
         this.id = id;

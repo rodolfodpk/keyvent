@@ -11,14 +11,13 @@ import javaslang.control.Option;
 import lombok.val;
 
 import static example1.mothership.core.MothershipDataSchema.*;
-import static example1.mothership.core.MothershipDataSchema.MothershipStatus.AVALIABLE;
-import static example1.mothership.core.MothershipDataSchema.MothershipStatus.FINISHED_MISSION;
-import static example1.mothership.core.MothershipDataSchema.MothershipStatus.ON_MISSION;
+import static example1.mothership.core.MothershipDataSchema.MothershipStatus.*;
 import static javaslang.API.Case;
 import static javaslang.API.Match;
 import static javaslang.Predicates.instanceOf;
 
-class MothershipStateTransitionFunction implements Function2<MothershipEvent, MothershipAggregateRoot, MothershipAggregateRoot> {
+class MothershipStateTransitionFunction
+        implements Function2<MothershipEvent, MothershipAggregateRoot, MothershipAggregateRoot> {
 
     @Override
     public MothershipAggregateRoot apply(MothershipEvent mothershipEvent, MothershipAggregateRoot mothership) {
@@ -37,19 +36,30 @@ class MothershipStateTransitionFunction implements Function2<MothershipEvent, Mo
                         event -> mothership.withRovers(mothership.getRovers().
                                 put(event.getRoverId().getId(), new Rover(event.getRoverId(), event.getNewDirection())))
                 ),
+                Case(instanceOf(RoverMoved.class),
+                        event -> {
+                            Plateau currentPlateau = mothership.getMission().get().getPlateau();
+                            Plateau newPLateau = currentPlateau.withLandedRovers(currentPlateau.getLandedRovers()
+                                    .put(event.getRoverId().getId(), event.getPlateauLocation()));
+                            return mothership.withMission(
+                                    Option.of(mothership.getMission().get().withPlateau(newPLateau)));
+                        }
+                ),
                 Case(instanceOf(RoverIsBack.class),
                         event -> {
                             Plateau currentPlateau = mothership.getMission().get().getPlateau();
                             Plateau newPlateau = currentPlateau.withLandedRovers(currentPlateau
                                     .getLandedRovers().remove(event.getRoverId().getId()));
-                            return mothership.withMission(Option.of(mothership.getMission().get().withPlateau(newPlateau)));
+                            return mothership.withMission(Option.of(mothership.getMission().get()
+                                    .withPlateau(newPlateau)));
                         }
                 ),
                 Case(instanceOf(MissionFinished.class),
                         event -> {
                             Plateau currentPlateau = mothership.getMission().get().getPlateau();
                             Plateau newPlateau = currentPlateau.withLandedRovers(HashMap.empty());
-                            return mothership.withMission(Option.of(mothership.getMission().get().withPlateau(newPlateau)))
+                            return mothership.withMission(Option.of(mothership.getMission().get()
+                                    .withPlateau(newPlateau)))
                                     .withStatus(FINISHED_MISSION);
                         }
                 ),

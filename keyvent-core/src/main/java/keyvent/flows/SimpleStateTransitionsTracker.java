@@ -21,7 +21,8 @@ public class SimpleStateTransitionsTracker<EV, AR> implements StateTransitionsTr
         this.stateTransitions = List.empty();
     }
 
-    public SimpleStateTransitionsTracker(Snapshot<AR> originalSnapshot, Function2<EV, AR, AR> applyEventsFn, List<StateTransition<EV, AR>> stateTransitions) {
+    public SimpleStateTransitionsTracker(Snapshot<AR> originalSnapshot, Function2<EV, AR, AR> applyEventsFn,
+                                         List<StateTransition<EV, AR>> stateTransitions) {
         Objects.requireNonNull(originalSnapshot);
         Objects.requireNonNull(applyEventsFn);
         Objects.requireNonNull(stateTransitions);
@@ -42,7 +43,8 @@ public class SimpleStateTransitionsTracker<EV, AR> implements StateTransitionsTr
             final AR last = stateTransitions.size() == 0 ?
                     originalSnapshot.getValue() :
                     stateTransitions.last().resultingInstance;
-            this.stateTransitions = stateTransitions.append(new StateTransition<>(event, applyEventsFn.apply(event, last)));
+            this.stateTransitions = stateTransitions.append(
+                    new StateTransition<>(event, applyEventsFn.apply(event, last)));
         }
     }
 
