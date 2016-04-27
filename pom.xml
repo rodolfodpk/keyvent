@@ -63,7 +63,6 @@
 
 	<modules>
 		<module>keyvent-core</module>
-		<module>keyvent-example1</module>
 	</modules>
 
 	<dependencyManagement>
