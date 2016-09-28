@@ -8,4 +8,4 @@ another experiment trying Event Sourcing in Java
 Architecture overview: 
 ![alt text][arch]
 
-[arch]: https://github.com/rodolfodpk/keyvent/blob/master/keyvent-arch.png
+[arch]: https://github.com/rodolfodpk/keyvent/blob/master/arch.png
