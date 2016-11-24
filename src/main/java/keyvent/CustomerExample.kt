@@ -1,4 +1,4 @@
-package kyvent
+package keyvent
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
@@ -48,10 +48,12 @@ data class CreateCustomerCmd(override val commandId: CommandId = CommandId(),
                              override val customerId: CustomerId) : CustomerCommand
 
 data class ActivateCustomerCmd(override val commandId: CommandId = CommandId(),
-                              override val customerId: CustomerId) : CustomerCommand
+                              override val customerId: CustomerId,
+                               val date: LocalDateTime) : CustomerCommand
 
 data class CreateActivatedCustomerCmd(override val commandId: CommandId,
-                                      override val customerId: CustomerId) : CustomerCommand
+                                      override val customerId: CustomerId,
+                                      val date: LocalDateTime) : CustomerCommand
 
 // events
 
@@ -73,11 +75,32 @@ data class Customer(val customerId: CustomerId?, val name: String?, val active: 
         return listOf(CustomerCreated(customerId))
     }
 
-    fun activate() : List<CustomerEvent> {
-        return listOf(CustomerActivated(LocalDateTime.now()))
+    fun activate(datetime: LocalDateTime) : List<CustomerEvent> {
+        return listOf(CustomerActivated(datetime))
     }
 
 }
+
+// commands routing and execution function
+
+val handleCustomerCommands : (Snapshot<Customer>, CustomerCommand, (CustomerEvent, Customer) -> Customer) -> CustomerUnitOfWork? = { snapshot, command, applyEventOn ->
+    when(command) {
+        is CreateCustomerCmd -> CustomerUnitOfWork(customerCommand = command, version = snapshot.nextVersion(),
+                events = snapshot.eventSourced.create(command.customerId))
+        is ActivateCustomerCmd -> CustomerUnitOfWork(customerCommand = command, version = snapshot.nextVersion(),
+                events = snapshot.eventSourced.activate(LocalDateTime.now()))
+        is CreateActivatedCustomerCmd -> {
+            val events = with(StateTransitionsTracker(snapshot.eventSourced, applyEventOn)) {
+                apply(snapshot.eventSourced.create(command.customerId))
+                apply(snapshot.eventSourced.activate(LocalDateTime.now()))
+                collectedEvents()
+            }
+            CustomerUnitOfWork(customerCommand = command, version = snapshot.nextVersion(), events = events)
+        }
+        else -> null
+    }
+}
+
 
 // events routing and execution function
 
@@ -89,22 +112,4 @@ val applyEventOnCustomer : (CustomerEvent, Customer) -> Customer = { event, cust
     }
 }
 
-// commands routing and execution function
-
-val handleCustomerCommands : (Snapshot<Customer>, CustomerCommand, (CustomerEvent, Customer) -> Customer) -> CustomerUnitOfWork? = { snapshot, command, applyEventOn ->
-    when(command) {
-        is CreateCustomerCmd -> CustomerUnitOfWork(customerCommand = command, version = snapshot.nextVersion(),
-                events = snapshot.eventSourced.create(command.customerId))
-        is ActivateCustomerCmd -> CustomerUnitOfWork(customerCommand = command, version = snapshot.nextVersion(),
-                events = snapshot.eventSourced.activate())
-        is CreateActivatedCustomerCmd -> {
-            val events = with(StateTransitionsTracker(snapshot.eventSourced, applyEventOn)) {
-                apply(snapshot.eventSourced.create(command.customerId))
-                apply(snapshot.eventSourced.activate())
-                collectedEvents()
-            }
-            CustomerUnitOfWork(customerCommand = command, version = snapshot.nextVersion(), events = events)
-        }
-        else -> null
-    }
-}
+// projection TODO

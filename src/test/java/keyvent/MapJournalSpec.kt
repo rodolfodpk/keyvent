@@ -1,4 +1,4 @@
-package kyvent
+package keyvent
 
 import org.jetbrains.spek.api.Spek
 import java.time.LocalDateTime
@@ -43,7 +43,8 @@ class MapJournalSpec: Spek() {
             val journal = MapJournal(map = mutableMapOf(Pair(createCustomerCmd.customerId, mutableListOf(uow1))),
                     versionExtractor = { uow -> uow.version })
             on("adding a new unitOfWork with version =2") {
-                val activateCmd: ActivateCustomerCmd = ActivateCustomerCmd(CommandId(), createCustomerCmd.customerId)
+                val localDatTime = LocalDateTime.now()
+                val activateCmd: ActivateCustomerCmd = ActivateCustomerCmd(CommandId(), createCustomerCmd.customerId, date = localDatTime)
                 val uow2 = CustomerUnitOfWork(customerCommand = activateCmd, version = Version(2), events = listOf(CustomerActivated(LocalDateTime.now())))
                 journal.append(createCustomerCmd.customerId, uow2)
                 it("should result in a journal with the respective first and second entries") {

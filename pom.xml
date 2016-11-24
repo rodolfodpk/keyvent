@@ -8,10 +8,16 @@
 	<packaging>jar</packaging>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jackson-core-version>2.7.2</jackson-core-version>
 		<java.version>1.8</java.version>
-		<kotlin.version>1.0.0</kotlin.version>
-		<jackson-core-version>2.7.2</jackson-core-version>
+		<kotlin.version>1.0.1</kotlin.version>
+		<dokka.version>0.9.7</dokka.version>
+		<spek.version>0.1.199</spek.version>
+		<assertj-core.version>3.3.0</assertj-core.version>
 		<!--<junit.version>4.11</junit.version>-->
+        <junit.jupiter.version>5.0.0-M2</junit.jupiter.version>
+        <junit.vintage.version>4.12.0-M2</junit.vintage.version>
+        <junit.platform.version>1.0.0-M2</junit.platform.version>
 	</properties>
 
 	<build>
@@ -60,9 +66,28 @@
 					</execution>
 				</executions>
 				<configuration>
-					<mainClass>kyvent.MainKt</mainClass>
+					<mainClass>keyvent.MainKt</mainClass>
 				</configuration>
 			</plugin>
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.1</version>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.19</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.junit.platform</groupId>
+                            <artifactId>junit-platform-surefire-provider</artifactId>
+                            <version>${junit.platform.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
 		</plugins>
 	</build>
 
@@ -108,19 +133,63 @@
 			<version>${kotlin.version}</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.jetbrains.kotlin</groupId>
-			<artifactId>kotlin-test-junit</artifactId>
-			<version>${kotlin.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jetbrains.spek</groupId>
-			<artifactId>spek</artifactId>
-			<version>0.1-SNAPSHOT</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
+
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.spek</groupId>
+            <artifactId>spek</artifactId>
+            <version>${spek.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>${assertj-core.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+		<!--<dependency>-->
+			<!--<groupId>org.jetbrains.kotlin</groupId>-->
+			<!--<artifactId>kotlin-test-junit</artifactId>-->
+			<!--<version>${kotlin.version}</version>-->
+			<!--<scope>test</scope>-->
+		<!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.jetbrains.spek</groupId>-->
+            <!--<artifactId>spek-junit-platform-engine</artifactId>-->
+            <!--<version>1.0.89</version>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.jetbrains.spek</groupId>-->
+            <!--<artifactId>spek-api</artifactId>-->
+            <!--<version>1.0.89</version>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.junit.jupiter</groupId>-->
+            <!--<artifactId>junit-jupiter-engine</artifactId>-->
+            <!--<version>${junit.jupiter.version}</version>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.junit.vintage</groupId>-->
+            <!--<artifactId>junit-vintage-engine</artifactId>-->
+            <!--<version>${junit.vintage.version}</version>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
+        <!-- https://mvnrepository.com/artifact/org.junit.platform/junit-platform-launcher -->
+        <!--<dependency>-->
+            <!--<groupId>org.junit.platform</groupId>-->
+            <!--<artifactId>junit-platform-launcher</artifactId>-->
+            <!--<version>1.0.0-M1</version>-->
+        <!--</dependency>-->
+
+    </dependencies>
 
 	<repositories>
 		<repository>

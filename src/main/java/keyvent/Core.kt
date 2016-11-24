@@ -1,26 +1,26 @@
-package kyvent
+package keyvent
 
 import java.util.*
 
 data class CommandId(val uuid: UUID = UUID.randomUUID())
+
 data class UnitOfWorkId(val uuid: UUID = UUID.randomUUID())
+
 data class Version(val version: Long) {
     fun nextVersion(): Version { return Version(version.inc())}
 }
 
-class Snapshot<E> (val eventSourced: E, val version: Version) {
+class Snapshot<A> (val eventSourced: A, val version: Version) {
     fun nextVersion(): Version { return version.nextVersion()}
 }
 
-class StateTransitionsTracker<E, V> (val instance: E, val applyEventOn: (event: V, E) -> E) {
-    val stateTransitions : MutableList<Pair<E, V>> = mutableListOf()
-    fun apply(events: List<V>) {
+class StateTransitionsTracker<A, E> (val instance: A, val applyEventOn: (event: E, A) -> A) {
+    val stateTransitions : MutableList<Pair<A, E>> = mutableListOf()
+    fun apply(events: List<E>) {
         val last = if (stateTransitions.size == 0) instance else stateTransitions.last().first
-        for (event in events) {
-            stateTransitions.add(Pair(applyEventOn(event, last), event))
-        }
+        events.mapTo(stateTransitions) { Pair(applyEventOn(it, last), it) }
     }
-    fun collectedEvents() : List<V> {
+    fun collectedEvents() : List<E> {
         var i = 0
         for ((instance, event) in stateTransitions) {
             i++
@@ -43,8 +43,7 @@ class MapEventRepository<ID, UOW> (val map: MutableMap<ID, MutableList<UOW>> = m
                             : EventRepository<ID, UOW> {
     override fun eventsAfter(id: ID, afterVersion: Version): List<UOW> {
         val targetInstance = map[id]
-        return if (targetInstance == null) listOf()
-        else targetInstance.filter { uow -> versionExtractor(uow).version > afterVersion.version}
+        return targetInstance?.filter { uow -> versionExtractor(uow).version > afterVersion.version} ?: listOf()
     }
 
 }

@@ -1,4 +1,4 @@
-package kyvent
+package keyvent
 
 import org.jetbrains.spek.api.Spek
 import java.time.LocalDateTime
@@ -38,7 +38,7 @@ class EventRepositorySpec: Spek() {
             val uow1 = CustomerUnitOfWork(customerCommand= createCustomerCmd,
                     version = Version(1),
                     events = listOf(CustomerCreated(createCustomerCmd.customerId)))
-            val activateCmd: ActivateCustomerCmd = ActivateCustomerCmd(CommandId(), createCustomerCmd.customerId)
+            val activateCmd: ActivateCustomerCmd = ActivateCustomerCmd(CommandId(), createCustomerCmd.customerId, LocalDateTime.now())
             val uow2 = CustomerUnitOfWork(customerCommand = activateCmd, version = Version(2), events = listOf(CustomerActivated(LocalDateTime.now())))
             val eventRepo : MapEventRepository<CustomerId, CustomerUnitOfWork> =
                     MapEventRepository(map = mutableMapOf(Pair(createCustomerCmd.customerId, mutableListOf(uow1, uow2))),
