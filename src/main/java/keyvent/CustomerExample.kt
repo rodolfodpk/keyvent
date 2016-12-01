@@ -83,19 +83,20 @@ data class Customer(val customerId: CustomerId?, val name: String?, val active: 
 
 // commands routing and execution function
 
-val handleCustomerCommands : (Snapshot<Customer>, CustomerCommand, (CustomerEvent, Customer) -> Customer) -> CustomerUnitOfWork? = { snapshot, command, applyEventOn ->
+val handleCustomerCommands : (Customer, Version, CustomerCommand, (CustomerEvent, Customer) -> Customer) ->
+                        CustomerUnitOfWork? = { aggregateRoot, version, command, stateTransitionFn ->
     when(command) {
-        is CreateCustomerCmd -> CustomerUnitOfWork(customerCommand = command, version = snapshot.nextVersion(),
-                events = snapshot.eventSourced.create(command.customerId))
-        is ActivateCustomerCmd -> CustomerUnitOfWork(customerCommand = command, version = snapshot.nextVersion(),
-                events = snapshot.eventSourced.activate(LocalDateTime.now()))
+        is CreateCustomerCmd -> CustomerUnitOfWork(customerCommand = command, version = version.nextVersion(),
+                events = aggregateRoot.create(command.customerId))
+        is ActivateCustomerCmd -> CustomerUnitOfWork(customerCommand = command, version = version.nextVersion(),
+                events = aggregateRoot.activate(LocalDateTime.now()))
         is CreateActivatedCustomerCmd -> {
-            val events = with(StateTransitionsTracker(snapshot.eventSourced, applyEventOn)) {
-                apply(snapshot.eventSourced.create(command.customerId))
-                apply(snapshot.eventSourced.activate(LocalDateTime.now()))
+            val events = with(StateTransitionsTracker(aggregateRoot, stateTransitionFn)) {
+                apply(aggregateRoot.create(command.customerId))
+                apply(aggregateRoot.activate(LocalDateTime.now()))
                 collectedEvents()
             }
-            CustomerUnitOfWork(customerCommand = command, version = snapshot.nextVersion(), events = events)
+            CustomerUnitOfWork(customerCommand = command, version = version.nextVersion(), events = events)
         }
         else -> null
     }
@@ -104,11 +105,11 @@ val handleCustomerCommands : (Snapshot<Customer>, CustomerCommand, (CustomerEven
 
 // events routing and execution function
 
-val applyEventOnCustomer : (CustomerEvent, Customer) -> Customer = { event, customer ->
+val stateTransitionFn: (CustomerEvent, Customer) -> Customer = { event, state ->
     when(event) {
-        is CustomerCreated -> customer.copy(customerId = event.customerId)
-        is CustomerActivated -> customer.copy(active = true, activatedSince = event.date)
-        else -> customer
+        is CustomerCreated -> state.copy(customerId = event.customerId)
+        is CustomerActivated -> state.copy(active = true, activatedSince = event.date)
+        else -> state
     }
 }
 

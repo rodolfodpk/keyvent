@@ -16,14 +16,16 @@ fun main(args : Array<String>) {
 
 fun test1() {
     val cmd : CreateCustomerCmd = CreateCustomerCmd(CommandId(), CustomerId())
-    val snapshot : Snapshot<Customer> = Snapshot(Customer(), Version(0))
-    val uow = handleCustomerCommands(snapshot, cmd, applyEventOnCustomer)
+    val state = Customer()
+    val version = Version(0)
+    val uow = handleCustomerCommands(state, version, cmd, stateTransitionFn)
 }
 
 fun uow2(): CustomerUnitOfWork? {
     val cmd : CreateActivatedCustomerCmd = CreateActivatedCustomerCmd(CommandId(), CustomerId(), LocalDateTime.now())
-    val snapshot : Snapshot<Customer> = Snapshot(Customer(), Version(1))
-    return handleCustomerCommands(snapshot, cmd, applyEventOnCustomer)
+    val state = Customer()
+    val version = Version(1)
+    return handleCustomerCommands(state, version, cmd, stateTransitionFn)
 }
 
 fun jacksonTest() {
@@ -40,6 +42,5 @@ fun jacksonTest() {
 
     val jsonHelper2 = JsonHelper<List<CustomerEvent>>(mapper)
     val onlyTheEvents = jsonHelper2.fromJsonAt("/events", uowAsJson, List::class.java)
-
 
 }

@@ -4,15 +4,21 @@ import java.util.*
 
 data class CommandId(val uuid: UUID = UUID.randomUUID())
 
+interface Command { fun commandId() : CommandId }
+
+interface Event
+
+interface AggregateRoot
+
 data class UnitOfWorkId(val uuid: UUID = UUID.randomUUID())
 
 data class Version(val version: Long) {
     fun nextVersion(): Version { return Version(version.inc())}
 }
 
-class Snapshot<A> (val eventSourced: A, val version: Version) {
-    fun nextVersion(): Version { return version.nextVersion()}
-}
+//class Snapshot<A> (val eventSourced: A, val version: Version) {
+//    fun nextVersion(): Version { return version.nextVersion()}
+//}
 
 class StateTransitionsTracker<A, E> (val instance: A, val applyEventOn: (event: E, A) -> A) {
     val stateTransitions : MutableList<Pair<A, E>> = mutableListOf()
