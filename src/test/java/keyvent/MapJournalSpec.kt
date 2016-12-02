@@ -1,32 +1,32 @@
 package keyvent
 
-import org.jetbrains.spek.api.Spek
+import io.kotlintest.specs.BehaviorSpec
+import keyvent.example.*
 import java.time.LocalDateTime
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class MapJournalSpec: Spek() {
+class MapJournalSpec: BehaviorSpec() {
     init {
-        given("An empty journal") {
-            val journal = MapJournal<CustomerId, CustomerUnitOfWork>(versionExtractor = { uow -> uow.version })
-            on("adding a new unitOfWork with version=1") {
+        Given("An empty journal") {
+            val journal = MapJournal<CustomerId, UnitOfWork>(versionExtractor = { uow -> uow.version })
+            When("adding a new unitOfWork with version=1") {
                 val cmd: CreateCustomerCmd = CreateCustomerCmd(CommandId(), CustomerId())
-                val uow = CustomerUnitOfWork(customerCommand = cmd, version = Version(1), events = listOf(CustomerCreated(cmd.customerId)))
+                val uow = UnitOfWork(command = cmd, version = Version(1), events = listOf(CustomerCreated(cmd.customerId)))
                 journal.append(cmd.customerId, uow)
-                it("should result in a journal with the respective entry") {
-                    val expected: MutableList<CustomerUnitOfWork> = mutableListOf(uow)
-                    val current: MutableList<CustomerUnitOfWork>? = journal.map[cmd.customerId]
+                Then("should result in a journal with the respective entry") {
+                    val expected: MutableList<UnitOfWork> = mutableListOf(uow)
+                    val current: MutableList<UnitOfWork>? = journal.map[cmd.customerId]
                     assertEquals(expected, current)
                 }
             }
         }
-        given("An empty journal") {
-            val journal = MapJournal<CustomerId, CustomerUnitOfWork>(versionExtractor = { uow -> uow.version })
-            on("adding a new unitOfWork with version =2") {
+        Given("An empty journal") {
+            val journal = MapJournal<CustomerId, UnitOfWork>(versionExtractor = { uow -> uow.version })
+            When("adding a new unitOfWork with version =2") {
                 val cmd: CreateCustomerCmd = CreateCustomerCmd(CommandId(), CustomerId())
-                val uow = CustomerUnitOfWork(customerCommand = cmd, version = Version(2), events = listOf(CustomerCreated(cmd.customerId)))
-                it("should throw an exception since version should be 1") {
+                val uow = UnitOfWork(command = cmd, version = Version(2), events = listOf(CustomerCreated(cmd.customerId)))
+                Then("should throw an exception since version should be 1") {
                     try {
                         journal.append(cmd.customerId, uow)
                         assertTrue(false, "should throw IllegalArgumentException")
@@ -35,21 +35,21 @@ class MapJournalSpec: Spek() {
                 }
             }
         }
-        given("A journal with one uow with version =1") {
+        Given("A journal with one uow with version =1") {
             val createCustomerCmd: CreateCustomerCmd = CreateCustomerCmd(CommandId(), CustomerId())
-            val uow1 = CustomerUnitOfWork(customerCommand= createCustomerCmd,
+            val uow1 = UnitOfWork(command= createCustomerCmd,
                                           version = Version(1),
                                           events = listOf(CustomerCreated(createCustomerCmd.customerId)))
             val journal = MapJournal(map = mutableMapOf(Pair(createCustomerCmd.customerId, mutableListOf(uow1))),
                     versionExtractor = { uow -> uow.version })
-            on("adding a new unitOfWork with version =2") {
+            When("adding a new unitOfWork with version =2") {
                 val localDatTime = LocalDateTime.now()
                 val activateCmd: ActivateCustomerCmd = ActivateCustomerCmd(CommandId(), createCustomerCmd.customerId, date = localDatTime)
-                val uow2 = CustomerUnitOfWork(customerCommand = activateCmd, version = Version(2), events = listOf(CustomerActivated(LocalDateTime.now())))
+                val uow2 = UnitOfWork(command = activateCmd, version = Version(2), events = listOf(CustomerActivated(LocalDateTime.now())))
                 journal.append(createCustomerCmd.customerId, uow2)
-                it("should result in a journal with the respective first and second entries") {
-                    val expected: MutableList<CustomerUnitOfWork> = mutableListOf(uow1, uow2)
-                    val current: MutableList<CustomerUnitOfWork>? = journal.map[createCustomerCmd.customerId]
+                Then("should result in a journal with the respective first and second entries") {
+                    val expected: MutableList<UnitOfWork> = mutableListOf(uow1, uow2)
+                    val current: MutableList<UnitOfWork>? = journal.map[createCustomerCmd.customerId]
                     assertEquals(expected, current)
                 }
             }

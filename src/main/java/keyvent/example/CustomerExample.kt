@@ -1,7 +1,7 @@
-package keyvent
+package keyvent.example
 
-import com.fasterxml.jackson.annotation.JsonSubTypes
-import com.fasterxml.jackson.annotation.JsonTypeInfo
+import com.github.kittinunf.result.Result
+import keyvent.*
 import java.time.LocalDateTime
 import java.util.*
 
@@ -11,51 +11,24 @@ data class CustomerId(val uuid: UUID = UUID.randomUUID())
 
 // customer commands
 
-@JsonTypeInfo(
-        use = JsonTypeInfo.Id.NAME,
-        include = JsonTypeInfo.As.PROPERTY,
-        property = "commandType")
-@JsonSubTypes(
-        JsonSubTypes.Type(value = CreateCustomerCmd::class, name = "CreateCustomerCmd"),
-        JsonSubTypes.Type(value = CreateActivatedCustomerCmd::class, name = "CreateActivatedCustomerCmd"))
-interface CustomerCommand {
-    val commandId: CommandId
+interface CustomerCommand : Command {
     val customerId: CustomerId
 }
-
-// customer events
-
-@JsonTypeInfo(
-        use = JsonTypeInfo.Id.NAME,
-        include = JsonTypeInfo.As.PROPERTY,
-        property = "eventType")
-@JsonSubTypes(
-        JsonSubTypes.Type(value = CustomerCreated::class, name = "CustomerCreated"),
-        JsonSubTypes.Type(value = CustomerActivated::class, name = "CustomerActivated"))
-interface CustomerEvent
-
-// customer unitOfWork
-
-data class CustomerUnitOfWork(val id: UnitOfWorkId = UnitOfWorkId(),
-                              val customerCommand: CustomerCommand,
-                              val version: Version,
-                              val events: List<CustomerEvent>,
-                              val timestamp : LocalDateTime = LocalDateTime.now())
-
-// commands
 
 data class CreateCustomerCmd(override val commandId: CommandId = CommandId(),
                              override val customerId: CustomerId) : CustomerCommand
 
 data class ActivateCustomerCmd(override val commandId: CommandId = CommandId(),
-                              override val customerId: CustomerId,
+                               override val customerId: CustomerId,
                                val date: LocalDateTime) : CustomerCommand
 
 data class CreateActivatedCustomerCmd(override val commandId: CommandId,
                                       override val customerId: CustomerId,
                                       val date: LocalDateTime) : CustomerCommand
 
-// events
+// customer events
+
+interface CustomerEvent : Event
 
 data class CustomerCreated(val customerId: CustomerId) : CustomerEvent
 
@@ -84,21 +57,23 @@ data class Customer(val customerId: CustomerId?, val name: String?, val active: 
 // commands routing and execution function
 
 val handleCustomerCommands : (Customer, Version, CustomerCommand, (CustomerEvent, Customer) -> Customer) ->
-                        CustomerUnitOfWork? = { aggregateRoot, version, command, stateTransitionFn ->
+        Result<UnitOfWork, Exception> = { aggregateRoot, version, command, stateTransitionFn ->
     when(command) {
-        is CreateCustomerCmd -> CustomerUnitOfWork(customerCommand = command, version = version.nextVersion(),
-                events = aggregateRoot.create(command.customerId))
-        is ActivateCustomerCmd -> CustomerUnitOfWork(customerCommand = command, version = version.nextVersion(),
-                events = aggregateRoot.activate(LocalDateTime.now()))
+        is CreateCustomerCmd ->
+            Result.of { UnitOfWork(command = command, version = version.nextVersion(),
+                    events = aggregateRoot.create(command.customerId)) }
+        is ActivateCustomerCmd -> Result.of { UnitOfWork(command = command, version = version.nextVersion(),
+                events = aggregateRoot.activate(command.date))}
         is CreateActivatedCustomerCmd -> {
             val events = with(StateTransitionsTracker(aggregateRoot, stateTransitionFn)) {
                 apply(aggregateRoot.create(command.customerId))
-                apply(aggregateRoot.activate(LocalDateTime.now()))
+                apply(aggregateRoot.activate(command.date))
                 collectedEvents()
             }
-            CustomerUnitOfWork(customerCommand = command, version = version.nextVersion(), events = events)
+            Result.of { UnitOfWork(command = command, version = version.nextVersion(), events = events) }
+
         }
-        else -> null
+        else -> Result.error(IllegalArgumentException("Unknown command " + command.javaClass.simpleName))
     }
 }
 
