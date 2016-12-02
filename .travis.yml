@@ -9,4 +9,12 @@ after_success:
   - codecov
   - bash <(curl -s https://codecov.io/bash)
 
-  
+cache:
+  directories:
+  - "$HOME/.m2"
+install:
+- curl -o $HOME/.m2/settings.xml
+  https://raw.githubusercontent.com/rodolfodpk/keyvent/kotlin-gson/settings.xml
+- mvn dependency:go-offline
+script:
+- mvn clean install site
