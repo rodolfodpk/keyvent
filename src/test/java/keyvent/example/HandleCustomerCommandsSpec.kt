@@ -3,9 +3,10 @@ package keyvent.example
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
+import com.nhaarman.mockito_kotlin.verifyNoMoreInteractions
 import io.kotlintest.specs.BehaviorSpec
 import keyvent.CommandId
-import keyvent.GeneratedValuesService
+import keyvent.ValuesService
 import keyvent.UnitOfWork
 import keyvent.Version
 import java.time.LocalDateTime
@@ -13,11 +14,6 @@ import kotlin.test.assertEquals
 
 class HandleCustomerCommandsSpec : BehaviorSpec() {
     init {
-        // just a service mock
-        val activatedOn = LocalDateTime.now()
-        val serviceMock = mock<GeneratedValuesService> {
-            on { now() } doReturn activatedOn
-        }
         Given("an empty Customer with version 0") {
             val state = Customer()
             val version = Version(0)
@@ -33,6 +29,11 @@ class HandleCustomerCommandsSpec : BehaviorSpec() {
             }
         }
         Given("a non active Customer with version 1") {
+            // just a service mock
+            val activatedOn = LocalDateTime.now()
+            val serviceMock = mock<ValuesService> {
+                on { now() } doReturn activatedOn
+            }
             val state = Customer(serviceMock, customerId = CustomerId(), name="customer1", active = false, activatedSince = null)
             val version = Version(1)
             When("an activateCommand is issued") {
@@ -48,6 +49,11 @@ class HandleCustomerCommandsSpec : BehaviorSpec() {
             }
         }
         Given("a non active Customer with version 1") {
+            // just a service mock
+            val activatedOn = LocalDateTime.now()
+            val serviceMock = mock<ValuesService> {
+                on { now() } doReturn activatedOn
+            }
             val state = Customer(serviceMock, customerId = CustomerId(), name="customer1", active = false, activatedSince = null)
             val version = Version(1)
             When("a createCommand with same customerId is issued") {
@@ -56,6 +62,7 @@ class HandleCustomerCommandsSpec : BehaviorSpec() {
                 Then("result must be an error with an IllegalArgumentException") {
                     val exception = result.component2()
                     assertEquals(exception!!.javaClass.name, IllegalArgumentException::class.java.name)
+                    verifyNoMoreInteractions(serviceMock)
                 }
 
             }

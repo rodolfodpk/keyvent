@@ -43,7 +43,6 @@ class MapJournalSpec: BehaviorSpec() {
             val journal = MapJournal(map = mutableMapOf(Pair(createCustomerCmd.customerId, mutableListOf(uow1))),
                     versionExtractor = { uow -> uow.version })
             When("adding a new unitOfWork with version =2") {
-                val localDatTime = LocalDateTime.now()
                 val activateCmd: ActivateCustomerCmd = ActivateCustomerCmd(CommandId(), createCustomerCmd.customerId)
                 val uow2 = UnitOfWork(command = activateCmd, version = Version(2), events = listOf(CustomerActivated(LocalDateTime.now())))
                 journal.append(createCustomerCmd.customerId, uow2)

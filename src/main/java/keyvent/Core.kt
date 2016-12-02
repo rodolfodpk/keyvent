@@ -44,7 +44,7 @@ class StateTransitionsTracker<A : AggregateRoot, E : Event> (val instance: A,
     }
 }
 
-open class GeneratedValuesService {
+open class ValuesService {
 
     open fun now() = LocalDateTime.now()
 

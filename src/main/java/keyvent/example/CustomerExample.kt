@@ -34,9 +34,9 @@ data class CustomerActivated(val date: LocalDateTime) : CustomerEvent
 
 // aggregate root
 
-data class Customer(var genValService: GeneratedValuesService, val customerId: CustomerId?, val name: String?, val active: Boolean, val activatedSince : LocalDateTime?) : AggregateRoot {
+data class Customer(var genValService: ValuesService, val customerId: CustomerId?, val name: String?, val active: Boolean, val activatedSince : LocalDateTime?) : AggregateRoot {
 
-    constructor() : this(GeneratedValuesService(), null, null, false, null)
+    constructor() : this(ValuesService(), null, null, false, null)
 
     // behaviour
 
