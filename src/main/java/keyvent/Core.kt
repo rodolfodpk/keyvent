@@ -52,7 +52,7 @@ open class ValuesService {
 
 }
 
-// default implementations - just for tests
+// default implementations - just for tests -- TODO caffeine ?
 
 class MapEventRepository<ID> (val map: MutableMap<ID, MutableList<UnitOfWork>> = mutableMapOf(),
                               val versionExtractor: (UnitOfWork) -> Version)
