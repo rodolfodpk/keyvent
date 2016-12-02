@@ -4,10 +4,10 @@ jdk:
 before_install:
   # - sudo apt-get update
   # - sudo apt-get install --only-upgrade -y oracle-java8-installer
-  - pip install --user codecov
+  # - pip install --user codecov
 after_success:
-  - codecov
-  - bash <(curl -s https://codecov.io/bash)
+  # - codecov
+  # - bash <(curl -s https://codecov.io/bash)
 
 cache:
   directories:
