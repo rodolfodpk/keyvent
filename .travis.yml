@@ -14,7 +14,7 @@ cache:
   - "$HOME/.m2"
 install:
 - curl -o $HOME/.m2/settings.xml
-  https://raw.githubusercontent.com/rodolfodpk/keyvent/kotlin-gson/settings.xml
+  https://raw.githubusercontent.com/rodolfodpk/keyvent/master/settings.xml
 - mvn dependency:go-offline
 script:
 - mvn clean install site
