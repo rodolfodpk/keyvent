@@ -23,10 +23,6 @@ data class Version(val version: Long) {
     fun nextVersion(): Version { return Version(version.inc())}
 }
 
-//class Snapshot<A> (val eventSourced: A, val version: Version) {
-//    fun nextVersion(): Version { return version.nextVersion()}
-//}
-
 class StateTransitionsTracker<A, E> (val instance: A, val applyEventOn: (event: E, A) -> A) {
     val stateTransitions : MutableList<Pair<A, E>> = mutableListOf()
     fun apply(events: List<E>) {

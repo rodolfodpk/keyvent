@@ -9,7 +9,7 @@ import kotlin.test.assertEquals
 
 class HandleCustomerCommandsSpec : BehaviorSpec() {
     init {
-        Given("An empty Customer with version 0") {
+        Given("an empty Customer with version 0") {
             val state = Customer()
             val version = Version(0)
             When("a createCommand is issued") {
@@ -23,7 +23,7 @@ class HandleCustomerCommandsSpec : BehaviorSpec() {
                 }
             }
         }
-        Given("A non active Customer with version 1") {
+        Given("a non active Customer with version 1") {
             val state = Customer(customerId = CustomerId(), name="customer1", active = false, activatedSince = null)
             val version = Version(1)
             When("an activateCommand is issued") {
@@ -37,7 +37,7 @@ class HandleCustomerCommandsSpec : BehaviorSpec() {
                 }
             }
         }
-        Given("A non active Customer with version 1") {
+        Given("a non active Customer with version 1") {
             val state = Customer(customerId = CustomerId(), name="customer1", active = false, activatedSince = null)
             val version = Version(1)
             When("a createCommand with same customerId is issued") {

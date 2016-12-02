@@ -36,7 +36,7 @@ data class CustomerActivated(val date: LocalDateTime) : CustomerEvent
 
 // aggregate root
 
-data class Customer(val customerId: CustomerId?, val name: String?, val active: Boolean, val activatedSince : LocalDateTime?) {
+data class Customer(val customerId: CustomerId?, val name: String?, val active: Boolean, val activatedSince : LocalDateTime?) : AggregateRoot {
 
     constructor() : this(null, null, false, null)
 

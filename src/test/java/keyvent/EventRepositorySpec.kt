@@ -7,7 +7,7 @@ import kotlin.test.assertEquals
 
 class EventRepositorySpec: BehaviorSpec() {
     init {
-        Given("An empty event repo") {
+        Given("an empty event repo") {
             val eventRepo = MapEventRepository<CustomerId, UnitOfWork>(
                     versionExtractor = { uow -> uow.version})
             When("querying for a non existent id ") {
@@ -18,7 +18,7 @@ class EventRepositorySpec: BehaviorSpec() {
                 }
             }
         }
-        Given("An event repo with one uow") {
+        Given("an event repo with one uow") {
             val createCustomerCmd: CreateCustomerCmd = CreateCustomerCmd(CommandId(), CustomerId())
             val uow1 = UnitOfWork(command = createCustomerCmd,
                                           version = Version(1),
@@ -34,7 +34,7 @@ class EventRepositorySpec: BehaviorSpec() {
                 }
             }
         }
-        Given("An event repo with a couple of uow versioned as 1 and 2") {
+        Given("an event repo with a couple of uow versioned as 1 and 2") {
             val createCustomerCmd: CreateCustomerCmd = CreateCustomerCmd(CommandId(), CustomerId())
             val uow1 = UnitOfWork(command= createCustomerCmd,
                     version = Version(1),

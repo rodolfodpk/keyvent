@@ -8,7 +8,7 @@ import kotlin.test.assertTrue
 
 class MapJournalSpec: BehaviorSpec() {
     init {
-        Given("An empty journal") {
+        Given("an empty journal") {
             val journal = MapJournal<CustomerId, UnitOfWork>(versionExtractor = { uow -> uow.version })
             When("adding a new unitOfWork with version=1") {
                 val cmd: CreateCustomerCmd = CreateCustomerCmd(CommandId(), CustomerId())
@@ -21,7 +21,7 @@ class MapJournalSpec: BehaviorSpec() {
                 }
             }
         }
-        Given("An empty journal") {
+        Given("an empty journal") {
             val journal = MapJournal<CustomerId, UnitOfWork>(versionExtractor = { uow -> uow.version })
             When("adding a new unitOfWork with version =2") {
                 val cmd: CreateCustomerCmd = CreateCustomerCmd(CommandId(), CustomerId())
@@ -35,7 +35,7 @@ class MapJournalSpec: BehaviorSpec() {
                 }
             }
         }
-        Given("A journal with one uow with version =1") {
+        Given("a journal with one uow with version =1") {
             val createCustomerCmd: CreateCustomerCmd = CreateCustomerCmd(CommandId(), CustomerId())
             val uow1 = UnitOfWork(command= createCustomerCmd,
                                           version = Version(1),
