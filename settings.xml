@@ -1,0 +1,26 @@
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                      https://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+    <profiles>
+        <profile>
+            <repositories>
+                <repository>
+                    <id>jebrains-all</id>
+                    <url>http://repository.jetbrains.com/all</url>
+                </repository>
+                <repository>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                    <id>central</id>
+                    <name>bintray</name>
+                    <url>http://jcenter.bintray.com</url>
+                </repository>
+            </repositories>
+            <pluginRepositories>
+            </pluginRepositories>
+        </profile>
+    </profiles>
+</settings>
