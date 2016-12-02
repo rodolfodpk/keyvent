@@ -39,7 +39,7 @@ class MapEventRepositorySpec : BehaviorSpec() {
             val uow1 = UnitOfWork(command= createCustomerCmd,
                     version = Version(1),
                     events = listOf(CustomerCreated(createCustomerCmd.customerId)))
-            val activateCmd: ActivateCustomerCmd = ActivateCustomerCmd(CommandId(), createCustomerCmd.customerId, LocalDateTime.now())
+            val activateCmd: ActivateCustomerCmd = ActivateCustomerCmd(CommandId(), createCustomerCmd.customerId)
             val uow2 = UnitOfWork(command = activateCmd, version = Version(2), events = listOf(CustomerActivated(LocalDateTime.now())))
             val eventRepo : MapEventRepository<CustomerId> =
                     MapEventRepository(map = mutableMapOf(Pair(createCustomerCmd.customerId, mutableListOf(uow1, uow2))),

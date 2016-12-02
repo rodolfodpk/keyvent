@@ -141,6 +141,8 @@
 			<version>1.0.2</version>
 		</dependency>
 
+		<!-- utils -->
+
 		<dependency>
 			<groupId>com.github.kittinunf.result</groupId>
 			<artifactId>result</artifactId>
@@ -155,6 +157,12 @@
             <!--<scope>test</scope>-->
         <!--</dependency>-->
 
+		<dependency>
+			<groupId>com.nhaarman</groupId>
+			<artifactId>mockito-kotlin</artifactId>
+			<version>0.12.2</version>
+			<scope>test</scope>
+		</dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

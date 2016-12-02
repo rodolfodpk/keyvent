@@ -19,12 +19,10 @@ data class CreateCustomerCmd(override val commandId: CommandId = CommandId(),
                              override val customerId: CustomerId) : CustomerCommand
 
 data class ActivateCustomerCmd(override val commandId: CommandId = CommandId(),
-                               override val customerId: CustomerId,
-                               val date: LocalDateTime) : CustomerCommand
+                               override val customerId: CustomerId) : CustomerCommand
 
 data class CreateActivatedCustomerCmd(override val commandId: CommandId,
-                                      override val customerId: CustomerId,
-                                      val date: LocalDateTime) : CustomerCommand
+                                      override val customerId: CustomerId) : CustomerCommand
 
 // customer events
 
@@ -36,9 +34,9 @@ data class CustomerActivated(val date: LocalDateTime) : CustomerEvent
 
 // aggregate root
 
-data class Customer(val customerId: CustomerId?, val name: String?, val active: Boolean, val activatedSince : LocalDateTime?) : AggregateRoot {
+data class Customer(var genValService: GeneratedValuesService, val customerId: CustomerId?, val name: String?, val active: Boolean, val activatedSince : LocalDateTime?) : AggregateRoot {
 
-    constructor() : this(null, null, false, null)
+    constructor() : this(GeneratedValuesService(), null, null, false, null)
 
     // behaviour
 
@@ -48,8 +46,8 @@ data class Customer(val customerId: CustomerId?, val name: String?, val active: 
         return listOf(CustomerCreated(customerId))
     }
 
-    fun activate(datetime: LocalDateTime) : List<CustomerEvent> {
-        return listOf(CustomerActivated(datetime))
+    fun activate() : List<CustomerEvent> {
+        return listOf(CustomerActivated(genValService.now()))
     }
 
 }
@@ -63,11 +61,11 @@ val handleCustomerCommands : (Customer, Version, CustomerCommand, (CustomerEvent
             Result.of { UnitOfWork(command = command, version = version.nextVersion(),
                     events = aggregateRoot.create(command.customerId)) }
         is ActivateCustomerCmd -> Result.of { UnitOfWork(command = command, version = version.nextVersion(),
-                events = aggregateRoot.activate(command.date))}
+                events = aggregateRoot.activate())}
         is CreateActivatedCustomerCmd -> {
             val events = with(StateTransitionsTracker(aggregateRoot, stateTransitionFn)) {
                 apply(aggregateRoot.create(command.customerId))
-                apply(aggregateRoot.activate(command.date))
+                apply(aggregateRoot.activate())
                 collectedEvents()
             }
             Result.of { UnitOfWork(command = command, version = version.nextVersion(), events = events) }

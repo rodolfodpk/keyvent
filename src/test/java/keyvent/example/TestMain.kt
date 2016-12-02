@@ -23,7 +23,7 @@ fun test1() {
 }
 
 fun uow2(): UnitOfWork? {
-    val cmd : CreateActivatedCustomerCmd = CreateActivatedCustomerCmd(CommandId(), CustomerId(), LocalDateTime.now())
+    val cmd : CreateActivatedCustomerCmd = CreateActivatedCustomerCmd(CommandId(), CustomerId())
     val state = Customer()
     val version = Version(1)
     return handleCustomerCommands(state, version, cmd, stateTransitionFn).get()

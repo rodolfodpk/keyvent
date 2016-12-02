@@ -44,7 +44,7 @@ class MapJournalSpec: BehaviorSpec() {
                     versionExtractor = { uow -> uow.version })
             When("adding a new unitOfWork with version =2") {
                 val localDatTime = LocalDateTime.now()
-                val activateCmd: ActivateCustomerCmd = ActivateCustomerCmd(CommandId(), createCustomerCmd.customerId, date = localDatTime)
+                val activateCmd: ActivateCustomerCmd = ActivateCustomerCmd(CommandId(), createCustomerCmd.customerId)
                 val uow2 = UnitOfWork(command = activateCmd, version = Version(2), events = listOf(CustomerActivated(LocalDateTime.now())))
                 journal.append(createCustomerCmd.customerId, uow2)
                 Then("should result in a journal with the respective first and second entries") {

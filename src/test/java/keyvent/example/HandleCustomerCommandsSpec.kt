@@ -1,7 +1,11 @@
 package keyvent.example
 
+import com.nhaarman.mockito_kotlin.doReturn
+import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockito_kotlin.verify
 import io.kotlintest.specs.BehaviorSpec
 import keyvent.CommandId
+import keyvent.GeneratedValuesService
 import keyvent.UnitOfWork
 import keyvent.Version
 import java.time.LocalDateTime
@@ -9,6 +13,11 @@ import kotlin.test.assertEquals
 
 class HandleCustomerCommandsSpec : BehaviorSpec() {
     init {
+        // just a service mock
+        val activatedOn = LocalDateTime.now()
+        val serviceMock = mock<GeneratedValuesService> {
+            on { now() } doReturn activatedOn
+        }
         Given("an empty Customer with version 0") {
             val state = Customer()
             val version = Version(0)
@@ -24,21 +33,22 @@ class HandleCustomerCommandsSpec : BehaviorSpec() {
             }
         }
         Given("a non active Customer with version 1") {
-            val state = Customer(customerId = CustomerId(), name="customer1", active = false, activatedSince = null)
+            val state = Customer(serviceMock, customerId = CustomerId(), name="customer1", active = false, activatedSince = null)
             val version = Version(1)
             When("an activateCommand is issued") {
-                val cmd = ActivateCustomerCmd(CommandId(), customerId = state.customerId!!, date = LocalDateTime.now())
+                val cmd = ActivateCustomerCmd(CommandId(), customerId = state.customerId!!)
                 val result = handleCustomerCommands.invoke(state, version, cmd, stateTransitionFn)
                 val uow: UnitOfWork = result.get()
                 Then("a proper UnitOfWork is generated") {
                     assertEquals(uow.command, cmd)
                     assertEquals(uow.version, Version(2))
-                    assertEquals(uow.events.first(), CustomerActivated(cmd.date))
+                    assertEquals(uow.events.first(), CustomerActivated(activatedOn))
+                    verify(serviceMock).now()
                 }
             }
         }
         Given("a non active Customer with version 1") {
-            val state = Customer(customerId = CustomerId(), name="customer1", active = false, activatedSince = null)
+            val state = Customer(serviceMock, customerId = CustomerId(), name="customer1", active = false, activatedSince = null)
             val version = Version(1)
             When("a createCommand with same customerId is issued") {
                 val cmd = CreateCustomerCmd(customerId = state.customerId!!)
@@ -47,6 +57,7 @@ class HandleCustomerCommandsSpec : BehaviorSpec() {
                     val exception = result.component2()
                     assertEquals(exception!!.javaClass.name, IllegalArgumentException::class.java.name)
                 }
+
             }
         }
 
