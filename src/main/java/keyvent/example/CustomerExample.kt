@@ -5,6 +5,13 @@ import keyvent.*
 import java.time.LocalDateTime
 import java.util.*
 
+// a helper service
+
+open class SupplierHelperService {
+    open fun now() = LocalDateTime.now()
+    open fun uuId() = UUID.randomUUID()
+}
+
 // customer value objects
 
 data class CustomerId(val uuid: UUID = UUID.randomUUID())
@@ -34,9 +41,10 @@ data class CustomerActivated(val date: LocalDateTime) : CustomerEvent
 
 // aggregate root
 
-data class Customer(var genValService: ValuesService, val customerId: CustomerId?, val name: String?, val active: Boolean, val activatedSince : LocalDateTime?) : AggregateRoot {
+data class Customer(var genValService: SupplierHelperService, val customerId: CustomerId?, val name: String?,
+                    val active: Boolean, val activatedSince : LocalDateTime?) : AggregateRoot {
 
-    constructor() : this(ValuesService(), null, null, false, null)
+    constructor() : this(SupplierHelperService(), null, null, false, null)
 
     // behaviour
 

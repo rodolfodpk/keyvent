@@ -6,7 +6,6 @@ import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.verifyNoMoreInteractions
 import io.kotlintest.specs.BehaviorSpec
 import keyvent.CommandId
-import keyvent.ValuesService
 import keyvent.UnitOfWork
 import keyvent.Version
 import java.time.LocalDateTime
@@ -31,7 +30,7 @@ class HandleCustomerCommandsSpec : BehaviorSpec() {
         Given("a non active Customer with version 1") {
             // just a service mock
             val activatedOn = LocalDateTime.now()
-            val serviceMock = mock<ValuesService> {
+            val serviceMock = mock<SupplierHelperService> {
                 on { now() } doReturn activatedOn
             }
             val state = Customer(serviceMock, customerId = CustomerId(), name="customer1", active = false, activatedSince = null)
@@ -46,12 +45,15 @@ class HandleCustomerCommandsSpec : BehaviorSpec() {
                     assertEquals(uow.events.first(), CustomerActivated(activatedOn))
                     verify(serviceMock).now()
                 }
+                Then("now() is called on  serviceMock") {
+                    verify(serviceMock).now()
+                }
             }
         }
         Given("a non active Customer with version 1") {
             // just a service mock
             val activatedOn = LocalDateTime.now()
-            val serviceMock = mock<ValuesService> {
+            val serviceMock = mock<SupplierHelperService> {
                 on { now() } doReturn activatedOn
             }
             val state = Customer(serviceMock, customerId = CustomerId(), name="customer1", active = false, activatedSince = null)
@@ -62,9 +64,10 @@ class HandleCustomerCommandsSpec : BehaviorSpec() {
                 Then("result must be an error with an IllegalArgumentException") {
                     val exception = result.component2()
                     assertEquals(exception!!.javaClass.name, IllegalArgumentException::class.java.name)
+                }
+                Then("nothing is called on serviceMock") {
                     verifyNoMoreInteractions(serviceMock)
                 }
-
             }
         }
 

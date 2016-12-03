@@ -44,14 +44,6 @@ class StateTransitionsTracker<A : AggregateRoot, E : Event> (val instance: A,
     }
 }
 
-open class ValuesService {
-
-    open fun now() = LocalDateTime.now()
-
-    open fun uuId() = UUID.randomUUID()
-
-}
-
 // default implementations - just for tests -- TODO caffeine ?
 
 class MapEventRepository<ID> (val map: MutableMap<ID, MutableList<UnitOfWork>> = mutableMapOf(),
