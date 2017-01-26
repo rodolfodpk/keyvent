@@ -9,7 +9,7 @@ class MapEventRepositorySpec : BehaviorSpec() {
     init {
         Given("an empty event repo") {
             val eventRepo = MapEventRepository<CustomerId>(
-                    versionExtractor = { uow -> uow.version})
+                    versionExtractor = { uow -> uow.version })
             When("querying for a non existent id ") {
                 val customerId = CustomerId()
                 val uowList = eventRepo.eventsAfter(customerId, Version(0))
@@ -21,11 +21,11 @@ class MapEventRepositorySpec : BehaviorSpec() {
         Given("an event repo with one uow") {
             val createCustomerCmd: CreateCustomerCmd = CreateCustomerCmd(CommandId(), CustomerId())
             val uow1 = UnitOfWork(command = createCustomerCmd,
-                                          version = Version(1),
-                                          events = listOf(CustomerCreated(createCustomerCmd.customerId)))
-            val eventRepo : MapEventRepository<CustomerId> =
+                    version = Version(1),
+                    events = listOf(CustomerCreated(createCustomerCmd.customerId)))
+            val eventRepo: MapEventRepository<CustomerId> =
                     MapEventRepository(map = mutableMapOf(Pair(createCustomerCmd.customerId, mutableListOf(uow1))),
-                    versionExtractor = { uow -> uow.version })
+                            versionExtractor = { uow -> uow.version })
             When("querying for an existent id ") {
                 Then("should result in a list with the respective uow") {
                     val expected: MutableList<UnitOfWork> = mutableListOf(uow1)
@@ -36,12 +36,12 @@ class MapEventRepositorySpec : BehaviorSpec() {
         }
         Given("an event repo with a couple of uow versioned as 1 and 2") {
             val createCustomerCmd: CreateCustomerCmd = CreateCustomerCmd(CommandId(), CustomerId())
-            val uow1 = UnitOfWork(command= createCustomerCmd,
+            val uow1 = UnitOfWork(command = createCustomerCmd,
                     version = Version(1),
                     events = listOf(CustomerCreated(createCustomerCmd.customerId)))
             val activateCmd: ActivateCustomerCmd = ActivateCustomerCmd(CommandId(), createCustomerCmd.customerId)
             val uow2 = UnitOfWork(command = activateCmd, version = Version(2), events = listOf(CustomerActivated(LocalDateTime.now())))
-            val eventRepo : MapEventRepository<CustomerId> =
+            val eventRepo: MapEventRepository<CustomerId> =
                     MapEventRepository(map = mutableMapOf(Pair(createCustomerCmd.customerId, mutableListOf(uow1, uow2))),
                             versionExtractor = { uow -> uow.version })
             When("querying for an existent id with version greater than 1") {

@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class MapJournalSpec: BehaviorSpec() {
+class MapJournalSpec : BehaviorSpec() {
     init {
         Given("an empty journal") {
             val journal = MapJournal<CustomerId>(versionExtractor = { uow -> uow.version })
@@ -37,9 +37,9 @@ class MapJournalSpec: BehaviorSpec() {
         }
         Given("a journal with one uow with version =1") {
             val createCustomerCmd: CreateCustomerCmd = CreateCustomerCmd(CommandId(), CustomerId())
-            val uow1 = UnitOfWork(command= createCustomerCmd,
-                                          version = Version(1),
-                                          events = listOf(CustomerCreated(createCustomerCmd.customerId)))
+            val uow1 = UnitOfWork(command = createCustomerCmd,
+                    version = Version(1),
+                    events = listOf(CustomerCreated(createCustomerCmd.customerId)))
             val journal = MapJournal(map = mutableMapOf(Pair(createCustomerCmd.customerId, mutableListOf(uow1))),
                     versionExtractor = { uow -> uow.version })
             When("adding a new unitOfWork with version =2") {
