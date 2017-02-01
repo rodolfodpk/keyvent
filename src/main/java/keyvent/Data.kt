@@ -5,13 +5,18 @@ import java.util.*
 
 // interfaces
 
+interface Event
+
+interface AggregateRoot
+
 interface Command {
     val commandId: CommandId
 }
 
-interface Event
-
-interface AggregateRoot
+interface CommandScheduling {
+    val scheduledCommand: Command
+    val scheduledAt: LocalDateTime
+}
 
 // data classes
 
@@ -30,5 +35,3 @@ data class UnitOfWork(val id: UnitOfWorkId = UnitOfWorkId(),
                       val version: Version,
                       val events: List<Event>,
                       val timestamp: LocalDateTime = LocalDateTime.now())
-
-

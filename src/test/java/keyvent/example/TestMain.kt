@@ -9,16 +9,16 @@ import net.dongliu.gson.GsonJava8TypeAdapterFactory
 import kotlin.test.assertEquals
 
 fun main(args: Array<String>) {
-    //gsonTest()
+    // gsonTest()
+    println(uow1())
     println(uow2())
-    //uow2()
     println("hi !")
 }
 
 fun uow1(): UnitOfWork {
     val injector = Guice.createInjector(CustomerModule())
     val cmd: CreateCustomerCmd = CreateCustomerCmd(CommandId(), CustomerId())
-    val customer = emptyAggregateRootFn(injector)
+    val customer = injectedAggregateRootFn(injector, Customer())
     val version = Version(0)
     return handleCustomerCommandsFn(customer, version, cmd, stateTransitionFn).get()
 }
@@ -26,7 +26,7 @@ fun uow1(): UnitOfWork {
 fun uow2(): UnitOfWork {
     val injector = Guice.createInjector(CustomerModule())
     val cmd: CreateActivatedCustomerCmd = CreateActivatedCustomerCmd(CommandId(), CustomerId())
-    val customer = emptyAggregateRootFn(injector)
+    val customer = injectedAggregateRootFn(injector, Customer())
     val version = Version(0)
     return handleCustomerCommandsFn(customer, version, cmd, stateTransitionFn).get()
 }
@@ -41,6 +41,7 @@ fun gsonTest() {
     val rtaEvents: RuntimeTypeAdapterFactory<Event> = RuntimeTypeAdapterFactory.of(Event::class.java)
             .registerSubtype(CustomerCreated::class.java)
             .registerSubtype(CustomerActivated::class.java)
+            .registerSubtype(DeactivatedCmdScheduled::class.java)
 
     val gsonBuilder = GsonBuilder()
 
@@ -53,7 +54,7 @@ fun gsonTest() {
 
     val uow1 = uow1()
     val uowAsJson1 = gson.toJson(uow1)
-    // println(uowAsJson1)
+    println(uowAsJson1)
     val fromJsonUow1 = gson.fromJson(uowAsJson1, UnitOfWork::class.java)
     assertEquals(fromJsonUow1, uow1)
 
@@ -65,9 +66,3 @@ fun gsonTest() {
 
 }
 
-class CustomerModule : AbstractModule() {
-
-    override fun configure() {
-        bind(SupplierHelperService::class.java)
-    }
-}

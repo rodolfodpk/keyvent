@@ -75,6 +75,18 @@ class HandleCustomerCommandsSpec : BehaviorSpec() {
                 }
             }
         }
+        Given("an empty Customer with version 1") {
+            val customer = Customer()
+            val version = Version(1)
+            val cmd = CreateCustomerCmd(customerId = CustomerId())
+            When("a createCommand is issued") {
+                val result = handleCustomerCommandsFn.invoke(customer, version, cmd, stateTransitionFn)
+                Then("result must be an error with an IllegalArgumentException") {
+                    val exception = result.component2()
+                    assertEquals(exception!!.javaClass.name, IllegalArgumentException::class.java.name)
+                }
+            }
+        }
         Given("an empty Customer with version 0") {
             val customer = Customer()
             val version = Version(0)

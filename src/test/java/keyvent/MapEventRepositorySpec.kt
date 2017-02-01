@@ -2,6 +2,7 @@ package keyvent
 
 import io.kotlintest.specs.BehaviorSpec
 import keyvent.example.*
+import keyvent.runtimes.default.MapEventRepository
 import java.time.LocalDateTime
 import kotlin.test.assertEquals
 

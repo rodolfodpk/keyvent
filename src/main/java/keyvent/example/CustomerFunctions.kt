@@ -1,8 +1,11 @@
 package keyvent.example
 
 import com.github.kittinunf.result.Result
+import com.google.inject.AbstractModule
+import com.google.inject.Guice
 import com.google.inject.Injector
 import keyvent.*
+import keyvent.runtimes.default.StateTransitionsTracker
 import java.time.LocalDateTime
 import java.util.*
 import javax.inject.Inject
@@ -14,40 +17,15 @@ open class SupplierHelperService {
     open fun uuId() = UUID.randomUUID()
 }
 
-// customer value objects
+// dependencies
 
-data class CustomerId(val uuid: UUID = UUID.randomUUID())
-
-// customer commands
-
-interface CustomerCommand : Command {
-    val customerId: CustomerId
+class CustomerModule : AbstractModule() {
+    override fun configure() {
+        bind(SupplierHelperService::class.java)
+    }
 }
 
-data class CreateCustomerCmd(override val commandId: CommandId = CommandId(),
-                             override val customerId: CustomerId) : CustomerCommand
-
-data class ActivateCustomerCmd(override val commandId: CommandId = CommandId(),
-                               override val customerId: CustomerId) : CustomerCommand
-
-data class CreateActivatedCustomerCmd(override val commandId: CommandId,
-                                      override val customerId: CustomerId) : CustomerCommand
-
-data class DeactivateCustomerCmd(override val commandId: CommandId = CommandId(),
-                                 override val customerId: CustomerId) : CustomerCommand
-
-// customer events
-
-interface CustomerEvent : Event
-
-data class CustomerCreated(val customerId: CustomerId) : CustomerEvent
-
-data class CustomerActivated(val date: LocalDateTime) : CustomerEvent
-
-data class DeactivatedCmdScheduled(override val scheduledCommand: DeactivateCustomerCmd,
-                                   override val scheduledAt: LocalDateTime) : CustomerEvent, CommandSchedule
-
-data class CustomerDeactivated(val date: LocalDateTime) : CustomerEvent
+val injector = Guice.createInjector(CustomerModule())
 
 // aggregate root
 
@@ -69,6 +47,7 @@ data class Customer(val customerId: CustomerId?, val name: String?,
     }
 
     fun activate(): List<CustomerEvent> {
+        println(this.customerId!!)
         return listOf(CustomerActivated(genValService.now()),
                 DeactivatedCmdScheduled(
                         DeactivateCustomerCmd(commandId = CommandId(genValService.uuId()),
@@ -81,10 +60,9 @@ data class Customer(val customerId: CustomerId?, val name: String?,
     }
 }
 
-val emptyAggregateRootFn: (Injector) -> Customer = {
-    i ->
-    val c = Customer();
-    i.injectMembers(c);
+val injectedAggregateRootFn: (Injector, Customer) -> Customer = {
+    i, c ->
+    i.injectMembers(c)
     c
 }
 
@@ -95,7 +73,10 @@ val stateTransitionFn: (CustomerEvent, Customer) -> Customer = { event, state ->
         is CustomerCreated -> state.copy(customerId = event.customerId)
         is CustomerActivated -> state.copy(active = true, activatedSince = event.date)
         is CustomerDeactivated -> state.copy(active = false, deactivatedSince = event.date)
-        else -> state
+        is DeactivatedCmdScheduled -> state
+        else -> {
+            throw IllegalArgumentException("invalid event")
+        }
     }
 }
 
@@ -107,7 +88,7 @@ Result<UnitOfWork, Exception> = { aggregateRoot, version, command, stateTransiti
     Result.of {
         when (command) {
             is CreateCustomerCmd -> {
-                // TODO  assertThat(version == Version(0), {"before create the instance must be version= 0"});
+                require(version == Version(0), {"before create the instance must be version= 0"})
                 UnitOfWork(command = command, version = version.nextVersion(),
                         events = aggregateRoot.create(command.customerId))
             }
@@ -118,12 +99,13 @@ Result<UnitOfWork, Exception> = { aggregateRoot, version, command, stateTransiti
                 UnitOfWork(command = command, version = version.nextVersion(),
                         events = aggregateRoot.deactivate())
             is CreateActivatedCustomerCmd -> {
-                val events = with(StateTransitionsTracker(aggregateRoot, stateTransitionFn)) {
+                // TODO check https://gist.github.com/cy6erGn0m/6960104
+                val _events = with(StateTransitionsTracker(aggregateRoot, stateTransitionFn, injector)) { // TODO injector should be a param
                     apply(aggregateRoot.create(command.customerId))
-                    apply(aggregateRoot.activate())
+                    apply(currentState().activate())
                     collectedEvents()
                 }
-                UnitOfWork(command = command, version = version.nextVersion(), events = events)
+                UnitOfWork(command = command, version = version.nextVersion(), events = _events)
             }
             else -> {
                 throw IllegalArgumentException("invalid command")
@@ -131,7 +113,3 @@ Result<UnitOfWork, Exception> = { aggregateRoot, version, command, stateTransiti
         }
     }
 }
-
-// projections TODO
-
-

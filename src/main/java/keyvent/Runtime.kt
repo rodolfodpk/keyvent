@@ -2,32 +2,53 @@ package keyvent
 
 import com.github.kittinunf.result.Result
 import com.google.inject.Injector
+import java.time.LocalDateTime
 
-interface ArContainer<AR> {
 
-    fun initialInstanceFn(injector: Injector): AR
+// persistence
 
-    fun stateTransitionFn(instance: AR, event: Event): AR
+interface EventRepository<ID> {
+    fun eventsAfter(id: ID, afterVersion: Version): List<UnitOfWork>
+}
 
-    fun handleCommandFn(instance: AR, version: Version,
-                        command: Command, stateTransitionFn: (Event, AR) -> AR): Result<UnitOfWork, Exception>
+interface Journal<ID> {
+    fun append(targetId: ID, unitOfWork: UnitOfWork)
+}
 
+// scheduling
+
+interface CommandScheduler {
+    fun schedule(causeCommand : CommandId, commandScheduling: CommandScheduling)
+}
+
+// exploratory
+
+interface CommandReceiver {
+
+    val aggregateRoot: String
+
+    val submit: (Command) -> Result<Unit, Exception>
 
 }
 
-class StateTransitionsTracker<A : AggregateRoot, E : Event>(val instance: A,
-                                                            val applyEventOn: (event: E, aggregateRoot: A) -> A) {
-    val stateTransitions: MutableList<Pair<A, E>> = mutableListOf()
-    fun apply(events: List<E>) {
-        val last = if (stateTransitions.size == 0) instance else stateTransitions.last().first
-        events.mapTo(stateTransitions) { Pair(applyEventOn(it, last), it) }
-    }
+interface CommandProcessor<AR, ID> {
 
-    fun collectedEvents(): List<E> {
-        return stateTransitions.map { pair -> pair.second }
-    }
+    val aggregateRoot: String
 
-    fun currentState(): A {
-        return stateTransitions.last().first;
-    }
+    val lastSnapshot: (ID) -> Pair<AR, Version>
+
+    val latestVersion: (ID) -> Version
+
+    val eventsAfter: (ID, Version) -> List<UnitOfWork>
+
+    val initialInstance: (Injector) -> AR
+
+    val stateTransition: (AR, Event) -> AR
+
+    val handleCommand: (AR, Version, Command, (Event, AR) -> AR) -> Result<UnitOfWork, Exception>
+
+    val append: (ID, UnitOfWork) -> Result<Unit, Exception>
+
 }
+
+// TODO EventsProjector
